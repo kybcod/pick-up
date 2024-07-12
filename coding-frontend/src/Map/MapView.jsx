@@ -1,4 +1,27 @@
 import React, { useEffect, useState } from "react";
+import { Map, MapMarker, CustomOverlayMap } from "react-kakao-maps-sdk";
+import { Box, Link, VStack, Text, Button, Flex, Heading } from "@chakra-ui/react";
+
+// RestaurantList 컴포넌트
+function RestaurantList({ restaurants, onRestaurantClick }) {
+    return (
+        <VStack align="stretch" spacing={2} overflowY="auto" height="400px">
+            {restaurants.map((restaurant, index) => (
+                <Box
+                    key={index}
+                    p={2}
+                    bg="gray.100"
+                    borderRadius="md"
+                    cursor="pointer"
+                    onClick={() => onRestaurantClick(restaurant)}
+                >
+                    <Text fontWeight="bold">{restaurant.place.place_name}</Text>
+                    <Text fontSize="sm">{restaurant.place.road_address_name || restaurant.place.address_name}</Text>
+                </Box>
+            ))}
+        </VStack>
+    );
+}
 
 export default function MapView() {
     const apiKey = import.meta.env.VITE_API_KEY;
@@ -6,14 +29,16 @@ export default function MapView() {
     const [currentPosition, setCurrentPosition] = useState(null);
     const [foodMarkers, setFoodMarkers] = useState([]);
     const [cafeMarkers, setCafeMarkers] = useState([]);
+    const [info, setInfo] = useState(null);
+    const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
     useEffect(() => {
         const script = document.createElement("script");
         script.async = true;
-        script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false&libraries=services,clusterer`;
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false&libraries=services,clusterer`;
         document.head.appendChild(script);
 
-        script.addEventListener("load", () => {
+        script.onload = () => {
             window.kakao.maps.load(() => {
                 const mapContainer = document.getElementById("map");
                 const options = {
@@ -21,100 +46,68 @@ export default function MapView() {
                     level: 3,
                 };
                 const newMap = new window.kakao.maps.Map(mapContainer, options);
-                setMap(newMap); // Set the map instance in state
+                setMap(newMap);
             });
-        });
+        };
 
         return () => {
             document.head.removeChild(script);
         };
-    }, [apiKey]);
+    }, []);
 
     useEffect(() => {
-        if (map) {
-            // Once map is loaded, fetch current location
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const latitude = position.coords.latitude;
-                        const longitude = position.coords.longitude;
-                        setCurrentPosition({ latitude, longitude });
-                        map.panTo(new window.kakao.maps.LatLng(latitude, longitude)); // Move map to current location
-                        setDefaultMarker(latitude, longitude); // Set default marker at current location
-                        searchNearbyPlaces(latitude, longitude); // Search nearby places
-                    },
-                    (error) => {
-                        console.error("Error getting current location:", error);
-                    }
-                );
-            } else {
-                console.error("Geolocation is not supported by this browser.");
-            }
+        if (map && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    setCurrentPosition({ latitude, longitude });
+                    map.panTo(new window.kakao.maps.LatLng(latitude, longitude));
+                    searchNearbyPlaces(latitude, longitude);
+                },
+                (error) => console.error("Error getting current location:", error)
+            );
         }
     }, [map]);
 
-    // Function to set default marker at current location
-    const setDefaultMarker = (latitude, longitude) => {
-        if (!map) return;
-
-        const markerImage = new window.kakao.maps.MarkerImage(
-            "https://img.icons8.com/emoji/48/000000/pinching-hand.png",
-            new window.kakao.maps.Size(40, 40),
-            { offset: new window.kakao.maps.Point(20, 40) }
-        );
-
-        const marker = new window.kakao.maps.Marker({
-            position: new window.kakao.maps.LatLng(latitude, longitude),
-            map: map,
-            image: markerImage,
-        });
-    };
-
-    // Function to search nearby places based on latitude and longitude
     const searchNearbyPlaces = (latitude, longitude) => {
-        if (!map) return;
+        if (!window.kakao || !window.kakao.maps) return;
 
-        const ps = new window.kakao.maps.services.Places(map);
-
-        // Category codes for restaurants and cafes
-        const categories = ["FD6", "CE7"]; // FD6: 음식점, CE7: 카페
+        const ps = new window.kakao.maps.services.Places();
+        const categories = ["FD6", "CE7"];
 
         categories.forEach((categoryCode) => {
-            ps.categorySearch(categoryCode, (data, status, pagination) => {
-                if (status === window.kakao.maps.services.Status.OK) {
-                    const places = data.filter((place) => {
-                        const distance = calculateDistance(latitude, longitude, place.y, place.x);
-                        return distance <= 10000; // Within 10km radius
-                    });
-                    displayPlacesOnMap(places, categoryCode);
-                } else {
-                    console.error("Failed to fetch places:", status);
-                }
-            }, { location: new window.kakao.maps.LatLng(latitude, longitude), radius: 10000 });
+            let placesAccumulator = [];
+
+            const searchPlaces = (pagination) => {
+                ps.categorySearch(
+                    categoryCode,
+                    (data, status, pagination) => {
+                        if (status === window.kakao.maps.services.Status.OK) {
+                            placesAccumulator = placesAccumulator.concat(data);
+                            if (pagination.hasNextPage) {
+                                pagination.nextPage();
+                            } else {
+                                displayPlacesOnMap(placesAccumulator, categoryCode);
+                            }
+                        } else {
+                            console.error("Failed to fetch places:", status);
+                        }
+                    },
+                    { location: new window.kakao.maps.LatLng(latitude, longitude) }
+                );
+            };
+
+            searchPlaces();
         });
     };
 
-    // Function to display places as markers on the map
     const displayPlacesOnMap = (places, categoryCode) => {
-        if (!map) return;
-
-        const markersArray = [];
-
-        places.forEach((place) => {
-            const markerImage = getMarkerImage(categoryCode);
-            const marker = new window.kakao.maps.Marker({
-                position: new window.kakao.maps.LatLng(place.y, place.x),
-                map: map,
-                image: markerImage,
-            });
-
-            markersArray.push(marker);
-
-            // Add click event listener to each marker
-            window.kakao.maps.event.addListener(marker, "click", () => {
-                displayPlaceInfo(place);
-            });
-        });
+        const markersArray = places.map((place) => ({
+            position: { lat: place.y, lng: place.x },
+            content: place.place_name,
+            place: place,
+        }));
 
         if (categoryCode === "FD6") {
             setFoodMarkers(markersArray);
@@ -123,86 +116,20 @@ export default function MapView() {
         }
     };
 
-    // Function to calculate distance between two points in meters
-    const calculateDistance = (lat1, lon1, lat2, lon2) => {
-        const R = 6371e3; // metres
-        const φ1 = lat1 * (Math.PI / 180);
-        const φ2 = lat2 * (Math.PI / 180);
-        const Δφ = (lat2 - lat1) * (Math.PI / 180);
-        const Δλ = (lon2 - lon1) * (Math.PI / 180);
-
-        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        const distance = R * c;
-        return distance;
-    };
-
-    // Function to display place info in a custom overlay
-    const displayPlaceInfo = (place) => {
-        const content = `<div class="placeinfo">
-            <a class="title" href="${place.place_url}" target="_blank">${place.place_name}</a>
-            ${place.road_address_name ? `<span>${place.road_address_name}</span>` : `<span>${place.address_name}</span>`}
-            <span class="tel">${place.phone}</span>
-        </div><div class="after"></div>`;
-        const placeOverlay = new window.kakao.maps.CustomOverlay({ zIndex: 1 });
-        const contentNode = document.createElement('div');
-        contentNode.className = 'placeinfo_wrap';
-        contentNode.innerHTML = content;
-        placeOverlay.setContent(contentNode);
-        placeOverlay.setPosition(new window.kakao.maps.LatLng(place.y, place.x));
-        placeOverlay.setMap(map);
-    };
-
-    // Function to get marker image based on category code
-    const getMarkerImage = (categoryCode) => {
-        let imageSrc = "";
-        let imageSize = new window.kakao.maps.Size(50, 50); // Marker image size
-
-        if (categoryCode === "FD6") {
-            imageSrc = '/img/restaurant.png'; // Food marker image
-        } else if (categoryCode === "CE7") {
-            imageSrc = '/img/cafe.png'; // Cafe marker image
-        } else {
-            // Default marker image
-            imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
-            imageSize = new window.kakao.maps.Size(27, 28); // Default size for other markers
-        }
-
-        const imgOptions = {
-            spriteSize: imageSize, // Use the same size as imageSize
-            spriteOrigin: new window.kakao.maps.Point(0, 0), // Start displaying from the top-left corner of the sprite
-            offset: new window.kakao.maps.Point(0, 0), // No offset to show the entire image within the 50x50 box
-        };
-
-        return new window.kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions);
-    };
-
-
-
-    // Handler for showing food markers
     const handleShowFoodMarkers = () => {
-        if (foodMarkers.length > 0) {
-            foodMarkers.forEach(marker => marker.setMap(map));
-        }
-        if (cafeMarkers.length > 0) {
-            cafeMarkers.forEach(marker => marker.setMap(null));
-        }
+        setInfo(null);
+        setSelectedRestaurant(null);
+        setFoodMarkers((prev) => prev.map((marker) => ({ ...marker, visible: true })));
+        setCafeMarkers((prev) => prev.map((marker) => ({ ...marker, visible: false })));
     };
 
-    // Handler for showing cafe markers
     const handleShowCafeMarkers = () => {
-        if (cafeMarkers.length > 0) {
-            cafeMarkers.forEach(marker => marker.setMap(map));
-        }
-        if (foodMarkers.length > 0) {
-            foodMarkers.forEach(marker => marker.setMap(null));
-        }
+        setInfo(null);
+        setSelectedRestaurant(null);
+        setFoodMarkers((prev) => prev.map((marker) => ({ ...marker, visible: false })));
+        setCafeMarkers((prev) => prev.map((marker) => ({ ...marker, visible: true })));
     };
 
-    // Handler for current location button click
     const handleCurrentLocationClick = () => {
         if (navigator.geolocation && map) {
             navigator.geolocation.getCurrentPosition(
@@ -210,27 +137,134 @@ export default function MapView() {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
                     setCurrentPosition({ latitude, longitude });
-                    map.panTo(new window.kakao.maps.LatLng(latitude, longitude)); // Move map to current location
-                    setDefaultMarker(latitude, longitude); // Set default marker at current location
-                    searchNearbyPlaces(latitude, longitude); // Search nearby places
+                    map.panTo(new window.kakao.maps.LatLng(latitude, longitude));
+                    searchNearbyPlaces(latitude, longitude);
                 },
-                (error) => {
-                    console.error("Error getting current location:", error);
-                }
+                (error) => console.error("Error getting current location:", error)
             );
         } else {
             console.error("Geolocation is not supported by this browser or map is not initialized.");
         }
     };
 
+    const handleRestaurantClick = (restaurant) => {
+        setSelectedRestaurant(restaurant);
+        setInfo(restaurant);
+        map.panTo(new window.kakao.maps.LatLng(restaurant.position.lat, restaurant.position.lng));
+    };
+
+    const allRestaurants = [...foodMarkers, ...cafeMarkers].filter(r => r.visible !== false);
+
     return (
-        <>
-            <div>
-                <button onClick={handleCurrentLocationClick}>현재 내 위치</button>
-                <button onClick={handleShowFoodMarkers}><span role="img" aria-label="Food">🌮</span> 음식점</button>
-                <button onClick={handleShowCafeMarkers}><span role="img" aria-label="Cafe">☕</span> 카페</button>
-            </div>
-            <div id="map" style={{ width: "100%", height: "400px" }}></div>
-        </>
+        <Flex>
+            <Box width="30%" mr={4}>
+                <Heading size="md" mb={4}>식당 및 카페 목록</Heading>
+                <Button onClick={handleShowFoodMarkers} mr={2} mb={4}><Text role="img" aria-label="Food">🌮</Text> 음식점</Button>
+                <Button onClick={handleShowCafeMarkers} mb={4}><Text role="img" aria-label="Cafe">☕</Text> 카페</Button>
+                <RestaurantList
+                    restaurants={allRestaurants}
+                    onRestaurantClick={handleRestaurantClick}
+                />
+            </Box>
+            <Box width="70%">
+                <Button onClick={handleCurrentLocationClick} mb={4}>현재 내 위치</Button>
+                <Box id="map" style={{ width: "100%", height: "400px" }}>
+                    {map && (
+                        <Map
+                            center={currentPosition ? { lat: currentPosition.latitude, lng: currentPosition.longitude } : { lat: 37.5662952, lng: 126.9779451 }}
+                            style={{ width: "100%", height: "100%" }}
+                            level={3}
+                            onCreate={setMap}
+                        >
+                            {currentPosition && (
+                                <MapMarker
+                                    position={{ lat: currentPosition.latitude, lng: currentPosition.longitude }}
+                                    image={{
+                                        src: "/img/current.png",
+                                        size: { width: 40, height: 40 },
+                                        options: { offset: { x: 20, y: 40 } },
+                                    }}
+                                />
+                            )}
+                            {selectedRestaurant ? (
+                                <MapMarker
+                                    position={selectedRestaurant.position}
+                                    image={{
+                                        src: selectedRestaurant.place.category_group_code === "FD6" ? "/img/restaurant.png" : "/img/cafe.png",
+                                        size: { width: 50, height: 50 },
+                                    }}
+                                    onClick={() => setInfo(selectedRestaurant)}
+                                />
+                            ) : (
+                                <>
+                                    {foodMarkers.filter(marker => marker.visible !== false).map((marker, index) => (
+                                        <MapMarker
+                                            key={`food-${index}`}
+                                            position={marker.position}
+                                            image={{
+                                                src: "/img/restaurant.png",
+                                                size: { width: 50, height: 50 },
+                                            }}
+                                            onClick={() => setInfo(marker)}
+                                        />
+                                    ))}
+                                    {cafeMarkers.filter(marker => marker.visible !== false).map((marker, index) => (
+                                        <MapMarker
+                                            key={`cafe-${index}`}
+                                            position={marker.position}
+                                            image={{
+                                                src: "/img/cafe.png",
+                                                size: { width: 50, height: 50 },
+                                            }}
+                                            onClick={() => setInfo(marker)}
+                                        />
+                                    ))}
+                                </>
+                            )}
+                            {info && (
+                                <CustomOverlayMap position={info.position} yAnchor={1.4}>
+                                    <Box
+                                        bg="white"
+                                        p={4}
+                                        borderRadius="md"
+                                        boxShadow="md"
+                                        minWidth="200px"
+                                        _after={{
+                                            content: '""',
+                                            position: 'absolute',
+                                            bottom: "-10px",
+                                            left: "50%",
+                                            transform: "translateX(-50%)",
+                                            borderWidth: "10px",
+                                            borderStyle: "solid",
+                                            borderColor: "white transparent transparent transparent",
+                                        }}
+                                    >
+                                        <VStack spacing={2} align="stretch">
+                                            <Link
+                                                href={info.place.place_url}
+                                                isExternal
+                                                fontWeight="bold"
+                                                fontSize="lg"
+                                                color="teal.500"
+                                                _hover={{ textDecoration: "underline" }}
+                                            >
+                                                {info.content}
+                                            </Link>
+                                            <Text fontSize="sm" color="gray.600">
+                                                {info.place.road_address_name || info.place.address_name}
+                                            </Text>
+                                            <Text fontSize="sm" color="gray.500">
+                                                {info.place.phone}
+                                            </Text>
+                                        </VStack>
+                                    </Box>
+                                </CustomOverlayMap>
+                            )}
+                        </Map>
+                    )}
+                </Box>
+            </Box>
+        </Flex>
     );
 }
