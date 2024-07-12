@@ -1,27 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Map, MapMarker, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { Box, Link, VStack, Text, Button, Flex, Heading } from "@chakra-ui/react";
+import {StoreList} from "../pickUp/StoreList.jsx";
 
-// RestaurantList 컴포넌트
-function RestaurantList({ restaurants, onRestaurantClick }) {
-    return (
-        <VStack align="stretch" spacing={2} overflowY="auto" height="400px">
-            {restaurants.map((restaurant, index) => (
-                <Box
-                    key={index}
-                    p={2}
-                    bg="gray.100"
-                    borderRadius="md"
-                    cursor="pointer"
-                    onClick={() => onRestaurantClick(restaurant)}
-                >
-                    <Text fontWeight="bold">{restaurant.place.place_name}</Text>
-                    <Text fontSize="sm">{restaurant.place.road_address_name || restaurant.place.address_name}</Text>
-                </Box>
-            ))}
-        </VStack>
-    );
-}
+
 
 export default function MapView() {
     const apiKey = import.meta.env.VITE_API_KEY;
@@ -147,13 +129,13 @@ export default function MapView() {
         }
     };
 
-    const handleRestaurantClick = (restaurant) => {
+    const handleStoreClick = (restaurant) => {
         setSelectedRestaurant(restaurant);
         setInfo(restaurant);
         map.panTo(new window.kakao.maps.LatLng(restaurant.position.lat, restaurant.position.lng));
     };
 
-    const allRestaurants = [...foodMarkers, ...cafeMarkers].filter(r => r.visible !== false);
+    const allStores = [...foodMarkers, ...cafeMarkers].filter(r => r.visible !== false);
 
     return (
         <Flex>
@@ -161,9 +143,9 @@ export default function MapView() {
                 <Heading size="md" mb={4}>식당 및 카페 목록</Heading>
                 <Button onClick={handleShowFoodMarkers} mr={2} mb={4}><Text role="img" aria-label="Food">🌮</Text> 음식점</Button>
                 <Button onClick={handleShowCafeMarkers} mb={4}><Text role="img" aria-label="Cafe">☕</Text> 카페</Button>
-                <RestaurantList
-                    restaurants={allRestaurants}
-                    onRestaurantClick={handleRestaurantClick}
+                <StoreList
+                    store={allStores}
+                    onStoreClick={handleStoreClick}
                 />
             </Box>
             <Box width="70%">
@@ -181,7 +163,7 @@ export default function MapView() {
                                     position={{ lat: currentPosition.latitude, lng: currentPosition.longitude }}
                                     image={{
                                         src: "/img/current.png",
-                                        size: { width: 40, height: 40 },
+                                        size: { width: 35, height: 35                                                                                                            },
                                         options: { offset: { x: 20, y: 40 } },
                                     }}
                                 />
@@ -191,7 +173,7 @@ export default function MapView() {
                                     position={selectedRestaurant.position}
                                     image={{
                                         src: selectedRestaurant.place.category_group_code === "FD6" ? "/img/restaurant.png" : "/img/cafe.png",
-                                        size: { width: 50, height: 50 },
+                                        size: { width: 30, height: 30 },
                                     }}
                                     onClick={() => setInfo(selectedRestaurant)}
                                 />
@@ -203,7 +185,7 @@ export default function MapView() {
                                             position={marker.position}
                                             image={{
                                                 src: "/img/restaurant.png",
-                                                size: { width: 50, height: 50 },
+                                                size: { width: 30, height: 30 },
                                             }}
                                             onClick={() => setInfo(marker)}
                                         />
@@ -214,7 +196,7 @@ export default function MapView() {
                                             position={marker.position}
                                             image={{
                                                 src: "/img/cafe.png",
-                                                size: { width: 50, height: 50 },
+                                                size: { width: 30, height: 30 },
                                             }}
                                             onClick={() => setInfo(marker)}
                                         />
