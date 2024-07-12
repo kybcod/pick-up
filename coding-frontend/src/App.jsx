@@ -3,10 +3,9 @@ import React from 'react';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {Home} from "./Home.jsx";
 import MapView from "./Map/MapView.jsx";
-
-function MainPage() {
-    return null;
-}
+import "./fonts.css";
+import {theme} from "./component/theme.jsx";
+import {MainPage} from "./pickUp/mainPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -23,7 +22,7 @@ const router = createBrowserRouter([
 ])
 function App(props) {
     return (
-        <ChakraProvider>
+        <ChakraProvider theme={theme}>
             <RouterProvider router={router} />
         </ChakraProvider>
     );
