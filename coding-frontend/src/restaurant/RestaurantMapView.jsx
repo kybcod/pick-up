@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Map, MapMarker, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { Box, Link, VStack, Text, Button, Flex, Heading } from "@chakra-ui/react";
-import {StoreList} from "../pickUp/StoreList.jsx";
+import {RestaurantList} from "./RestaurantList.jsx";
 
 
-
-export default function MapView() {
+export default function RestaurantMapView() {
     const apiKey = import.meta.env.VITE_API_KEY;
     const [map, setMap] = useState(null);
     const [currentPosition, setCurrentPosition] = useState(null);
@@ -129,13 +128,13 @@ export default function MapView() {
         }
     };
 
-    const handleStoreClick = (restaurant) => {
+    const handleRestaurantClick = (restaurant) => {
         setSelectedRestaurant(restaurant);
         setInfo(restaurant);
         map.panTo(new window.kakao.maps.LatLng(restaurant.position.lat, restaurant.position.lng));
     };
 
-    const allStores = [...foodMarkers, ...cafeMarkers].filter(r => r.visible !== false);
+    const allRestaurants = [...foodMarkers, ...cafeMarkers].filter(r => r.visible !== false);
 
     return (
         <Flex>
@@ -143,9 +142,9 @@ export default function MapView() {
                 <Heading size="md" mb={4}>식당 및 카페 목록</Heading>
                 <Button onClick={handleShowFoodMarkers} mr={2} mb={4}><Text role="img" aria-label="Food">🌮</Text> 음식점</Button>
                 <Button onClick={handleShowCafeMarkers} mb={4}><Text role="img" aria-label="Cafe">☕</Text> 카페</Button>
-                <StoreList
-                    store={allStores}
-                    onStoreClick={handleStoreClick}
+                <RestaurantList
+                    restaurants={allRestaurants}
+                    onRestaurantClick={handleRestaurantClick}
                 />
             </Box>
             <Box width="70%">
