@@ -21,7 +21,7 @@ const router = createBrowserRouter([
 
                 // map
             {path:"restaurant", element:<RestaurantMapView/>},
-            {path:"menu/:storeId", element:<RestaurantMenuList/>},
+            {path:"menu/:placeId", element:<RestaurantMenuList/>},
 
         ]
     }
