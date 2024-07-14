@@ -3,7 +3,7 @@ import React from 'react';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {Home} from "./Home.jsx";
 import RestaurantMapView from "./restaurant/RestaurantMapView.jsx";
-import "./fonts.css";
+import "./styles/fonts.css";
 import {theme} from "./component/theme.jsx";
 import {MainPage} from "./restaurant/MainPage.jsx";
 import {RestaurantMenuList} from "./restaurant/RestaurantMenuList.jsx";

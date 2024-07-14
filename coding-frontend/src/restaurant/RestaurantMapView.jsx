@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Map, MapMarker, CustomOverlayMap } from "react-kakao-maps-sdk";
-import { Box, Link, VStack, Text, Button, Flex, Heading } from "@chakra-ui/react";
+import {
+    Box,
+    Link,
+    VStack,
+    Text,
+    Button,
+    Flex,
+    Heading,
+    Popover,
+    PopoverContent,
+    PopoverArrow,
+    PopoverCloseButton, PopoverBody, PopoverTrigger
+} from "@chakra-ui/react";
 import {RestaurantList} from "./RestaurantList.jsx";
 
 
@@ -186,7 +198,9 @@ export default function RestaurantMapView() {
                                                 src: "/img/restaurant.png",
                                                 size: { width: 30, height: 30 },
                                             }}
-                                            onClick={() => setInfo(marker)}
+                                            onClick={() => {
+                                                setInfo(marker);
+                                            }}
                                         />
                                     ))}
                                     {cafeMarkers.filter(marker => marker.visible !== false).map((marker, index) => (
@@ -197,49 +211,62 @@ export default function RestaurantMapView() {
                                                 src: "/img/cafe.png",
                                                 size: { width: 30, height: 30 },
                                             }}
-                                            onClick={() => setInfo(marker)}
+                                            onClick={() => {
+                                                setInfo(marker);
+                                            }}
                                         />
                                     ))}
                                 </>
                             )}
                             {info && (
-                                <CustomOverlayMap position={info.position} yAnchor={1.4}>
-                                    <Box
-                                        bg="white"
-                                        p={4}
-                                        borderRadius="md"
-                                        boxShadow="md"
-                                        minWidth="200px"
-                                        _after={{
-                                            content: '""',
-                                            position: 'absolute',
-                                            bottom: "-10px",
-                                            left: "50%",
-                                            transform: "translateX(-50%)",
-                                            borderWidth: "10px",
-                                            borderStyle: "solid",
-                                            borderColor: "white transparent transparent transparent",
-                                        }}
-                                    >
-                                        <VStack spacing={2} align="stretch">
-                                            <Link
-                                                href={info.place.place_url}
-                                                isExternal
-                                                fontWeight="bold"
-                                                fontSize="lg"
-                                                color="teal.500"
-                                                _hover={{ textDecoration: "underline" }}
-                                            >
-                                                {info.content}
-                                            </Link>
-                                            <Text fontSize="sm" color="gray.600">
-                                                {info.place.road_address_name || info.place.address_name}
-                                            </Text>
-                                            <Text fontSize="sm" color="gray.500">
-                                                {info.place.phone}
-                                            </Text>
-                                        </VStack>
-                                    </Box>
+                                <CustomOverlayMap
+                                    position={info.position}
+                                    yAnchor={1.4}
+                                >
+                                    <Popover isOpen={true} placement="bottom">
+                                        <PopoverTrigger>
+                                            <Box
+                                                width="1px"
+                                                height="1px"
+                                                position="absolute"
+                                                top="50%"
+                                                left="50%"
+                                            />
+                                        </PopoverTrigger>
+                                        <PopoverContent
+                                            outline="none"
+                                            boxShadow="none"
+                                            _focus={{ boxShadow: 'none' }}
+                                            width="auto"
+                                            maxWidth="300px"
+                                        >
+                                            <PopoverArrow />
+                                            <PopoverCloseButton onClick={() => setInfo(null)} />
+                                            <PopoverBody padding="2">
+                                                <VStack spacing={2} align="stretch">
+                                                    <Link
+                                                        href={info.place.place_url}
+                                                        isExternal
+                                                        fontWeight="bold"
+                                                        fontSize="md"
+                                                        color="teal.500"
+                                                        _hover={{ textDecoration: "underline" }}
+                                                        whiteSpace="nowrap"
+                                                        overflow="hidden"
+                                                        textOverflow="ellipsis"
+                                                    >
+                                                        {info.content}
+                                                    </Link>
+                                                    <Text fontSize="xs" color="gray.600" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+                                                        {info.place.road_address_name || info.place.address_name}
+                                                    </Text>
+                                                    <Text fontSize="xs" color="gray.500">
+                                                        {info.place.phone}
+                                                    </Text>
+                                                </VStack>
+                                            </PopoverBody>
+                                        </PopoverContent>
+                                    </Popover>
                                 </CustomOverlayMap>
                             )}
                         </Map>
