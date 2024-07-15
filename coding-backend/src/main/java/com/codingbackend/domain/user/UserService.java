@@ -26,10 +26,19 @@ public class UserService {
         }
         if (user.getNickName() == null || user.getNickName().isBlank()) {
             return false;
-        } else {
-            return true;
+        }
+        String emailPattern = "[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*";
+        if (!user.getEmail().matches(emailPattern)) {
+            return false;
+        }
+        String phoneNumPattern = "^010-\\d{4}-\\d{4}$";
+        if (!user.getPhoneNum().matches(phoneNumPattern)) {
+            return false;
         }
 
+        else {
+            return true;
+        }
     }
 
     public void add(User user) {

@@ -95,6 +95,13 @@ export function Signup() {
 
   const pwIsMatch = password === passwordCheck;
 
+  const phoneNumPattern = (num) => {
+    return num
+      .replace(/[^0-9]/g, "")
+      .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+      .replace(/(-{1,2})$/g, "");
+  };
+
   return (
     <Box>
       <Box>
@@ -132,7 +139,11 @@ export function Signup() {
       <Box>
         <FormControl>
           <FormLabel>전화번호</FormLabel>
-          <Input onChange={(e) => setPhoneNum(e.target.value)} />
+          <Input
+            onChange={(e) =>
+              setPhoneNum(phoneNumPattern(e.currentTarget.value))
+            }
+          />
         </FormControl>
       </Box>
       <Box>
