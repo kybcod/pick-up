@@ -23,8 +23,14 @@ export function MainPage() {
         "https://velog.velcdn.com/images/kpo12345/post/09fba573-348d-4d72-8f9b-4b019047d1e7/image.png",
     ];
 
-    const [currentAddress, setCurrentAddress] = useState("");
-    const [currentPosition, setCurrentPosition] = useState(null);
+    //TODO : 주석 풀고 초기값 설정한거 삭제
+    // const [currentAddress, setCurrentAddress] = useState("");
+    // const [currentPosition, setCurrentPosition] = useState(null);
+    const [currentAddress, setCurrentAddress] = useState("서울 마포구 대흥동 3-63"); // 초기 주소 설정
+    const [currentPosition, setCurrentPosition] = useState({
+        latitude: 37.5566568,
+        longitude: 126.9452068
+    }); // 초기 위도와 경도 설정
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -44,7 +50,7 @@ export function MainPage() {
         return () => {
             document.head.removeChild(script);
         };
-    }, [currentPosition]);
+    }, []);
 
     const fetchAddressFromCoords = (latitude, longitude) => {
         const geocoder = new window.kakao.maps.services.Geocoder();
