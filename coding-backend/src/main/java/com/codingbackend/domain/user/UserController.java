@@ -1,8 +1,11 @@
 package com.codingbackend.domain.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,5 +40,15 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(nickName);
+    }
+
+    @PostMapping("login")
+    public ResponseEntity login(@RequestBody User user) {
+        Map<String, Object> map = service.getToken(user);
+
+        if (map == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(map);
     }
 }

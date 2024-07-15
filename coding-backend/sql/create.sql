@@ -8,3 +8,10 @@ CREATE TABLE User
     address      VARCHAR(300),
     inserted     DATETIME     NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE authority
+(
+    user_id INT         NOT NULL REFERENCES user (id),
+    name      VARCHAR(20) NOT NULL,
+    PRIMARY KEY (user_id, name)
+);

@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
 
@@ -26,4 +28,11 @@ public interface UserMapper {
             WHERE nick_name = #{nickName};
             """)
     User selectByNickName(String nickName);
+
+    @Select("""
+            SELECT *
+            FROM authority
+            WHERE user_id = #{userId}
+            """)
+    List<String> selectAuthorityByUserId(Integer userId);
 }
