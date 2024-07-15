@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Map, MapMarker, CustomOverlayMap } from "react-kakao-maps-sdk";
+import React, {useEffect, useState} from "react";
+import {CustomOverlayMap, Map, MapMarker} from "react-kakao-maps-sdk";
 import {
     Box,
-    Link,
-    VStack,
-    Text,
+    Button,
     Flex,
     Heading,
+    Link,
     Popover,
-    PopoverContent,
     PopoverArrow,
-    PopoverCloseButton,
     PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
     PopoverTrigger,
-    Button
+    Text,
+    VStack
 } from "@chakra-ui/react";
-import { RestaurantList } from "./RestaurantList.jsx";
-import { useLocation } from "react-router-dom";
+import {RestaurantList} from "./RestaurantList.jsx";
+import {useLocation} from "react-router-dom";
+import axios from "axios";
 
 export default function RestaurantMapView() {
     const apiKey = import.meta.env.VITE_API_KEY;
@@ -56,7 +57,8 @@ export default function RestaurantMapView() {
         if (map && currentPosition) {
             searchNearbyPlaces(currentPosition.latitude, currentPosition.longitude);
         }
-    }, [map, currentPosition]);
+    }, [map]);
+
 
     const searchNearbyPlaces = (latitude, longitude) => {
         if (!window.kakao || !window.kakao.maps) return;
@@ -102,6 +104,27 @@ export default function RestaurantMapView() {
         } else if (categoryCode === "CE7") {
             setCafeMarkers(markersArray);
         }
+        // 데이터베이스에 저장하는 로직
+        savePlacesToDatabase(places);
+    };
+
+    const savePlacesToDatabase = (places) => {
+        // places 배열의 각 요소를 데이터베이스에 저장하는 로직
+        places.forEach(place => {
+        axios.post("/api/restaurants", {
+            restaurantId: place.id,
+            restaurantName: place.place_name,
+            restaurantNumber: place.phone,
+            address: place.road_address_name || place.address_name,
+        })
+            .then(response => {
+                console.log("가게 저장 성공 ", response.data);
+            })
+            .catch(error => {
+                console.error("가게 저장 실패", error);
+            });
+
+        })
     };
 
     const handleShowFoodMarkers = () => {
