@@ -5,25 +5,29 @@ import {
     Link,
     VStack,
     Text,
-    Button,
     Flex,
     Heading,
     Popover,
     PopoverContent,
     PopoverArrow,
-    PopoverCloseButton, PopoverBody, PopoverTrigger
+    PopoverCloseButton,
+    PopoverBody,
+    PopoverTrigger,
+    Button
 } from "@chakra-ui/react";
-import {RestaurantList} from "./RestaurantList.jsx";
-
+import { RestaurantList } from "./RestaurantList.jsx";
+import { useLocation } from "react-router-dom";
 
 export default function RestaurantMapView() {
     const apiKey = import.meta.env.VITE_API_KEY;
     const [map, setMap] = useState(null);
-    const [currentPosition, setCurrentPosition] = useState(null);
     const [foodMarkers, setFoodMarkers] = useState([]);
     const [cafeMarkers, setCafeMarkers] = useState([]);
     const [info, setInfo] = useState(null);
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+
+    const location = useLocation();
+    const { currentPosition, currentAddress } = location.state || {};
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -35,7 +39,7 @@ export default function RestaurantMapView() {
             window.kakao.maps.load(() => {
                 const mapContainer = document.getElementById("map");
                 const options = {
-                    center: new window.kakao.maps.LatLng(37.5662952, 126.9779451), // Seoul
+                    center: new window.kakao.maps.LatLng(currentPosition.latitude, currentPosition.longitude),
                     level: 3,
                 };
                 const newMap = new window.kakao.maps.Map(mapContainer, options);
@@ -49,19 +53,10 @@ export default function RestaurantMapView() {
     }, []);
 
     useEffect(() => {
-        if (map && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    setCurrentPosition({ latitude, longitude });
-                    map.panTo(new window.kakao.maps.LatLng(latitude, longitude));
-                    searchNearbyPlaces(latitude, longitude);
-                },
-                (error) => console.error("Error getting current location:", error)
-            );
+        if (map && currentPosition) {
+            searchNearbyPlaces(currentPosition.latitude, currentPosition.longitude);
         }
-    }, [map]);
+    }, [map, currentPosition]);
 
     const searchNearbyPlaces = (latitude, longitude) => {
         if (!window.kakao || !window.kakao.maps) return;
@@ -123,23 +118,6 @@ export default function RestaurantMapView() {
         setCafeMarkers((prev) => prev.map((marker) => ({ ...marker, visible: true })));
     };
 
-    const handleCurrentLocationClick = () => {
-        if (navigator.geolocation && map) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    setCurrentPosition({ latitude, longitude });
-                    map.panTo(new window.kakao.maps.LatLng(latitude, longitude));
-                    searchNearbyPlaces(latitude, longitude);
-                },
-                (error) => console.error("Error getting current location:", error)
-            );
-        } else {
-            console.error("Geolocation is not supported by this browser or map is not initialized.");
-        }
-    };
-
     const handleRestaurantClick = (restaurant) => {
         setSelectedRestaurant(restaurant);
         setInfo(restaurant);
@@ -152,6 +130,7 @@ export default function RestaurantMapView() {
         <Flex>
             <Box width="30%" mr={4}>
                 <Heading size="md" mb={4}>식당 및 카페 목록</Heading>
+                <Text mb={4}>현재 주소: {currentAddress}</Text>
                 <Button onClick={handleShowFoodMarkers} mr={2} mb={4}><Text role="img" aria-label="Food">🌮</Text> 음식점</Button>
                 <Button onClick={handleShowCafeMarkers} mb={4}><Text role="img" aria-label="Cafe">☕</Text> 카페</Button>
                 <RestaurantList
@@ -160,25 +139,22 @@ export default function RestaurantMapView() {
                 />
             </Box>
             <Box width="70%">
-                <Button onClick={handleCurrentLocationClick} mb={4}>현재 내 위치</Button>
                 <Box id="map" style={{ width: "100%", height: "400px" }}>
                     {map && (
                         <Map
-                            center={currentPosition ? { lat: currentPosition.latitude, lng: currentPosition.longitude } : { lat: 37.5662952, lng: 126.9779451 }}
+                            center={{ lat: currentPosition.latitude, lng: currentPosition.longitude }}
                             style={{ width: "100%", height: "100%" }}
                             level={3}
                             onCreate={setMap}
                         >
-                            {currentPosition && (
-                                <MapMarker
-                                    position={{ lat: currentPosition.latitude, lng: currentPosition.longitude }}
-                                    image={{
-                                        src: "/img/current.png",
-                                        size: { width: 35, height: 35                                                                                                            },
-                                        options: { offset: { x: 20, y: 40 } },
-                                    }}
-                                />
-                            )}
+                            <MapMarker
+                                position={{ lat: currentPosition.latitude, lng: currentPosition.longitude }}
+                                image={{
+                                    src: "/img/current.png",
+                                    size: { width: 35, height: 35 },
+                                    options: { offset: { x: 20, y: 40 } },
+                                }}
+                            />
                             {selectedRestaurant ? (
                                 <MapMarker
                                     position={selectedRestaurant.position}

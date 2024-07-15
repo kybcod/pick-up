@@ -1,17 +1,12 @@
-import {Box, Center, Grid, GridItem, Image, Text} from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Grid, GridItem, Image, Input, Text } from "@chakra-ui/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-// 카테고리 이름 배열
 const categories = [
-    "한식",
-    "중식",
-    "일식",
-    "분식",
-    "양식",
-    "치킨",
-    "피자",
-    "족발 • 보쌈",
-    "버거",
-    "카페",
+    "한식", "중식", "일식", "분식", "양식",
+    "치킨", "피자", "족발 • 보쌈", "버거", "카페",
 ];
 
 export function MainPage() {
@@ -28,21 +23,90 @@ export function MainPage() {
         "https://velog.velcdn.com/images/kpo12345/post/09fba573-348d-4d72-8f9b-4b019047d1e7/image.png",
     ];
 
+    const [currentAddress, setCurrentAddress] = useState("");
+    const [currentPosition, setCurrentPosition] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_API_KEY}&autoload=false&libraries=services`;
+        document.head.appendChild(script);
+
+        script.onload = () => {
+            window.kakao.maps.load(() => {
+                if (currentPosition) {
+                    fetchAddressFromCoords(currentPosition.latitude, currentPosition.longitude);
+                }
+            });
+        };
+
+        return () => {
+            document.head.removeChild(script);
+        };
+    }, [currentPosition]);
+
+    const fetchAddressFromCoords = (latitude, longitude) => {
+        const geocoder = new window.kakao.maps.services.Geocoder();
+        const coord = new window.kakao.maps.LatLng(latitude, longitude);
+
+        geocoder.coord2Address(coord.getLng(), coord.getLat(), (result, status) => {
+            if (status === window.kakao.maps.services.Status.OK) {
+                if (result[0]) {
+                    const roadAddress = result[0].road_address?.address_name;
+                    const jibunAddress = result[0].address.address_name;
+                    setCurrentAddress(roadAddress || jibunAddress);
+                }
+            } else {
+                console.error("Failed to fetch address:", status);
+            }
+        });
+    };
+
+    const handleGetCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    setCurrentPosition({ latitude, longitude });
+                },
+                (error) => console.error("Error getting current location:", error)
+            );
+        } else {
+            console.error("Geolocation is not supported by this browser.");
+        }
+    };
+
+    const handleCategoryClick = () => {
+        if (currentPosition) {
+            navigate('/restaurant', { state: { currentPosition, currentAddress } });
+        } else {
+            alert("먼저 현재 위치를 가져와주세요.");
+        }
+    };
+
     return (
         <Box p={4}>
             <Box mb={4} fontSize="2xl" fontWeight="bold">
                 메인 페이지
             </Box>
+            <Flex justifyContent={"center"} align={"center"}>
+                <Text>현 위치 </Text>
+                <Input readOnly value={currentAddress} placeholder={"현 위치"} />
+                <Button onClick={handleGetCurrentLocation} mt={2}>
+                    <FontAwesomeIcon icon={faLocationCrosshairs} />
+                </Button>
+            </Flex>
             <Grid templateColumns="repeat(5, 1fr)" gap={16}>
                 {images.map((imageUrl, index) => (
-                    <GridItem key={index} colSpan={1}>
+                    <GridItem key={index} colSpan={1} onClick={handleCategoryClick}>
                         <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="md">
                             <Center p={4}>
                                 <Image
                                     borderRadius="full"
                                     boxSize="150px"
                                     src={imageUrl}
-                                    alt={`Image ${index}`}
                                     transition="transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out"
                                     _hover={{ transform: "scale(1.1)" }}
                                 />
