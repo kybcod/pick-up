@@ -1,14 +1,17 @@
-import {ChakraProvider} from "@chakra-ui/react";
+import {ChakraProvider, MenuList} from "@chakra-ui/react";
 import React from 'react';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {Home} from "./Home.jsx";
+import RestaurantMapView from "./restaurant/RestaurantMapView.jsx";
+import "./styles/fonts.css";
+import {theme} from "./component/theme.jsx";
+import {MainPage} from "./restaurant/MainPage.jsx";
+import {RestaurantMenuList} from "./restaurant/RestaurantMenuList.jsx";
 import MapView from "./Map/MapView.jsx";
 import Login from "./User/Login.jsx";
 import {Signup} from "./User/Signup.jsx";
 
-function MainPage() {
-    return null;
-}
+
 
 const router = createBrowserRouter([
     {
@@ -21,13 +24,15 @@ const router = createBrowserRouter([
             {path:"signup", element: <Signup/>},
             {path:"login", element:<Login/>},
                 // map
-            {path:"map", element:<MapView/>},
+            {path:"restaurant", element:<RestaurantMapView/>},
+            {path:"menu/:placeId", element:<RestaurantMenuList/>},
+
         ]
     }
 ])
 function App(props) {
     return (
-        <ChakraProvider>
+        <ChakraProvider theme={theme}>
             <RouterProvider router={router} />
         </ChakraProvider>
     );
