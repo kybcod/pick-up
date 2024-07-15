@@ -11,15 +11,25 @@ CREATE TABLE user
     inserted     DATETIME     NOT NULL DEFAULT NOW()
 );
 
-#TODO : userId, category NOT NULL로 변경
+#TODO : userId, category NOT NULL로 변경, id INT PRIMARY KEY AUTO_INCREMENT,
 CREATE TABLE restaurant
 (
-    id                INT PRIMARY KEY AUTO_INCREMENT,
-    restaurant_id     LONG,
+    restaurant_id     BIGINT PRIMARY KEY,
     user_id           INT,
     category          VARCHAR(50),
     restaurant_name   VARCHAR(100) NOT NULL,
     restaurant_number VARCHAR(20),
     address           VARCHAR(100) NOT NULL,
     inserted          DATETIME     NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE menu
+(
+    id            INT PRIMARY KEY AUTO_INCREMENT,
+    restaurant_id BIGINT,
+    name          VARCHAR(100) NOT NULL,
+    price         VARCHAR(20)  NOT NULL,
+    img           VARCHAR(300),
+    inserted      DATETIME     NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id)
 );
