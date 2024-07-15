@@ -10,10 +10,6 @@ export function Navbar() {
                     <Image src={"/img/pickUp_black.png"} />
                 </Box>
             </Box>
-
-            <Center onClick={()=>navigate("restaurant")}>
-                지도
-            </Center>
             <Center>
                 login
             </Center>
