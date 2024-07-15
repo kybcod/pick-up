@@ -1,4 +1,4 @@
-package com.codingbackend.domain.restaurant;
+package com.codingbackend.domain.menu;
 
 import lombok.Builder;
 import lombok.Data;

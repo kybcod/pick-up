@@ -1,4 +1,4 @@
-package com.codingbackend.domain.restaurant;
+package com.codingbackend.domain.menu;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.codingbackend.domain.restaurant;
+package com.codingbackend.domain.menu;
 
 import lombok.Data;
 
@@ -18,17 +18,12 @@ class BasicInfo {
 
 @Data
 class CategoryDto {
-    private String cateid;
     private String catename;
     private String cate1name;
-    private String fullCateIds;
 }
 
 @Data
 class FeedbackDto {
-    private Integer allphotocnt;
-    private Integer blogrvwcnt;
-    private Integer comntcnt;
     private Integer scoresum;
     private Integer scorecnt;
 }
@@ -37,7 +32,6 @@ class FeedbackDto {
 class MenuInfoDto {
     private Integer menucount;
     private List<MenuDto> menuList;
-    private List<String> menuboardphotourlList;
 }
 
 @Data
