@@ -1,8 +1,20 @@
-import { Box, Button, Center, Flex, Grid, GridItem, Image, Input, Text } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Center,
+    Flex,
+    Grid,
+    GridItem,
+    Image,
+    Input,
+    InputGroup,
+    InputLeftAddon, InputRightAddon,
+    Text
+} from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
+import {faLocationCrosshairs, faSearch} from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 
 const categories = [
     "한식", "중식", "일식", "분식", "양식",
@@ -32,6 +44,7 @@ export function MainPage() {
         longitude: 126.9452068
     }); // 초기 위도와 경도 설정
     const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -92,18 +105,29 @@ export function MainPage() {
         }
     };
 
+    const handleSearchClick = () => {
+
+    };
+
     return (
         <Box p={4}>
             <Box mb={4} fontSize="2xl" fontWeight="bold">
                 메인 페이지
             </Box>
-            <Flex justifyContent={"center"} align={"center"}>
+            <InputGroup>
                 <Text>현 위치 </Text>
                 <Input readOnly value={currentAddress} placeholder={"현 위치"} />
-                <Button onClick={handleGetCurrentLocation} mt={2}>
+                <InputRightAddon onClick={handleGetCurrentLocation}>
                     <FontAwesomeIcon icon={faLocationCrosshairs} />
-                </Button>
-            </Flex>
+                </InputRightAddon>
+            </InputGroup>
+            <InputGroup>
+                <Text>가게 이름 </Text>
+                <Input type='tel' placeholder='상점명' />
+                <InputRightAddon onClick={handleSearchClick}>
+                        <FontAwesomeIcon icon={faSearch} />
+                </InputRightAddon>
+            </InputGroup>
             <Grid templateColumns="repeat(5, 1fr)" gap={16}>
                 {images.map((imageUrl, index) => (
                     <GridItem key={index} colSpan={1} onClick={handleCategoryClick}>

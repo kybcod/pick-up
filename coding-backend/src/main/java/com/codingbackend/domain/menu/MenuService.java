@@ -26,7 +26,6 @@ public class MenuService {
         if (placeDto != null && placeDto.getMenuInfo() != null) {
             String placeCategory = determineCategory(placeDto.getMenuInfo().getMenuList());
             placeDto.getBasicInfo().getCategory().setCate1name(placeCategory);
-            System.out.println("placeCategory = " + placeCategory);
 
             restaurantMapper.updateCategory(placeId, placeCategory);
         }
