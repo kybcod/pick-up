@@ -8,8 +8,8 @@ import org.apache.ibatis.annotations.Select;
 public interface UserMapper {
 
     @Insert("""
-            INSERT INTO user (email, password, phone_number, nick_name)
-            VALUES          (#{email}, #{password}, #{phoneNum}, #{nickName});
+            INSERT INTO user (email, password, phone_number, nick_name, address)
+            VALUES           (#{email}, #{password}, #{phoneNum}, #{nickName}, #{address});
             """)
     void inserted(User user);
 

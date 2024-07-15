@@ -45,6 +45,7 @@ public class UserService {
         user.setEmail(user.getEmail().trim());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setNickName(user.getNickName().trim());
+        user.setPhoneNum(user.getPhoneNum().trim());
 
         mapper.inserted(user);
     }

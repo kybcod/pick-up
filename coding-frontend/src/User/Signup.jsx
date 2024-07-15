@@ -19,11 +19,19 @@ export function Signup() {
   const [passwordCheck, setPasswordCheck] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [nickName, setNickName] = useState("");
+  // const [address, setAddress] = useState("");
+
   let toast = useToast();
 
   function handleClick() {
     axios
-      .post("/api/user/signup", { email, password, phoneNum, nickName })
+      .post("/api/user/signup", {
+        email,
+        password,
+        phoneNum,
+        nickName,
+        // address,
+      })
       .then(() => {
         toast({
           status: "success",
@@ -157,6 +165,13 @@ export function Signup() {
           </InputGroup>
         </FormControl>
       </Box>
+      {/*<Box>
+        <FormControl>
+          <FormLabel>주소</FormLabel>
+          <Input onChange={(e) => setAddress(e.target.value)} />
+        </FormControl>
+      </Box>
+      */}
       <Button onClick={handleClick}>가입하기</Button>
     </Box>
   );
