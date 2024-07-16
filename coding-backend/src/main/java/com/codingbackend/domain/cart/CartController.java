@@ -13,12 +13,14 @@ public class CartController {
     private final CartService cartService;
 
     @PutMapping
-    public void saveOrUpdateMenu(@RequestBody Cart cart) {
-        cartService.saveOrUpdate(cart);
+    public void saveOrUpdateMenu(@RequestBody List<Cart> cartList) {
+        for (Cart cart : cartList) {
+            cartService.saveOrUpdate(cart);
+        }
     }
 
-    @GetMapping
-    public List<Cart> getAll() {
-        return cartService.selectAllCartList();
+    @GetMapping("{userId}/{placeId}")
+    public List<Cart> getCartByUserIdAndRestaurantId(@PathVariable Integer userId, @PathVariable("placeId") Long restaurantId) {
+        return cartService.getCartByUserIdAndRestaurantId(userId, restaurantId);
     }
 }

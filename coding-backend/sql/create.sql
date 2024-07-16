@@ -44,7 +44,7 @@ CREATE TABLE cart
 (
     id            INT PRIMARY KEY AUTO_INCREMENT,
     restaurant_id BIGINT,
-    userId        INT,
+    user_id       INT,
     menu_name     VARCHAR(50) NOT NULL,
     menu_count    INT         NOT NULL,
     menu_price    VARCHAR(50) NOT NULL,

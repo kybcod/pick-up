@@ -9,6 +9,7 @@ import { MainPage } from "./restaurant/MainPage.jsx";
 import { RestaurantMenuList } from "./restaurant/RestaurantMenuList.jsx";
 import Login from "./User/Login.jsx";
 import { Signup } from "./User/Signup.jsx";
+import { LoginProvider } from "./component/LoginProvider.jsx";
 
 const router = createBrowserRouter([
   {
@@ -25,11 +26,14 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
 function App(props) {
   return (
-    <ChakraProvider theme={theme}>
-      <RouterProvider router={router} />
-    </ChakraProvider>
+    <LoginProvider>
+      <ChakraProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ChakraProvider>
+    </LoginProvider>
   );
 }
 

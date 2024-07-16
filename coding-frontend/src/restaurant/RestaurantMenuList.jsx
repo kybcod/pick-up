@@ -9,11 +9,9 @@ import { LoginContext } from "../component/LoginProvider.jsx";
 export function RestaurantMenuList() {
   const { placeId } = useParams();
   const [placeInfo, setPlaceInfo] = useState(null);
-  const [cart, setCart] = useState({}); // 키(메뉴), 값(수량)
+  const [cart, setCart] = useState({});
   const account = useContext(LoginContext);
-  const userId = account.email;
-
-  console.log(userId);
+  const userId = account.id;
 
   useEffect(() => {
     axios
@@ -23,7 +21,25 @@ export function RestaurantMenuList() {
         setPlaceInfo(res.data);
       })
       .catch((err) => {
-        console.error("실패", err);
+        console.error("Failed to fetch menu data", err);
+      });
+
+    axios
+      .get(`/api/cart/${userId}/${placeId}`)
+      .then((res) => {
+        console.log(res.data);
+        const cartData = res.data.reduce((acc, item) => {
+          acc[item.menuName] = {
+            menu: item.menuName,
+            price: item.menuPrice,
+            count: item.menuCount,
+          };
+          return acc;
+        }, {});
+        setCart(cartData);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch cart data", err);
       });
   }, [placeId]);
 
@@ -52,7 +68,7 @@ export function RestaurantMenuList() {
     });
   };
 
-  if (placeInfo === null || cart === null) {
+  if (placeInfo === null) {
     return <Spinner />;
   }
 
@@ -82,7 +98,11 @@ export function RestaurantMenuList() {
             장바구니
           </Heading>
           <Text mb={4}>주문내역</Text>
-          <CartList cart={cart} menuList={placeInfo.menuInfo.menuList} />
+          <CartList
+            cart={cart}
+            menuList={placeInfo.menuInfo.menuList}
+            placeId={placeId}
+          />
         </Box>
       </Flex>
     </Box>
