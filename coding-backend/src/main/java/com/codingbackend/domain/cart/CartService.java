@@ -29,4 +29,8 @@ public class CartService {
     public List<Cart> getCartByUserIdAndRestaurantId(Integer userId, Long restaurantId) {
         return cartMapper.selectByUserIdAndRestaurantId(userId, restaurantId);
     }
+
+    public List<Cart> getCartByUserId(Integer userId) {
+        return cartMapper.selectByUserId(userId);
+    }
 }

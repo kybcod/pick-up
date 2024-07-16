@@ -25,7 +25,7 @@ export function RestaurantMenuList() {
       });
 
     axios
-      .get(`/api/cart/${userId}/${placeId}`)
+      .get(`/api/carts/${userId}/${placeId}`)
       .then((res) => {
         console.log(res.data);
         const cartData = res.data.reduce((acc, item) => {

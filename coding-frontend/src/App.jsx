@@ -10,6 +10,7 @@ import { RestaurantMenuList } from "./restaurant/RestaurantMenuList.jsx";
 import Login from "./User/Login.jsx";
 import { Signup } from "./User/Signup.jsx";
 import { LoginProvider } from "./component/LoginProvider.jsx";
+import { Cart } from "./restaurant/Cart.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       // map
       { path: "restaurant", element: <RestaurantMapView /> },
       { path: "menu/:placeId", element: <RestaurantMenuList /> },
+      { path: "cart", element: <Cart /> },
     ],
   },
 ]);

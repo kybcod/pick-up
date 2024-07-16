@@ -29,4 +29,7 @@ public interface CartMapper {
 
     @Select("SELECT * FROM cart WHERE user_id=#{userId} And restaurant_id=#{restaurantId}")
     List<Cart> selectByUserIdAndRestaurantId(Integer userId, Long restaurantId);
+
+    @Select("SELECT * FROM cart WHERE user_id=#{userId}")
+    List<Cart> selectByUserId(Integer userId);
 }

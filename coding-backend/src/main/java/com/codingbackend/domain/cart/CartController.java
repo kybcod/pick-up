@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/carts")
 @RequiredArgsConstructor
 public class CartController {
 
@@ -22,5 +22,10 @@ public class CartController {
     @GetMapping("{userId}/{placeId}")
     public List<Cart> getCartByUserIdAndRestaurantId(@PathVariable Integer userId, @PathVariable("placeId") Long restaurantId) {
         return cartService.getCartByUserIdAndRestaurantId(userId, restaurantId);
+    }
+
+    @GetMapping("{userId}")
+    public List<Cart> getCartByUserId(@PathVariable Integer userId) {
+        return cartService.getCartByUserId(userId);
     }
 }

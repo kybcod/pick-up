@@ -30,7 +30,7 @@ export function CartList({ cart, menuList, placeId }) {
     }));
 
     axios
-      .put("/api/cart", cartItems)
+      .put("/api/carts", cartItems)
       .then((res) => {
         console.log("성공 : ", res.data);
       })
