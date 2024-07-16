@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Spinner, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Spinner } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -68,6 +68,23 @@ export function RestaurantMenuList() {
     });
   };
 
+  const handleReset = (menu) => {
+    setCart((prevCart) => {
+      const newCart = { ...prevCart };
+      if (newCart[menu.menu]) {
+        newCart[menu.menu].count = 0;
+        delete newCart[menu.menu];
+      }
+      return newCart;
+    });
+
+    const menuName = menu.menu;
+
+    axios
+      .delete(`/api/carts/${userId}/${placeId}/${menuName}`)
+      .then((res) => console.log("삭제 성공"));
+  };
+
   if (placeInfo === null) {
     return <Spinner />;
   }
@@ -75,11 +92,10 @@ export function RestaurantMenuList() {
   return (
     <Box p={4}>
       <Flex spacing={6} align="stretch" justifyContent="space-between">
-        <Box flex="1" mr={4}>
+        <Box flex="1" mr={20}>
           <Heading size="lg" mb={4}>
             메뉴 정보
           </Heading>
-          <Text mb={4}>메뉴 개수: {placeInfo.menuInfo.menucount}</Text>
           <MenuList
             menuList={placeInfo.menuInfo.menuList}
             cart={cart}
@@ -95,13 +111,13 @@ export function RestaurantMenuList() {
           overflowY="auto"
         >
           <Heading size="lg" mb={4}>
-            장바구니
+            주문내역
           </Heading>
-          <Text mb={4}>주문내역</Text>
           <CartList
             cart={cart}
             menuList={placeInfo.menuInfo.menuList}
             placeId={placeId}
+            handleReset={handleReset}
           />
         </Box>
       </Flex>

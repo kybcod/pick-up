@@ -18,11 +18,8 @@ public class CartService {
         if (count == 0) {
             cartMapper.insert(cart);
         } else {
-            if (cart.getMenuCount() == 0) {
-                cartMapper.deleteByRestaurantIdAndMenuName(cart.getRestaurantId(), cart.getMenuName(), cart.getUserId());
-            } else {
-                cartMapper.update(cart);
-            }
+            cartMapper.deleteByRestaurantIdAndUserId(cart.getRestaurantId(), cart.getUserId());
+            cartMapper.insert(cart);
         }
     }
 
@@ -32,5 +29,9 @@ public class CartService {
 
     public List<Cart> getCartByUserId(Integer userId) {
         return cartMapper.selectByUserId(userId);
+    }
+
+    public void deleteByUserIdAndRestaurantIdAndMenuName(Integer userId, Long restaurantId, String menuName) {
+        cartMapper.deleteByUserIdAndRestaurantIdAndMenuName(userId, restaurantId, menuName);
     }
 }

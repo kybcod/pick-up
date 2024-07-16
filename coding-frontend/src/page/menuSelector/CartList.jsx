@@ -1,3 +1,5 @@
+// CartList.jsx
+import React, { useContext } from "react";
 import {
   Box,
   Button,
@@ -8,10 +10,9 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useContext } from "react";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 
-export function CartList({ cart, menuList, placeId }) {
+export function CartList({ cart, placeId, handleReset }) {
   const account = useContext(LoginContext);
   const totalAmount = Object.values(cart).reduce((total, item) => {
     const priceWithoutComma = item.price.replace(/,/g, "");
@@ -43,13 +44,18 @@ export function CartList({ cart, menuList, placeId }) {
         <Text>장바구니가 비었습니다.</Text>
       ) : (
         Object.values(cart).map((item, index) => (
-          <Flex key={index} justifyContent="space-between" alignItems="center">
-            <Box>
+          <Box key={index}>
+            <Flex justifyContent="space-between" alignItems="center">
               <Text fontWeight="bold">{item.menu}</Text>
+              <Button variant={"unstyled"} onClick={() => handleReset(item)}>
+                x
+              </Button>
+            </Flex>
+            <Flex justifyContent="space-between" alignItems="center">
               <Text>{item.price}원</Text>
-            </Box>
-            <Text>수량: {item.count}</Text>
-          </Flex>
+              <Text>수량: {item.count}</Text>
+            </Flex>
+          </Box>
         ))
       )}
       <Divider />
@@ -63,7 +69,7 @@ export function CartList({ cart, menuList, placeId }) {
           </Box>
           <Flex>
             <Button w={"100%"} mr={2} onClick={handleSaveCart}>
-              장바구니
+              장바구니 담기
             </Button>
             <Button
               w={"100%"}
@@ -75,6 +81,11 @@ export function CartList({ cart, menuList, placeId }) {
             </Button>
           </Flex>
         </>
+      )}
+      {Object.keys(cart).length === 0 && (
+        <Button w={"100%"} mr={2} onClick={handleSaveCart}>
+          장바구니 담기
+        </Button>
       )}
     </VStack>
   );

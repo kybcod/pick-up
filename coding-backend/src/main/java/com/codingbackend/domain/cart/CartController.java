@@ -28,4 +28,9 @@ public class CartController {
     public List<Cart> getCartByUserId(@PathVariable Integer userId) {
         return cartService.getCartByUserId(userId);
     }
+
+    @DeleteMapping("{userId}/{placeId}/{menuName}")
+    public void delete(@PathVariable Integer userId, @PathVariable("placeId") Long restaurantId, @PathVariable String menuName) {
+        cartService.deleteByUserIdAndRestaurantIdAndMenuName(userId, restaurantId, menuName);
+    }
 }

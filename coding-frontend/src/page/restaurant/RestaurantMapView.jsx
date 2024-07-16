@@ -66,6 +66,10 @@ export default function RestaurantMapView() {
 
     const ps = new window.kakao.maps.services.Places();
     const categories = ["FD6", "CE7"];
+    // categries
+    // id - increment
+    // name - 일식
+    // groupCode - FD6
 
     categories.forEach((categoryCode) => {
       let placesAccumulator = [];
@@ -105,8 +109,9 @@ export default function RestaurantMapView() {
     } else if (categoryCode === "CE7") {
       setCafeMarkers(markersArray);
     }
+    console.log(places);
     // 데이터베이스에 저장하는 로직
-    savePlacesToDatabase(places);
+    // savePlacesToDatabase(places);
   };
 
   const savePlacesToDatabase = (places) => {

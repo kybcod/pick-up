@@ -1,4 +1,17 @@
-import { Box, Button, Spinner, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Spinner,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  VStack,
+} from "@chakra-ui/react";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../component/LoginProvider.jsx";
@@ -36,50 +49,78 @@ export function Cart() {
         };
       }
       grouped[key].items.push(item);
-      grouped[key].totalPrice = parseInt(item.totalPrice);
+      grouped[key].totalPrice += parseInt(item.totalPrice);
     });
     return grouped;
   };
 
   if (cartItems === null) {
-    return <Spinner />;
+    return <Spinner size="xl" />;
   }
 
   return (
-    <VStack spacing={4} align="stretch">
+    <VStack spacing={6} align="stretch">
       {Object.keys(cartItems).map((restaurantId) => (
-        <Box key={restaurantId} borderWidth="1px" p={4} borderRadius="md">
+        <Box
+          key={restaurantId}
+          borderWidth="1px"
+          p={4}
+          borderRadius="md"
+          boxShadow="sm"
+        >
           <Text
-            cursor={"pointer"}
-            fontSize="xl"
+            cursor="pointer"
+            fontSize="2xl"
             fontWeight="bold"
-            mb={2}
+            mb={4}
             onClick={() => navigate(`/menu/${restaurantId}`)}
+            color="teal.500"
           >
             가게 ID: {restaurantId}
           </Text>
-          {cartItems[restaurantId].items.map((item, index) => (
-            <Box key={index} borderWidth="1px" p={2} borderRadius="md">
-              <Text>메뉴: {item.menuName}</Text>
-              <Text>수량: {item.menuCount}</Text>
-              <Text>가격: {item.menuPrice} 원</Text>
-            </Box>
-          ))}
-          <Box borderWidth="1px" p={2} borderRadius="md" mt={2}>
-            <Text>
-              총 가격: {cartItems[restaurantId].totalPrice.toLocaleString()} 원
-            </Text>
-          </Box>
-          <Box p={2} borderRadius="md" mt={2}>
-            <Button
-              w={"100%"}
-              bgColor={"#2AC1BC"}
-              _hover={{ bgColor: "#2AC1BC" }} // 호버 효과 제거
-              _active={{ bgColor: "#23a19d" }} // 클릭 시 배경색 변경
-            >
-              주문하기
-            </Button>
-          </Box>
+          <TableContainer>
+            <Table variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>메뉴</Th>
+                  <Th>수량</Th>
+                  <Th>가격</Th>
+                  <Th>합계 가격</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {cartItems[restaurantId].items.map((item, index) => (
+                  <Tr key={index}>
+                    <Td>{item.menuName}</Td>
+                    <Td>
+                      <Button mr={2}>-</Button>
+                      {item.menuCount}
+                      <Button ml={2}>+</Button>
+                    </Td>
+                    <Td>{item.menuPrice} 원</Td>
+                    <Td>
+                      {(
+                        item.menuCount *
+                        parseInt(item.menuPrice.replace(/,/g, ""))
+                      ).toLocaleString()}
+                      원
+                    </Td>
+                  </Tr>
+                ))}
+                <Tr>
+                  <Td colSpan={2} fontWeight="bold" textAlign="right">
+                    총 가격:
+                  </Td>
+                  <Td fontWeight="bold">
+                    {cartItems[restaurantId].totalPrice.toLocaleString()} 원
+                  </Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </TableContainer>
+          <Button w="full" colorScheme="teal" variant="solid" size="lg" mt={3}>
+            주문하기
+          </Button>
         </Box>
       ))}
     </VStack>

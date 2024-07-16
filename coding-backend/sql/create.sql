@@ -51,3 +51,11 @@ CREATE TABLE cart
     total_price   INT         NOT NULL,
     inserted      DATETIME    NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE category
+(
+    id         INT PRIMARY KEY AUTO_INCREMENT,
+    name       VARCHAR(10) NOT NULL,
+    group_code VARCHAR(10) NOT NULL
+);
+
