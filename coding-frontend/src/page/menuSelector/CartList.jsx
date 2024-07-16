@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useContext } from "react";
-import { LoginContext } from "../component/LoginProvider.jsx";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 export function CartList({ cart, menuList, placeId }) {
   const account = useContext(LoginContext);

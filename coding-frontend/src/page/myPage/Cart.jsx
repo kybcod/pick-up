@@ -1,7 +1,7 @@
 import { Box, Button, Spinner, Text, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { LoginContext } from "../component/LoginProvider.jsx";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 import { useNavigate } from "react-router-dom";
 
 export function Cart() {

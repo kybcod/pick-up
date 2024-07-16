@@ -4,7 +4,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { MenuList } from "./MenuList.jsx";
 import { CartList } from "./CartList.jsx";
-import { LoginContext } from "../component/LoginProvider.jsx";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 export function RestaurantMenuList() {
   const { placeId } = useParams();
