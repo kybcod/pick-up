@@ -19,6 +19,7 @@ export function CartList({ cart, placeId, handleReset }) {
     const priceNumber = parseInt(priceWithoutComma, 10);
     return total + priceNumber * item.count;
   }, 0);
+  const userId = account.id;
 
   const handleSaveCart = () => {
     const cartItems = Object.values(cart).map((item) => ({
@@ -30,12 +31,21 @@ export function CartList({ cart, placeId, handleReset }) {
       totalPrice: totalAmount,
     }));
 
-    axios
-      .put("/api/carts", cartItems)
-      .then((res) => {
-        console.log("성공 : ", res.data);
-      })
-      .catch(() => console.log("실패"));
+    if (cartItems.length === 0) {
+      axios
+        .delete(`/api/carts/${userId}/${placeId}`)
+        .then((res) => {
+          console.log("삭제 성공");
+        })
+        .catch(() => console.log("삭제 실패"));
+    } else {
+      axios
+        .put("/api/carts", cartItems)
+        .then((res) => {
+          console.log("성공 : ", cartItems);
+        })
+        .catch(() => console.log("실패"));
+    }
   };
 
   return (

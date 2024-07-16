@@ -34,4 +34,9 @@ public class CartService {
     public void deleteByUserIdAndRestaurantIdAndMenuName(Integer userId, Long restaurantId, String menuName) {
         cartMapper.deleteByUserIdAndRestaurantIdAndMenuName(userId, restaurantId, menuName);
     }
+
+    public void deleteByUserIdAndRestaurantId(Integer userId, Long restaurantId) {
+        cartMapper.deleteByRestaurantIdAndUserId(restaurantId, userId);
+
+    }
 }

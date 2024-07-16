@@ -91,11 +91,11 @@ export function RestaurantMenuList() {
 
   return (
     <Box p={4}>
+      <Heading size="lg" mb={4}>
+        메뉴 정보
+      </Heading>
       <Flex spacing={6} align="stretch" justifyContent="space-between">
         <Box flex="1" mr={20}>
-          <Heading size="lg" mb={4}>
-            메뉴 정보
-          </Heading>
           <MenuList
             menuList={placeInfo.menuInfo.menuList}
             cart={cart}
@@ -110,9 +110,6 @@ export function RestaurantMenuList() {
           maxHeight="calc(100vh - 100px)"
           overflowY="auto"
         >
-          <Heading size="lg" mb={4}>
-            주문내역
-          </Heading>
           <CartList
             cart={cart}
             menuList={placeInfo.menuInfo.menuList}
