@@ -11,6 +11,12 @@ CREATE TABLE user
     inserted     DATETIME     NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE authority
+(
+    user_id INT         NOT NULL REFERENCES user (id),
+    name      VARCHAR(20) NOT NULL,
+    PRIMARY KEY (user_id, name)
+);
 #TODO : userId, category NOT NULL로 변경, id INT PRIMARY KEY AUTO_INCREMENT,
 CREATE TABLE restaurant
 (

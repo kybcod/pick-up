@@ -11,7 +11,7 @@ export function Navbar() {
                 </Box>
             </Box>
             <Center>
-                login
+                <Center onClick={() => navigate("login")}>login</Center>
             </Center>
         </Flex>
     );
