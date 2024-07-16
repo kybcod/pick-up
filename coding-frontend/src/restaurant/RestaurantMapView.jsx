@@ -223,21 +223,15 @@ export default function RestaurantMapView() {
                                     yAnchor={1.4}
                                 >
                                     <Popover isOpen={true} placement="bottom">
-                                        <PopoverTrigger>
-                                            <Box
-                                                width="1px"
-                                                height="1px"
-                                                position="absolute"
-                                                top="50%"
-                                                left="50%"
-                                            />
-                                        </PopoverTrigger>
                                         <PopoverContent
                                             outline="none"
-                                            boxShadow="none"
                                             _focus={{ boxShadow: 'none' }}
-                                            width="auto"
-                                            maxWidth="300px"
+                                            bg="white"
+                                            p={4}
+                                            borderRadius="md"
+                                            boxShadow="md"
+                                            w={"auto"}
+                                            minWidth="200px"
                                         >
                                             <PopoverArrow />
                                             <PopoverCloseButton onClick={() => setInfo(null)} />

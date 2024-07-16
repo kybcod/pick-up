@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 public class Menu {
     private Integer id;
-    private BigInteger restaurant_id;
+    private Long restaurant_id;
     private String name;
     private String price;
     private String img;
