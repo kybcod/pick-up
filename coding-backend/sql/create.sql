@@ -14,7 +14,7 @@ CREATE TABLE user
 CREATE TABLE authority
 (
     user_id INT         NOT NULL REFERENCES user (id),
-    name      VARCHAR(20) NOT NULL,
+    name    VARCHAR(20) NOT NULL,
     PRIMARY KEY (user_id, name)
 );
 #TODO : userId, category NOT NULL로 변경, id INT PRIMARY KEY AUTO_INCREMENT,
@@ -38,4 +38,16 @@ CREATE TABLE menu
     img           VARCHAR(300),
     inserted      DATETIME     NOT NULL DEFAULT NOW(),
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id)
+);
+
+CREATE TABLE cart
+(
+    id            INT PRIMARY KEY AUTO_INCREMENT,
+    restaurant_id BIGINT,
+    userId        INT,
+    menu_name     VARCHAR(50) NOT NULL,
+    menu_count    INT         NOT NULL,
+    menu_price    VARCHAR(50) NOT NULL,
+    total_price   INT         NOT NULL,
+    inserted      DATETIME    NOT NULL DEFAULT NOW()
 );
