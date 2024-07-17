@@ -1,3 +1,5 @@
+USE prj4;
+
 SELECT *
 FROM restaurant;
 
@@ -9,3 +11,6 @@ FROM restaurant;
 
 SELECT *
 FROM user;
+
+SELECT *
+FROM payment;

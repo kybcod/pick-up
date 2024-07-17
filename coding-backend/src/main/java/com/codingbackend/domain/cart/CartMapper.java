@@ -35,4 +35,13 @@ public interface CartMapper {
 
     @Delete("DELETE FROM cart WHERE user_id=#{userId} AND restaurant_id=#{restaurantId} AND menu_name=#{menuName}")
     int deleteByUserIdAndRestaurantIdAndMenuName(Integer userId, Long restaurantId, String menuName);
+
+    @Select("""
+            SELECT *
+            FROM cart
+            WHERE restaurant_id = #{restaurantId}
+              AND user_id = #{userId};
+            """)
+    List<Cart> selectPaymentInfo(Integer userId, Long restaurantId);
+
 }

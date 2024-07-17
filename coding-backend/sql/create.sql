@@ -59,3 +59,10 @@ CREATE TABLE category
     group_code VARCHAR(10) NOT NULL
 );
 
+CREATE TABLE payment
+(
+    id           INT PRIMARY KEY AUTO_INCREMENT,
+    merchant_uid VARCHAR(50) NOT NULL,
+    cart_id      INT         NOT NULL,
+    inserted     DATETIME    NOT NULL DEFAULT NOW()
+);

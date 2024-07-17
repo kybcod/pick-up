@@ -13,6 +13,10 @@ public class CartService {
 
     private final CartMapper cartMapper;
 
+    public List<Cart> getPaymentInfo(Integer userId, Long restaurantId) {
+        return cartMapper.selectPaymentInfo(userId, restaurantId);
+    }
+
     public void saveOrUpdate(Cart cart) {
         int count = cartMapper.selectByRestaurantIdAndMenuName(cart.getRestaurantId(), cart.getMenuName(), cart.getUserId());
         if (count == 0) {
