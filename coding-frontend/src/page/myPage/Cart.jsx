@@ -1,6 +1,13 @@
 import {
   Box,
   Button,
+  Flex,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Table,
   TableContainer,
@@ -10,6 +17,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -22,6 +30,8 @@ export function Cart() {
   const userId = account.id;
   const [cartItems, setCartItems] = useState(null);
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [placeId, setPlaceId] = useState(null);
 
   useEffect(() => {
     axios
@@ -56,6 +66,26 @@ export function Cart() {
 
   if (cartItems === null) {
     return <Spinner size="xl" />;
+  }
+
+  function handleCartDelete() {
+    axios
+      .delete(`api/carts/${userId}/${placeId}`)
+      .then(() => {
+        setCartItems((prevItems) => {
+          const updatedItems = { ...prevItems };
+          delete updatedItems[placeId];
+          return updatedItems;
+        });
+        console.log("장바구니 삭제 성공");
+      })
+      .catch(() => console.log("장바구니 삭제 실패"))
+      .finally(() => onClose());
+  }
+
+  function handleConfirmDelete(restaurantId) {
+    setPlaceId(restaurantId);
+    onOpen();
   }
 
   return (
@@ -118,11 +148,37 @@ export function Cart() {
               </Tbody>
             </Table>
           </TableContainer>
-          <Button w="full" colorScheme="teal" variant="solid" size="lg" mt={3}>
-            주문하기
-          </Button>
+          <Flex justifyContent={"flex-end"}>
+            <Button
+              onClick={() => handleConfirmDelete(restaurantId)}
+              colorScheme="teal"
+              variant="solid"
+              size="lg"
+              mt={3}
+              mr={3}
+            >
+              장바구니 삭제
+            </Button>
+            <Button colorScheme="teal" variant="solid" size="lg" mt={3}>
+              주문하기
+            </Button>
+          </Flex>
         </Box>
       ))}
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>삭제</ModalHeader>
+          <ModalBody>정말로 삭제하시겠습니까?</ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" onClick={handleCartDelete}>
+              삭제
+            </Button>
+            <Button onClick={onClose}>취소</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </VStack>
   );
 }
