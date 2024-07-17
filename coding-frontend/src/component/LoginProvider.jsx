@@ -24,7 +24,7 @@ export function LoginProvider({ children }) {
 
   // access confirm
   function hasAccess(param) {
-    return id === param;
+    return id == param;
   }
 
   // admin confirm
