@@ -19,4 +19,7 @@ public interface RestaurantMapper {
 
     @Update("UPDATE restaurant SET category=#{category} WHERE restaurant_id = #{restaurantId}")
     void updateCategory(Integer restaurantId, String category);
+
+    @Select("SELECT * FROM category WHERE id = #{category}")
+    Category select(Integer category);
 }
