@@ -1,11 +1,10 @@
-// CartList.jsx
 import React, {useContext} from "react";
 import {Box, Button, Divider, Flex, Heading, Text, VStack,} from "@chakra-ui/react";
 import axios from "axios";
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import {useNavigate} from "react-router-dom";
 
-export function CartList({cart, placeId, handleReset}) {
+export function SelectedMenuList({cart, placeId, handleReset}) {
     const account = useContext(LoginContext);
     const totalAmount = Object.values(cart).reduce((total, item) => {
         const priceWithoutComma = item.price.replace(/,/g, "");
@@ -17,12 +16,12 @@ export function CartList({cart, placeId, handleReset}) {
 
     const handleSaveCart = async () => {
         const cartItems = Object.values(cart).map((item) => ({
-            restaurantId: placeId,
-            userId: account.id,
-            menuName: item.menu,
-            menuCount: item.count,
-            menuPrice: item.price,
-            totalPrice: totalAmount,
+            restaurantId: placeId, // 선택한 식당의 ID
+            userId: account.id, // 현재 로그인한 사용자의 ID
+            menuName: item.menu, // 메뉴 이름
+            menuCount: item.count, // 메뉴의 수량
+            menuPrice: item.price, // 메뉴의 가격
+            totalPrice: totalAmount, // 선택한 메뉴들의 총 금액
         }));
 
         try {

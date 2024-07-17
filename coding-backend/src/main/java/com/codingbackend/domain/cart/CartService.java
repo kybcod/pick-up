@@ -43,4 +43,8 @@ public class CartService {
     public void updatePaymentStatus(Integer userId, Long restaurantId) {
         cartMapper.updateByUserIdAndRestaurantId(userId, restaurantId);
     }
+
+    public List<Cart> getOrdersByUserId(Integer userId) {
+        return cartMapper.selectByUserIdAndPaymentStatusTrue(userId);
+    }
 }

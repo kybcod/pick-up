@@ -11,8 +11,9 @@ import {RestaurantMenuList} from "./page/menuSelector/RestaurantMenuList.jsx";
 import Login from "./page/user/Login.jsx";
 import {Signup} from "./page/user/Signup.jsx";
 import {LoginProvider} from "./component/LoginProvider.jsx";
-import {Cart} from "./page/myPage/Cart.jsx";
+import {CartList} from "./page/myPage/CartList.jsx";
 import {Payment} from "./page/payment/Payment.jsx";
+import {OrderList} from "./page/myPage/OrderList.jsx";
 
 const router = createBrowserRouter([
     {
@@ -23,10 +24,16 @@ const router = createBrowserRouter([
             {index: true, element: <MainPage/>},
             {path: "signup", element: <Signup/>},
             {path: "login", element: <Login/>},
+
             // map
             {path: "restaurant", element: <RestaurantMapView/>},
             {path: "menu/:placeId", element: <RestaurantMenuList/>},
-            {path: "cart", element: <Cart/>},
+
+            //drawer
+            {path: "carts", element: <CartList/>},
+            {path: "orders", element: <OrderList/>},
+
+            //pay
             {path: "pay/buyer/:userId/restaurant/:restaurantId", element: <Payment/>},
         ],
     },
