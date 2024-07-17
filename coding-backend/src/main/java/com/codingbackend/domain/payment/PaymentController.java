@@ -17,11 +17,17 @@ public class PaymentController {
 
     @GetMapping("{userId}/{restaurantId}")
     public List<Cart> getPayment(@PathVariable Integer userId, @PathVariable Long restaurantId) {
-        return cartService.getPaymentInfo(userId, restaurantId);
+        return cartService.getCartByUserIdAndRestaurantId(userId, restaurantId);
     }
 
     @PostMapping
-    public List<Payment> addPayment(@RequestBody Payment payment) {
-        return paymentService.insertPaymentInfo(payment);
+    public void addPayment(@RequestBody Payment payment) {
+        paymentService.insert(payment);
     }
+
+    @PutMapping
+    public void updatePayment(@RequestBody Payment payment) {
+        cartService.updatePaymentStatus(payment.getUserId(), payment.getRestaurantId());
+    }
+
 }

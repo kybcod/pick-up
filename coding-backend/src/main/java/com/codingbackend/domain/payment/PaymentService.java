@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -13,8 +11,7 @@ import java.util.List;
 public class PaymentService {
     private final PaymentMapper paymentMapper;
 
-
-    public List<Payment> insertPaymentInfo(Payment payment) {
-        return paymentMapper.insert(payment);
+    public void insert(Payment payment) {
+        paymentMapper.insert(payment);
     }
 }

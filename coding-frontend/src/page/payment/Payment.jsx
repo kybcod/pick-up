@@ -67,10 +67,19 @@ export function Payment() {
             if (success) {
                 axios
                     .post(`/api/payments`, {
-                        merchantUid: merchantUid,
-                        cartId: paymentInfo.map((item) => item.id)
+                        merchantUid,
+                        restaurantId,
+                        userId
                     })
                     .then(() => {
+                        axios.put('/api/payments', {userId, restaurantId})
+                            .then(() => {
+                                alert('업데이트 성공');
+                            })
+                            .catch((err) => {
+                                console.error('Error updating payment status:', err);
+                                alert('업데이트 오류');
+                            });
                         alert(`결제성공`);
                     })
                     .catch(() => {
@@ -101,9 +110,9 @@ export function Payment() {
             목록
             {paymentInfo.map((item) => (
                 <Box key={item.id}>
-                    {/*<Text>{item.cartId}</Text>*/}
                     <Text>{item.menuName}</Text>
                     <Text>{item.menuPrice}</Text>
+                    <Text>{item.menuCount}</Text>
                 </Box>
             ))}
             <Box>
