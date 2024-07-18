@@ -1,5 +1,24 @@
-import {Badge, Box, Button, Divider, Flex, Heading, Spinner, Text, VStack} from "@chakra-ui/react";
-import {useContext, useEffect, useState} from "react";
+import {
+    Badge,
+    Box,
+    Button,
+    Divider,
+    Flex,
+    Heading,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Spinner,
+    Text,
+    Textarea,
+    useDisclosure,
+    VStack
+} from "@chakra-ui/react";
+import React, {useContext, useEffect, useState} from "react";
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
@@ -9,6 +28,10 @@ export function OrderList() {
     const userId = account.id;
     const [orderList, setOrderList] = useState(null);
     const navigate = useNavigate();
+    const {onClose, onOpen, isOpen} = useDisclosure();
+    const [files, setFiles] = useState([]);
+    const [content, setContent] = useState("");
+    const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
     useEffect(() => {
         axios.get(`api/payments/orders/${userId}`).then((res) => {
@@ -39,6 +62,30 @@ export function OrderList() {
         return <Spinner/>;
     }
 
+    function handleReview() {
+        const formData = new FormData();
+        formData.append('restaurantId', selectedRestaurant);
+        formData.append('userId', userId);
+        formData.append('rating', 5);
+        formData.append('content', content);
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+
+        axios.postForm('/api/reviews', formData)
+            .then((res) => {
+                console.log("리뷰 저장");
+                onClose();
+            })
+            .catch((error) => console.log("리뷰 저장 실패", error));
+    }
+
+    function handelOpenModal(restaurantId) {
+        setSelectedRestaurant(restaurantId);
+        onOpen();
+    }
+
     return (
         <Box maxW="800px" margin="auto" p={5}>
             <Heading mb={6}>주문 내역</Heading>
@@ -51,7 +98,8 @@ export function OrderList() {
                             }
                             {/*TODO:pickUpStatus => True일 떄로 바꾸기*/}
                             {group.paymentStatus ?
-                                <Button>리뷰쓰기</Button> : <Badge>안돼</Badge>
+                                <Button onClick={() => handelOpenModal(group.restaurantId)}>리뷰쓰기</Button> :
+                                <Badge>안돼</Badge>
                             }
                         </Box>
                         <Flex justify="space-between" align="center" mb={3}>
@@ -78,6 +126,28 @@ export function OrderList() {
                         </Flex>
                     </Box>
                 ))}
+                <Modal isOpen={isOpen} onClose={onClose}>
+                    <ModalOverlay/>
+                    <ModalContent>
+                        <ModalHeader>{selectedRestaurant} 리뷰 작성</ModalHeader>
+                        <ModalBody>
+                            <Input multiple type={"file"} accept={"image/*"}
+                                   onChange={(e) => setFiles(e.target.files)}/>
+                            <Textarea resize={"none"}
+                                      height={"100px"}
+                                      borderColor="gray.400"
+                                      value={content}
+                                      onChange={(e) => setContent(e.target.value)}
+                                      placeholder="음식의 맛, 양, 포장 상태 등 음식에 대한 솔직한 리뷰를 남겨주세요.(선텍)"/>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button colorScheme="blue" onClick={handleReview}>
+                                완료
+                            </Button>
+                            <Button onClick={onClose}>취소</Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
             </VStack>
         </Box>
     );

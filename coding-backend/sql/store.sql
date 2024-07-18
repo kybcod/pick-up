@@ -16,6 +16,12 @@ SELECT *
 FROM payment;
 
 SELECT *
+FROM review;
+
+SELECT *
+FROM review_file;
+
+SELECT *
 FROM category;
 
 # "한식", "중식", "일식", "분식", "양식", "카페",
