@@ -1,4 +1,4 @@
-package com.codingbackend.domain.payment;
+package com.codingbackend.domain.order;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 
 @Data
-public class Payment {
+public class Order {
     private Integer id;
     private String merchantUid;
     private Long restaurantId;

@@ -19,7 +19,7 @@ export function Payment() {
     }, []);
 
     useEffect(() => {
-        axios.get(`/api/payments/${userId}/${restaurantId}`).then((res) => {
+        axios.get(`/api/orders/${userId}/${restaurantId}`).then((res) => {
             console.log(res.data)
             setPaymentInfo(res.data);
             generateMerchantUid();
@@ -66,18 +66,17 @@ export function Payment() {
 
             if (success) {
                 axios
-                    .post(`/api/payments`, {
+                    .post(`/api/orders`, {
                         merchantUid,
                         restaurantId,
                         userId
                     })
                     .then(() => {
-                        axios.put('/api/payments', {userId, restaurantId})
+                        axios.put('/api/orders', {userId, restaurantId})
                             .then(() => {
                                 alert('업데이트 성공');
                             })
                             .catch((err) => {
-                                console.error('Error updating payment status:', err);
                                 alert('업데이트 오류');
                             });
                         alert(`결제성공`);

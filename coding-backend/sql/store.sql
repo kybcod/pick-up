@@ -13,7 +13,7 @@ SELECT *
 FROM user;
 
 SELECT *
-FROM payment;
+FROM orders;
 
 SELECT *
 FROM review;
@@ -42,11 +42,9 @@ SELECT c.id,
        c.total_price,
        c.inserted,
        c.payment_status,
-       p.pick_up_status
+       p.pick_up_status,
+       p.review_status
 FROM cart c
-         JOIN payment p ON c.restaurant_id = p.restaurant_id
+         JOIN order p ON c.restaurant_id = p.restaurant_id
 WHERE c.user_id = 9
   AND c.payment_status = TRUE;
-
-# TODO: cart에 review_status 컬럼 추가 / review 테이블에 있는 거 지우고
-# review를 작성하면 review_status True로 변경해주기

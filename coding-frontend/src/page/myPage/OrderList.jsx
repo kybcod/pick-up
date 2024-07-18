@@ -34,7 +34,7 @@ export function OrderList() {
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
     useEffect(() => {
-        axios.get(`api/payments/orders/${userId}`).then((res) => {
+        axios.get(`api/orders/${userId}`).then((res) => {
             console.log(res.data);
             const groupedOrders = groupOrders(res.data);
             setOrderList(groupedOrders);

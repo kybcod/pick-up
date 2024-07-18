@@ -1,4 +1,4 @@
-package com.codingbackend.domain.payment;
+package com.codingbackend.domain.order;
 
 import com.codingbackend.domain.cart.Cart;
 import com.codingbackend.domain.cart.CartService;
@@ -10,10 +10,10 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/payments")
-public class PaymentController {
+@RequestMapping("/api/orders")
+public class OrderController {
 
-    private final PaymentService paymentService;
+    private final OrderService orderService;
     private final CartService cartService;
 
     @GetMapping("{userId}/{restaurantId}")
@@ -23,16 +23,16 @@ public class PaymentController {
     }
 
     @PostMapping
-    public void addPayment(@RequestBody Payment payment) {
-        paymentService.insert(payment);
+    public void addPayment(@RequestBody Order order) {
+        orderService.insert(order);
     }
 
     @PutMapping
-    public void updatePayment(@RequestBody Payment payment) {
-        cartService.updatePaymentStatus(payment.getUserId(), payment.getRestaurantId());
+    public void updatePayment(@RequestBody Order order) {
+        cartService.updatePaymentStatus(order.getUserId(), order.getRestaurantId());
     }
 
-    @GetMapping("orders/{userId}")
+    @GetMapping("{userId}")
     @Description("결제 내역 => paymentStatus=TRUE 일때")
     public List<Cart> getPaymentList(@PathVariable Integer userId) {
         return cartService.getOrdersByUserId(userId);
