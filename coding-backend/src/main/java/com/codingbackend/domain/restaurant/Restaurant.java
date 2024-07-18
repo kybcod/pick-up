@@ -17,3 +17,4 @@ public class Restaurant {
     private Double longitude;
     private LocalDateTime inserted;
 }
+
