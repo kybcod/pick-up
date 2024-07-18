@@ -8,13 +8,13 @@ import org.apache.ibatis.annotations.Update;
 public interface OrderMapper {
 
     @Insert("""
-            INSERT INTO order (merchant_uid, restaurant_id, user_id, pick_up_status, review_status)
+            INSERT INTO orders (merchant_uid, restaurant_id, user_id, pick_up_status, review_status)
             VALUES (#{merchantUid}, #{restaurantId}, #{userId}, FALSE, FALSE)
             """)
     int insert(Order order);
 
     @Update("""
-            UPDATE order
+            UPDATE orders
             SET review_status = TRUE
             WHERE user_id=#{userId} AND restaurant_id = #{restaurantId}
             """)

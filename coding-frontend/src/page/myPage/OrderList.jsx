@@ -22,6 +22,9 @@ import React, {useContext, useEffect, useState} from "react";
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faStar as emptyStar} from "@fortawesome/free-regular-svg-icons";
+import {faStar as fullStar} from "@fortawesome/free-solid-svg-icons";
 
 export function OrderList() {
     const account = useContext(LoginContext);
@@ -31,6 +34,7 @@ export function OrderList() {
     const {onClose, onOpen, isOpen} = useDisclosure();
     const [files, setFiles] = useState([]);
     const [content, setContent] = useState("");
+    const [rating, setRating] = useState(0);
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
     useEffect(() => {
@@ -66,7 +70,7 @@ export function OrderList() {
         const formData = new FormData();
         formData.append('restaurantId', selectedRestaurant);
         formData.append('userId', userId);
-        formData.append('rating', 5);
+        formData.append('rating', rating); // 수정된 부분
         formData.append('content', content);
 
         for (let i = 0; i < files.length; i++) {
@@ -81,9 +85,13 @@ export function OrderList() {
             .catch((error) => console.log("리뷰 저장 실패", error));
     }
 
-    function handelOpenModal(restaurantId) {
+    function handleOpenModal(restaurantId) {
         setSelectedRestaurant(restaurantId);
         onOpen();
+    }
+
+    function handleStar(num) {
+        setRating(num);
     }
 
     return (
@@ -98,7 +106,7 @@ export function OrderList() {
                             }
                             {/*TODO:pickUpStatus => True일 떄로 바꾸기*/}
                             {group.paymentStatus ?
-                                <Button onClick={() => handelOpenModal(group.restaurantId)}>리뷰쓰기</Button> :
+                                <Button onClick={() => handleOpenModal(group.restaurantId)}>리뷰쓰기</Button> :
                                 <Badge>안돼</Badge>
                             }
                         </Box>
@@ -131,6 +139,13 @@ export function OrderList() {
                     <ModalContent>
                         <ModalHeader>{selectedRestaurant} 리뷰 작성</ModalHeader>
                         <ModalBody>
+                            {[1, 2, 3, 4, 5].map((num) => (
+                                <Box onClick={() => handleStar(num)} key={num} display="inline-block"
+                                     cursor="pointer">
+                                    <FontAwesomeIcon icon={num <= rating ? fullStar : emptyStar}
+                                                     style={{color: "#FFD43B",}}/>
+                                </Box>
+                            ))}
                             <Input multiple type={"file"} accept={"image/*"}
                                    onChange={(e) => setFiles(e.target.files)}/>
                             <Textarea resize={"none"}
@@ -138,7 +153,7 @@ export function OrderList() {
                                       borderColor="gray.400"
                                       value={content}
                                       onChange={(e) => setContent(e.target.value)}
-                                      placeholder="음식의 맛, 양, 포장 상태 등 음식에 대한 솔직한 리뷰를 남겨주세요.(선텍)"/>
+                                      placeholder="음식의 맛, 양, 포장 상태 등 음식에 대한 솔직한 리뷰를 남겨주세요.(선택)"/>
                         </ModalBody>
                         <ModalFooter>
                             <Button colorScheme="blue" onClick={handleReview}>
