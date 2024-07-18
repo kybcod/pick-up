@@ -56,12 +56,20 @@ public interface CartMapper {
     List<Cart> selectByUserIdAndRestaurantIdAndPaymentStatus(Integer userId, Long restaurantId);
 
     @Select("""
-            SELECT id, restaurant_id, user_id, 
-                   menu_name, menu_count, menu_price, 
-                   total_price, inserted, payment_status 
-            FROM cart 
-            WHERE user_id=#{userId}
-              AND payment_status = TRUE
+            SELECT c.id,
+                    c.restaurant_id,
+                    c.user_id,
+                    c.menu_name,
+                    c.menu_count,
+                    c.menu_price,
+                    c.total_price,
+                    c.inserted,
+                    c.payment_status,
+                    p.pick_up_status
+             FROM cart c
+                      JOIN payment p ON c.restaurant_id = p.restaurant_id
+             WHERE c.user_id = #{userId}
+               AND c.payment_status = TRUE
             """)
     List<Cart> selectByUserIdAndPaymentStatusTrue(Integer userId);
 }

@@ -65,5 +65,6 @@ CREATE TABLE payment
     merchant_uid  VARCHAR(50) NOT NULL,
     restaurant_id LONG        NOT NULL,
     user_id       INT         NOT NULL,
-    inserted      DATETIME    NOT NULL DEFAULT NOW()
+    inserted      DATETIME    NOT NULL DEFAULT NOW(),
+    pick_up_state BOOLEAN     NOT NULL DEFAULT FALSE
 );

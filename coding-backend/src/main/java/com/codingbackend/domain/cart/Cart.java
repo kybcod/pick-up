@@ -15,4 +15,7 @@ public class Cart {
     private String totalPrice;
     private Boolean paymentStatus;
     private LocalDateTime inserted;
+
+    //결제
+    private Boolean pickUpStatus;
 }

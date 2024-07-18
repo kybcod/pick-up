@@ -12,4 +12,5 @@ public class Payment {
     private Long restaurantId;
     private Integer userId;
     private LocalDateTime inserted;
+    private Boolean pickUpStatus;
 }

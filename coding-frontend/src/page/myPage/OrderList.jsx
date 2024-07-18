@@ -1,4 +1,4 @@
-import {Badge, Box, Divider, Flex, Heading, Spinner, Text, VStack} from "@chakra-ui/react";
+import {Badge, Box, Button, Divider, Flex, Heading, Spinner, Text, VStack} from "@chakra-ui/react";
 import {useContext, useEffect, useState} from "react";
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import axios from "axios";
@@ -25,6 +25,8 @@ export function OrderList() {
                 acc[key] = {
                     restaurantId: order.restaurantId,
                     inserted: order.inserted,
+                    pickUpStatus: order.pickUpStatus,
+                    paymentStatus: order.paymentStatus,
                     items: []
                 };
             }
@@ -34,7 +36,7 @@ export function OrderList() {
     };
 
     if (orderList === null) {
-        return <Spinner size="xl"/>;
+        return <Spinner/>;
     }
 
     return (
@@ -43,6 +45,15 @@ export function OrderList() {
             <VStack spacing={6} align="stretch">
                 {Object.values(orderList).map((group, index) => (
                     <Box key={index} borderWidth={1} borderRadius="lg" p={4} boxShadow="md">
+                        <Box>
+                            {group.pickUpStatus ?
+                                <Badge>픽업완료</Badge> : <Badge>픽업대기</Badge>
+                            }
+                            {/*TODO:pickUpStatus => True일 떄로 바꾸기*/}
+                            {group.paymentStatus ?
+                                <Button>리뷰쓰기</Button> : <Badge>안돼</Badge>
+                            }
+                        </Box>
                         <Flex justify="space-between" align="center" mb={3}>
                             <Heading size="md" onClick={() => navigate(`/menu/${group.restaurantId}`)}>식당
                                 ID: {group.restaurantId}</Heading>
