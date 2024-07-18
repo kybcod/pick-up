@@ -56,7 +56,7 @@ export function Payment() {
             buyer_name: userId, // 구매자 이름
             buyer_tel: "010", // 구매자 전화번호
             buyer_email: "email", // 구매자 이메일
-            m_redirect_url: "", // 모바일 결제 후 리디렉션될 URL : 채팅방으로
+            m_redirect_url: "/", // 모바일 결제 후 리디렉션될 URL : 채팅방으로
         };
 
         IMP.request_pay(data, callback);

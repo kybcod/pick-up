@@ -12,6 +12,7 @@ public class Review {
     private Integer rating;
     private String content;
     private LocalDateTime inserted;
+    private Boolean reviewStatus;
 }
 
 @Data

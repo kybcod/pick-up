@@ -8,8 +8,8 @@ import java.util.List;
 public interface CartMapper {
 
     @Insert("""
-            INSERT INTO cart (restaurant_id, user_id, menu_name, menu_count, menu_price, total_price, payment_status)
-            VALUES (#{restaurantId}, #{userId}, #{menuName}, #{menuCount}, #{menuPrice}, #{totalPrice}, FALSE)
+            INSERT INTO cart (restaurant_id, user_id, menu_name, menu_count, menu_price, total_price, payment_status, pick_up_status)
+            VALUES (#{restaurantId}, #{userId}, #{menuName}, #{menuCount}, #{menuPrice}, #{totalPrice}, FALSE, FALSE)
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Cart cart);
@@ -65,9 +65,11 @@ public interface CartMapper {
                     c.total_price,
                     c.inserted,
                     c.payment_status,
-                    p.pick_up_status
+                    p.pick_up_status,
+                    r.review_status
              FROM cart c
                       JOIN payment p ON c.restaurant_id = p.restaurant_id
+                      JOIN review r ON c.restaurant_id = r.restaurant_id
              WHERE c.user_id = #{userId}
                AND c.payment_status = TRUE
             """)

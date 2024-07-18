@@ -31,3 +31,22 @@ FROM category;
 
 INSERT INTO category (name, group_code)
 VALUES ('카페', 'CE7');
+
+
+SELECT c.id,
+       c.restaurant_id,
+       c.user_id,
+       c.menu_name,
+       c.menu_count,
+       c.menu_price,
+       c.total_price,
+       c.inserted,
+       c.payment_status,
+       p.pick_up_status
+FROM cart c
+         JOIN payment p ON c.restaurant_id = p.restaurant_id
+WHERE c.user_id = 9
+  AND c.payment_status = TRUE;
+
+# TODO: cart에 review_status 컬럼 추가 / review 테이블에 있는 거 지우고
+# review를 작성하면 review_status True로 변경해주기

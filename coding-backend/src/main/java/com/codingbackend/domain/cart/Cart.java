@@ -18,4 +18,8 @@ public class Cart {
 
     //결제
     private Boolean pickUpStatus;
+
+    //리뷰
+    private Boolean reviewStatus;
+
 }

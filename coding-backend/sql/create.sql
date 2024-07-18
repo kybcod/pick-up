@@ -76,7 +76,8 @@ CREATE TABLE review
     user_id       INT          NOT NULL,
     rating        INT          NOT NULL,
     content       VARCHAR(100) NOT NULL,
-    inserted      DATETIME     NOT NULL DEFAULT NOW()
+    inserted      DATETIME     NOT NULL DEFAULT NOW(),
+    review_status BOOLEAN      NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE review_file
