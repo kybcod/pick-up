@@ -11,6 +11,7 @@ import Login from "./page/user/Login.jsx";
 import { Signup } from "./page/user/Signup.jsx";
 import { LoginProvider } from "./component/LoginProvider.jsx";
 import { Cart } from "./page/myPage/Cart.jsx";
+import { OAuthRedirectHandler } from "./page/user/OAuthRedirectHandler.jsx";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
       { index: true, element: <MainPage /> },
       { path: "signup", element: <Signup /> },
       { path: "login", element: <Login /> },
+      { path: "oauth/login", element: <OAuthRedirectHandler /> },
       // map
       { path: "restaurant", element: <RestaurantMapView /> },
       { path: "menu/:placeId", element: <RestaurantMenuList /> },

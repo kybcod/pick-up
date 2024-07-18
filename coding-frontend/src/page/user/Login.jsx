@@ -22,7 +22,7 @@ function Login(props) {
 
   //const CLIENTID = import.meta.env.CLIENT_ID;
   const reUri = "http://localhost:5173/oauth/login";
-  //const state = Math.random();
+  const state = Math.random();
 
   function handleClickLogin() {
     axios
@@ -69,8 +69,7 @@ function Login(props) {
       </Box>
       <Button onClick={handleClickLogin}>로그인</Button>
       <a
-        href={`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=cOENA5ySQ3knmQd0ghMS&redirect_uri=${reUri}`}
-        //href={`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${CLIENTID}&redirect_uri=${reUri}&state=${state}`}
+        href={`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=cOENA5ySQ3knmQd0ghMS&redirect_uri=${reUri}&state=${state}`}
       >
         <Image boxSize={"50px"} src={"/img/naver.png"} />
       </a>
