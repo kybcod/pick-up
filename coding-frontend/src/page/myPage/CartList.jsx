@@ -55,11 +55,11 @@ export function CartList() {
             if (!grouped[key]) {
                 grouped[key] = {
                     items: [],
-                    totalPrice: 0,
+                    // totalPrice: 0,
                 };
             }
             grouped[key].items.push(item);
-            grouped[key].totalPrice += parseInt(item.totalPrice);
+            // grouped[key].totalPrice += parseInt(item.totalPrice);
         });
         return grouped;
     };
@@ -152,7 +152,7 @@ export function CartList() {
                                                 총 가격:
                                             </Td>
                                             <Td fontWeight="bold">
-                                                {cartItems[restaurantId].totalPrice.toLocaleString()} 원
+                                                {/*{cartItems[restaurantId].totalPrice.toLocaleString()} 원*/}
                                             </Td>
                                         </Tr>
                                     </Tbody>

@@ -38,7 +38,7 @@ export function OrderList() {
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
     useEffect(() => {
-        axios.get(`api/orders/${userId}`).then((res) => {
+        axios.get(`/api/orders/${userId}`).then((res) => {
             console.log(res.data);
             const groupedOrders = groupOrders(res.data);
             setOrderList(groupedOrders);
@@ -105,7 +105,7 @@ export function OrderList() {
                                 <Badge>픽업완료</Badge> : <Badge>픽업대기</Badge>
                             }
                             {/*TODO:pickUpStatus => True일 떄로 바꾸기*/}
-                            {group.paymentStatus ?
+                            {group.orderId !== null ?
                                 <Button onClick={() => handleOpenModal(group.restaurantId)}>리뷰쓰기</Button> :
                                 <Badge>안돼</Badge>
                             }
@@ -129,7 +129,7 @@ export function OrderList() {
                         <Flex justify="flex-end">
                             <Text fontWeight="bold">
                                 총
-                                금액: {group.items.reduce((sum, item) => parseInt(item.totalPrice), 0).toLocaleString()}원
+                                {/*금액: {group.items.reduce((sum, item) => parseInt(item.totalPrice), 0).toLocaleString()}원*/}
                             </Text>
                         </Flex>
                     </Box>

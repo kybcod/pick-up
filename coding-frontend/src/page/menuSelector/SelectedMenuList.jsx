@@ -7,9 +7,8 @@ import {useNavigate} from "react-router-dom";
 export function SelectedMenuList({cart, placeId, handleReset}) {
     const account = useContext(LoginContext);
     const totalAmount = Object.values(cart).reduce((total, item) => {
-        const priceWithoutComma = item.price.replace(/,/g, "");
-        const priceNumber = parseInt(priceWithoutComma, 10);
-        return total + priceNumber * item.count;
+        console.log(item)
+        return total + item.price * item.count;
     }, 0);
     const userId = account.id;
     const navigate = useNavigate();

@@ -41,15 +41,15 @@ CREATE TABLE menu
 
 CREATE TABLE cart
 (
-    id             INT PRIMARY KEY AUTO_INCREMENT,
-    restaurant_id  BIGINT,
-    user_id        INT,
-    menu_name      VARCHAR(50) NOT NULL,
-    menu_count     INT         NOT NULL,
-    menu_price     VARCHAR(50) NOT NULL,
-    total_price    INT         NOT NULL,
-    payment_status BOOLEAN     NOT NULL DEFAULT FALSE,
-    inserted       DATETIME    NOT NULL DEFAULT NOW()
+    id            INT PRIMARY KEY AUTO_INCREMENT,
+    restaurant_id BIGINT,
+    user_id       INT,
+    menu_name     VARCHAR(50) NOT NULL,
+    menu_count    INT         NOT NULL,
+    menu_price    VARCHAR(50) NOT NULL,
+    total_price   INT         NOT NULL,
+    order_id      INT,
+    inserted      DATETIME    NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE category
@@ -67,7 +67,7 @@ CREATE TABLE orders
     user_id       INT         NOT NULL,
     inserted      DATETIME    NOT NULL DEFAULT NOW(),
     pick_up_state BOOLEAN     NOT NULL DEFAULT FALSE,
-    review_status BOOLEAN      NOT NULL DEFAULT FALSE
+    review_status BOOLEAN     NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE review
@@ -77,7 +77,7 @@ CREATE TABLE review
     user_id       INT          NOT NULL,
     rating        INT          NOT NULL,
     content       VARCHAR(100) NOT NULL,
-    inserted      DATETIME     NOT NULL DEFAULT NOW(),
+    inserted      DATETIME     NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE review_file

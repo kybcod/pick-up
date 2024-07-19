@@ -36,7 +36,11 @@ class MenuInfoDto {
 
 @Data
 class MenuDto {
-    private String price;
+    private int price;
     private String menu;
     private String img;
+
+    public void setPrice(String price) {
+        this.price = Integer.parseInt(price.replace(",", ""));
+    }
 }

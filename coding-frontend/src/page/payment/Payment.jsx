@@ -61,6 +61,8 @@ export function Payment() {
 
         IMP.request_pay(data, callback);
 
+        const cartIds = paymentInfo.map((info) => info.id)
+
         function callback(response) {
             const {success, error_msg} = response;
 
@@ -69,16 +71,10 @@ export function Payment() {
                     .post(`/api/orders`, {
                         merchantUid,
                         restaurantId,
-                        userId
+                        userId,
+                        cartIds
                     })
                     .then(() => {
-                        axios.put('/api/orders', {userId, restaurantId})
-                            .then(() => {
-                                alert('업데이트 성공');
-                            })
-                            .catch((err) => {
-                                alert('업데이트 오류');
-                            });
                         alert(`결제성공`);
                     })
                     .catch(() => {
@@ -115,7 +111,7 @@ export function Payment() {
                 </Box>
             ))}
             <Box>
-                {paymentInfo[0].totalPrice.toLocaleString()} 원
+                {/*{paymentInfo[0].totalPrice.toLocaleString()} 원*/}
             </Box>
             <Flex>
                 <Button>뒤로가기</Button>

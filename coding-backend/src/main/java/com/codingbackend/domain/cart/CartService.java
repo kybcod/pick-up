@@ -39,12 +39,16 @@ public class CartService {
         cartMapper.deleteByRestaurantIdAndUserId(restaurantId, userId);
 
     }
-
-    public void updatePaymentStatus(Integer userId, Long restaurantId) {
-        cartMapper.updateByUserIdAndRestaurantId(userId, restaurantId);
-    }
+//
+//    public void updatePaymentStatus(Integer userId, Long restaurantId) {
+//        cartMapper.updateByUserIdAndRestaurantId(userId, restaurantId);
+//    }
 
     public List<Cart> getOrdersByUserId(Integer userId) {
-        return cartMapper.selectByUserIdAndPaymentStatusTrue(userId);
+        List<Cart> test = cartMapper.selectByUserIdAndPaymentStatusTrue(userId);
+        test.forEach(cart -> {
+            System.out.println("cart " + cart);
+        });
+        return test;
     }
 }

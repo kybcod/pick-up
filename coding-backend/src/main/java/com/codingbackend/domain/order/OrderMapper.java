@@ -2,6 +2,7 @@ package com.codingbackend.domain.order;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Update;
 
 @Mapper
@@ -11,6 +12,7 @@ public interface OrderMapper {
             INSERT INTO orders (merchant_uid, restaurant_id, user_id, pick_up_status, review_status)
             VALUES (#{merchantUid}, #{restaurantId}, #{userId}, FALSE, FALSE)
             """)
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Order order);
 
     @Update("""
