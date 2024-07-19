@@ -1,10 +1,7 @@
 package com.codingbackend.domain.restaurant;
 
-import com.codingbackend.domain.menu.PlaceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,5 +12,10 @@ public class RestaurantController {
     @PostMapping
     public void insert(@RequestBody Restaurant restaurant) {
         restaurantService.insertRestaurants(restaurant);
+    }
+
+    @GetMapping("/{category}")
+    public Category test(@PathVariable Integer category) {
+        return restaurantService.getcategory(category);
     }
 }

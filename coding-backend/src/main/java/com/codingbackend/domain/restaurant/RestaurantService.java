@@ -18,4 +18,8 @@ public class RestaurantService {
         }
 
     }
+
+    public Category getcategory(Integer category) {
+        return restaurantMapper.select(category);
+    }
 }
