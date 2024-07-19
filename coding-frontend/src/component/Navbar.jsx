@@ -1,18 +1,18 @@
 import {
-  Box,
-  Button,
-  Center,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  Flex,
-  Image,
-  Text,
-  useDisclosure,
+    Box,
+    Button,
+    Center,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
+    Flex,
+    Image,
+    Text,
+    useDisclosure,
 } from "@chakra-ui/react";
 import {useNavigate} from "react-router-dom";
 import React, {useContext} from "react";
@@ -91,6 +91,15 @@ function DrawerExample() {
                         >
                             <Text fontWeight="bold" mb={2}>
                                 찜한 가게
+                            </Text>
+                        </Box>
+                        <Box
+                            mb={4}
+                            cursor="pointer"
+                            onClick={() => handleNavigateTo("/reviews")}
+                        >
+                            <Text fontWeight="bold" mb={2}>
+                                리뷰 내역
                             </Text>
                         </Box>
                     </DrawerBody>

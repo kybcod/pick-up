@@ -1,8 +1,10 @@
 package com.codingbackend.domain.review;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class Review {
@@ -13,11 +15,12 @@ public class Review {
     private String content;
     private LocalDateTime inserted;
     private Boolean reviewStatus;
+    private List<ReviewFile> fileList;
 }
 
 @Data
+@AllArgsConstructor
 class ReviewFile {
-    private Integer id;
-    private Integer reviewId;
-    private String fileName;
+    private String name;
+    private String src;
 }

@@ -20,6 +20,3 @@ FROM review_file;
 
 SELECT *
 FROM category;
-
-select *
-from cart;

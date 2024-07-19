@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -45,5 +46,17 @@ public class ReviewService {
 //                s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             }
         }
+    }
+
+    public List<Review> getAllReviews(Integer userId) {
+        List<Review> reviews = reviewMapper.selectAllReviews(userId);
+        for (Review review : reviews) {
+            List<String> fileNames = reviewMapper.selectFileNamesByReviewId(review.getId());
+            List<ReviewFile> files = fileNames.stream()
+                    .map(name -> new ReviewFile(name, STR."\{srcPrefix}review/\{review.getId()}/\{name}"))
+                    .toList();
+            review.setFileList(files);
+        }
+        return reviews;
     }
 }

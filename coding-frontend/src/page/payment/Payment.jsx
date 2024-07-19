@@ -1,12 +1,13 @@
 import {Box, Button, Flex, Spinner, Text,} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 export function Payment() {
     const {userId, restaurantId} = useParams();
     const [paymentInfo, setPaymentInfo] = useState(null);
     const [merchantUid, setMerchantUid] = useState("");
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -50,7 +51,6 @@ export function Payment() {
             pg: "kakaopay", // 카카오페이
             pay_method: "card", // 결제수단
             merchant_uid: merchantUid, // 주문번호
-            // amount: paymentInfo[0].totalPrice, // 결제금액
             amount: 1, // 결제금액
             name: restaurantId, // 주문명
             buyer_name: userId, // 구매자 이름
@@ -81,7 +81,7 @@ export function Payment() {
                         alert("결제 처리 중 오류", error_msg)
                     })
                     .finally(() => {
-                        // navigate(`/chat/product/${product.id}/buyer/${account.id}`);
+                        navigate(`/orders`);
                     });
             } else {
                 alert(`${error_msg}.`);
