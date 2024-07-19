@@ -65,9 +65,10 @@ public interface CartMapper {
                     c.total_price,
                     c.inserted,
                     c.payment_status,
-                    p.pick_up_status
+                    o.pick_up_status,
+                    o.review_status
              FROM cart c
-                      JOIN payment p ON c.restaurant_id = p.restaurant_id
+                      JOIN orders o ON c.restaurant_id = o.restaurant_id
              WHERE c.user_id = #{userId}
                AND c.payment_status = TRUE
             """)

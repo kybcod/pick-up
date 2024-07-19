@@ -13,7 +13,13 @@ SELECT *
 FROM user;
 
 SELECT *
-FROM payment;
+FROM orders;
+
+SELECT *
+FROM review;
+
+SELECT *
+FROM review_file;
 
 SELECT *
 FROM category;
@@ -25,3 +31,20 @@ FROM category;
 
 INSERT INTO category (name, group_code)
 VALUES ('카페', 'CE7');
+
+
+SELECT c.id,
+       c.restaurant_id,
+       c.user_id,
+       c.menu_name,
+       c.menu_count,
+       c.menu_price,
+       c.total_price,
+       c.inserted,
+       c.payment_status,
+       p.pick_up_status,
+       p.review_status
+FROM cart c
+         JOIN order p ON c.restaurant_id = p.restaurant_id
+WHERE c.user_id = 9
+  AND c.payment_status = TRUE;

@@ -59,12 +59,30 @@ CREATE TABLE category
     group_code VARCHAR(10) NOT NULL
 );
 
-CREATE TABLE payment
+CREATE TABLE orders
 (
     id            INT PRIMARY KEY AUTO_INCREMENT,
     merchant_uid  VARCHAR(50) NOT NULL,
     restaurant_id LONG        NOT NULL,
     user_id       INT         NOT NULL,
     inserted      DATETIME    NOT NULL DEFAULT NOW(),
-    pick_up_state BOOLEAN     NOT NULL DEFAULT FALSE
+    pick_up_state BOOLEAN     NOT NULL DEFAULT FALSE,
+    review_status BOOLEAN      NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE review
+(
+    id            INT PRIMARY KEY AUTO_INCREMENT,
+    restaurant_id BIGINT       NOT NULL,
+    user_id       INT          NOT NULL,
+    rating        INT          NOT NULL,
+    content       VARCHAR(100) NOT NULL,
+    inserted      DATETIME     NOT NULL DEFAULT NOW(),
+);
+
+CREATE TABLE review_file
+(
+    id        INT PRIMARY KEY AUTO_INCREMENT,
+    review_id INT          NOT NULL REFERENCES review (id),
+    file_name VARCHAR(200) NOT NULL
 );
