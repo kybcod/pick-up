@@ -15,7 +15,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import {RestaurantList} from "./RestaurantList.jsx";
-import {useLocation} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import axios from "axios";
 
 export default function RestaurantMapView() {
@@ -26,6 +26,8 @@ export default function RestaurantMapView() {
     const [info, setInfo] = useState(null);
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
     const [category, setCategory] = useState(null);
+    const {categoryId} = useParams();
+
 
     const location = useLocation();
     const {currentPosition, currentAddress} = location.state || {};
@@ -69,7 +71,7 @@ export default function RestaurantMapView() {
         if (!window.kakao || !window.kakao.maps) return;
 
         const ps = new window.kakao.maps.services.Places();
-        axios.get(`/api/restaurants/5`)
+        axios.get(`/api/restaurants/${categoryId}`)
             .then((res) => {
                 console.log(res.data);
                 setCategory(res.data);
@@ -101,14 +103,6 @@ export default function RestaurantMapView() {
                 searchPlaces();
             })
             .catch((reason) => console.log("실패 " + reason));
-
-        // const categories = ["FD6", "CE7"];
-        // categries
-        // id - increment
-        // name - 일식
-        // groupCode - FD6
-
-        //category.forEach((categoryCode) => {
     };
 
     const displayPlacesOnMap = (places, categoryCode) => {
@@ -128,24 +122,24 @@ export default function RestaurantMapView() {
         // savePlacesToDatabase(places);
     };
 
-    const savePlacesToDatabase = (places) => {
-        // places 배열의 각 요소를 데이터베이스에 저장하는 로직
-        places.forEach((place) => {
-            axios
-                .post("/api/restaurants", {
-                    restaurantId: place.id,
-                    restaurantName: place.place_name,
-                    restaurantNumber: place.phone,
-                    address: place.road_address_name || place.address_name,
-                })
-                .then((response) => {
-                    console.log("가게 저장 성공 ", response.data);
-                })
-                .catch((error) => {
-                    console.error("가게 저장 실패", error);
-                });
-        });
-    };
+    // const savePlacesToDatabase = (places) => {
+    //     // places 배열의 각 요소를 데이터베이스에 저장하는 로직
+    //     places.forEach((place) => {
+    //         axios
+    //             .post("/api/restaurants", {
+    //                 restaurantId: place.id,
+    //                 restaurantName: place.place_name,
+    //                 restaurantNumber: place.phone,
+    //                 address: place.road_address_name || place.address_name,
+    //             })
+    //             .then((response) => {
+    //                 console.log("가게 저장 성공 ", response.data);
+    //             })
+    //             .catch((error) => {
+    //                 console.error("가게 저장 실패", error);
+    //             });
+    //     });
+    // };
 
     const handleShowFoodMarkers = () => {
         setInfo(null);

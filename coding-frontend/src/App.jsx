@@ -26,7 +26,7 @@ const router = createBrowserRouter([
             {path: "login", element: <Login/>},
 
             // map
-            {path: "restaurant", element: <RestaurantMapView/>},
+            {path: "restaurant/:categoryId", element: <RestaurantMapView/>},
             {path: "menu/:placeId", element: <RestaurantMenuList/>},
 
             //drawer

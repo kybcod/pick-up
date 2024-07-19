@@ -1,24 +1,12 @@
-import {
-    Box,
-    Button,
-    Center,
-    Flex,
-    Grid,
-    GridItem,
-    Image,
-    Input,
-    InputGroup,
-    InputLeftAddon, InputRightAddon,
-    Text
-} from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {Box, Center, Grid, GridItem, Image, Input, InputGroup, InputRightAddon, Text} from "@chakra-ui/react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLocationCrosshairs, faSearch} from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect } from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 const categories = [
     "한식", "중식", "일식", "분식", "양식",
-    "치킨", "피자", "족발 • 보쌈", "버거", "카페",
+    "치킨", "아시아음식", "족발 • 보쌈", "패스트푸드", "카페",
 ];
 
 export function MainPage() {
@@ -88,7 +76,7 @@ export function MainPage() {
                 (position) => {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
-                    setCurrentPosition({ latitude, longitude });
+                    setCurrentPosition({latitude, longitude});
                 },
                 (error) => console.error("Error getting current location:", error)
             );
@@ -97,9 +85,9 @@ export function MainPage() {
         }
     };
 
-    const handleCategoryClick = () => {
+    const handleCategoryClick = (index) => {
         if (currentPosition) {
-            navigate('/restaurant', { state: { currentPosition, currentAddress } });
+            navigate(`/restaurant/${index + 1}`, {state: {currentPosition, currentAddress}});
         } else {
             alert("먼저 현재 위치를 가져와주세요.");
         }
@@ -116,21 +104,21 @@ export function MainPage() {
             </Box>
             <InputGroup>
                 <Text>현 위치 </Text>
-                <Input readOnly value={currentAddress} placeholder={"현 위치"} />
+                <Input readOnly value={currentAddress} placeholder={"현 위치"}/>
                 <InputRightAddon onClick={handleGetCurrentLocation}>
-                    <FontAwesomeIcon icon={faLocationCrosshairs} />
+                    <FontAwesomeIcon icon={faLocationCrosshairs}/>
                 </InputRightAddon>
             </InputGroup>
             <InputGroup>
                 <Text>가게 이름 </Text>
-                <Input type='tel' placeholder='상점명' />
+                <Input type='tel' placeholder='상점명'/>
                 <InputRightAddon onClick={handleSearchClick}>
-                        <FontAwesomeIcon icon={faSearch} />
+                    <FontAwesomeIcon icon={faSearch}/>
                 </InputRightAddon>
             </InputGroup>
             <Grid templateColumns="repeat(5, 1fr)" gap={16}>
                 {images.map((imageUrl, index) => (
-                    <GridItem key={index} colSpan={1} onClick={handleCategoryClick}>
+                    <GridItem key={index} colSpan={1} onClick={() => handleCategoryClick(index)}>
                         <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="md">
                             <Center p={4}>
                                 <Image
@@ -138,7 +126,7 @@ export function MainPage() {
                                     boxSize="150px"
                                     src={imageUrl}
                                     transition="transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out"
-                                    _hover={{ transform: "scale(1.1)" }}
+                                    _hover={{transform: "scale(1.1)"}}
                                 />
                             </Center>
                             <Box p={4} textAlign="center">
