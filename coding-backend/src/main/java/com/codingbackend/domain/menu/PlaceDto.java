@@ -14,6 +14,9 @@ public class PlaceDto {
 class BasicInfo {
     private CategoryDto category;
     private FeedbackDto feedback;
+    private String placenamefull;
+    private String mainphotourl;
+    private String phonenum;
 }
 
 @Data

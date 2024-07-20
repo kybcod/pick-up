@@ -31,22 +31,47 @@ export function CartList() {
     const account = useContext(LoginContext);
     const userId = account.id;
     const [cartItems, setCartItems] = useState(null);
+    const [restaurantInfo, setRestaurantInfo] = useState({}); // 빈 객체로 초기화
     const navigate = useNavigate();
     const {isOpen, onOpen, onClose} = useDisclosure();
     const [placeId, setPlaceId] = useState(null);
 
     useEffect(() => {
-        axios
-            .get(`/api/carts/${userId}`)
+        axios.get(`/api/carts/${userId}`)
             .then((res) => {
                 console.log("장바구니 데이터 조회 성공:", res.data);
                 const groupedByRestaurant = groupCartByRestaurant(res.data);
                 setCartItems(groupedByRestaurant);
+
+                const restaurantIds = Object.keys(groupedByRestaurant);
+                console.log("레스토랑 ID들:", restaurantIds);
+
+                Promise.all(
+                    restaurantIds.map((id) =>
+                        axios.get(`/api/menus/${id}`)
+                            .then((res) => ({
+                                id,
+                                data: res.data
+                            }))
+                    )
+                )
+                    .then((responses) => {
+                        console.log("응답 데이터들:", responses);
+                        const info = {};
+                        responses.forEach(({id, data}) => {
+                            info[id] = data.basicInfo;
+                        });
+                        setRestaurantInfo(info);
+                    })
+                    .catch((err) => {
+                        console.error("가게 데이터 조회 실패:", err);
+                    });
             })
             .catch((err) => {
                 console.error("장바구니 데이터 조회 실패:", err);
             });
-    }, [userId]);
+    }, []);
+
 
     const groupCartByRestaurant = (cartItems) => {
         const grouped = {};
@@ -68,8 +93,8 @@ export function CartList() {
         }, 0);
     };
 
-    if (cartItems === null) {
-        return <Spinner size="xl"/>;
+    if (cartItems === null || restaurantInfo === null) {
+        return <Spinner/>;
     }
 
     function handleCartDelete() {
@@ -120,7 +145,7 @@ export function CartList() {
                                 onClick={() => navigate(`/menu/${restaurantId}`)}
                                 color="teal.500"
                             >
-                                가게 ID: {restaurantId}
+                                가게 이름 : {restaurantInfo[restaurantId]?.placenamefull}
                             </Text>
                             <TableContainer>
                                 <Table variant="simple">
@@ -198,4 +223,5 @@ export function CartList() {
             )}
         </Box>
     );
+
 }

@@ -30,6 +30,7 @@ export function OrderList() {
     const account = useContext(LoginContext);
     const userId = account.id;
     const [orderList, setOrderList] = useState(null);
+    const [restaurantInfo, setRestaurantInfo] = useState({});
     const navigate = useNavigate();
     const {onClose, onOpen, isOpen} = useDisclosure();
     const [files, setFiles] = useState([]);
@@ -42,12 +43,39 @@ export function OrderList() {
             console.log(res.data);
             const groupedOrders = groupOrders(res.data);
             setOrderList(groupedOrders);
-        });
+
+            const restaurantIds = Object.keys(groupedOrders);
+            console.log("레스토랑 ID들:", restaurantIds);
+
+            Promise.all(
+                restaurantIds.map((id) =>
+                    axios.get(`/api/menus/${id}`)
+                        .then((res) => ({
+                            id,
+                            data: res.data
+                        }))
+                )
+            )
+                .then((responses) => {
+                    console.log("응답 데이터들:", responses);
+                    const info = {};
+                    responses.forEach(({id, data}) => {
+                        info[id] = data.basicInfo;
+                    });
+                    setRestaurantInfo(info);
+                })
+                .catch((err) => {
+                    console.error("가게 데이터 조회 실패:", err);
+                });
+        })
+            .catch((err) => {
+                console.error("주문 데이터 조회 실패:", err);
+            });
     }, []);
 
     const groupOrders = (orders) => {
         return orders.reduce((acc, order) => {
-            const key = `${order.restaurantId}_${order.inserted}`;
+            const key = order.restaurantId;
             if (!acc[key]) {
                 acc[key] = {
                     restaurantId: order.restaurantId,
@@ -62,7 +90,7 @@ export function OrderList() {
         }, {});
     };
 
-    if (orderList === null) {
+    if (orderList === null || Object.keys(restaurantInfo).length === 0) {
         return <Spinner/>;
     }
 
@@ -70,14 +98,14 @@ export function OrderList() {
         const formData = new FormData();
         formData.append('restaurantId', selectedRestaurant);
         formData.append('userId', userId);
-        formData.append('rating', rating); // 수정된 부분
+        formData.append('rating', rating);
         formData.append('content', content);
 
         for (let i = 0; i < files.length; i++) {
             formData.append('files', files[i]);
         }
 
-        axios.postForm('/api/reviews', formData)
+        axios.post('/api/reviews', formData)
             .then((res) => {
                 console.log("리뷰 저장");
                 onClose();
@@ -101,18 +129,25 @@ export function OrderList() {
                 {Object.values(orderList).map((group, index) => (
                     <Box key={index} borderWidth={1} borderRadius="lg" p={4} boxShadow="md">
                         <Box>
+
                             {group.pickUpStatus ?
                                 <Badge>픽업완료</Badge> : <Badge>픽업대기</Badge>
                             }
-                            {/*TODO:pickUpStatus => True일 떄로 바꾸기*/}
                             {group.orderId !== null ?
                                 <Button onClick={() => handleOpenModal(group.restaurantId)}>리뷰쓰기</Button> :
-                                <Badge>안돼</Badge>
+                                <Badge>리뷰 작성 불가</Badge>
                             }
                         </Box>
                         <Flex justify="space-between" align="center" mb={3}>
-                            <Heading size="md" onClick={() => navigate(`/menu/${group.restaurantId}`)}>식당
-                                ID: {group.restaurantId}</Heading>
+                            <Text
+                                cursor="pointer"
+                                fontSize="2xl"
+                                fontWeight="bold"
+                                onClick={() => navigate(`/menu/${group.restaurantId}`)}
+                                color="teal.500"
+                            >
+                                가게 이름 : {restaurantInfo[group.restaurantId]?.placenamefull || "정보 없음"}
+                            </Text>
                             <Badge colorScheme="green">{new Date(group.inserted).toLocaleString()}</Badge>
                         </Flex>
                         <Divider mb={3}/>
@@ -149,7 +184,7 @@ export function OrderList() {
                                 </Box>
                             ))}
                             <Input multiple type={"file"} accept={"image/*"}
-                                   onChange={(e) => setFiles(e.target.files)}/>
+                                   onChange={(e) => setFiles(Array.from(e.target.files))}/>
                             <Textarea resize={"none"}
                                       height={"100px"}
                                       borderColor="gray.400"
