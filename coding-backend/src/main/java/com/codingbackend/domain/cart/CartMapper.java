@@ -15,9 +15,9 @@ public interface CartMapper {
     void insert(Cart cart);
 
     @Select("SELECT COUNT(*) FROM cart WHERE restaurant_id=#{restaurantId} AND menu_name = #{menuName} And user_id=#{userId} AND order_id IS NULL")
-    int selectByRestaurantIdAndMenuNameAndUserIdAndPaymentStatusFalse(Long restaurantId, String menuName, Integer userId);
+    int selectByRestaurantIdAndMenuNameAndUserIdAndOrderId(Long restaurantId, String menuName, Integer userId);
 
-    @Delete("DELETE FROM cart WHERE restaurant_id=#{restaurantId} AND user_id=#{userId}")
+    @Delete("DELETE FROM cart WHERE restaurant_id=#{restaurantId} AND user_id=#{userId} AND order_id IS NULL")
     int deleteByRestaurantIdAndUserId(Long restaurantId, Integer userId);
 
     @Select("SELECT * FROM cart WHERE user_id=#{userId} AND restaurant_id=#{restaurantId}")
@@ -35,15 +35,6 @@ public interface CartMapper {
 
     @Delete("DELETE FROM cart WHERE user_id=#{userId} AND restaurant_id=#{restaurantId} AND menu_name=#{menuName}")
     int deleteByUserIdAndRestaurantIdAndMenuName(Integer userId, Long restaurantId, String menuName);
-
-    //TODO:나중에 ordersId 받아서 넣기
-//    @Update("""
-//            UPDATE cart
-//            SET payment_status = TRUE
-//            WHERE user_id = #{userId} AND restaurant_id = #{restaurantId}
-//            """)
-//    void updateByUserIdAndRestaurantId(Integer userId, Long restaurantId);
-
 
     @Select("""
             SELECT id, restaurant_id, user_id, 

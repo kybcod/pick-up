@@ -45,7 +45,6 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
         handleKakaoPay();
     }
 
-
     return (
         <VStack spacing={4} align="stretch" p={4} borderWidth={1} borderRadius="lg">
             {Object.keys(cart).length === 0 ? (
@@ -60,7 +59,7 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
                             </Button>
                         </Flex>
                         <Flex justifyContent="space-between" alignItems="center">
-                            <Text>{item.price}원</Text>
+                            {item.price !== null && <Text>{parseInt(item.price).toLocaleString()}원</Text>}
                             <Text>수량: {item.count}</Text>
                         </Flex>
                     </Box>
@@ -70,10 +69,17 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
             {Object.keys(cart).length > 0 && (
                 <>
                     <Box>
-                        <Heading size="md" mt={4}>
-                            합계
-                        </Heading>
-                        <Text>총 금액: {totalAmount.toLocaleString()}원</Text>
+                        {totalAmount !== 0 ?
+                            <>
+                                <Heading size="md" mt={4}>
+                                    합계
+                                </Heading>
+                                <Text>총 금액: {totalAmount.toLocaleString()}원</Text>
+                            </>
+                            :
+                            <Text>가게에서 직접 계산하세요.</Text>
+                        }
+
                     </Box>
                     <Flex>
                         <Button w={"100%"} mr={2} onClick={handleSaveCart}>
@@ -82,8 +88,8 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
                         <Button
                             w={"100%"}
                             bgColor={"#2AC1BC"}
-                            _hover={{bgColor: "#2AC1BC"}} // 호버 효과 제거
-                            _active={{bgColor: "#23a19d"}} // 클릭 시 배경색 변경
+                            _hover={{bgColor: "#2AC1BC"}}
+                            _active={{bgColor: "#23a19d"}}
                             onClick={handleSaveCartAndKakaoPay}
                         >
                             주문하기

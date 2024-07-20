@@ -46,7 +46,7 @@ CREATE TABLE cart
     user_id       INT,
     menu_name     VARCHAR(50) NOT NULL,
     menu_count    INT         NOT NULL,
-    menu_price    VARCHAR(50) NOT NULL,
+    menu_price    VARCHAR(50) NULL,
     total_price   INT         NOT NULL,
     order_id      INT,
     inserted      DATETIME    NOT NULL DEFAULT NOW()

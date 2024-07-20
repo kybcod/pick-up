@@ -31,7 +31,7 @@ export function CartList() {
     const account = useContext(LoginContext);
     const userId = account.id;
     const [cartItems, setCartItems] = useState(null);
-    const [restaurantInfo, setRestaurantInfo] = useState({}); // 빈 객체로 초기화
+    const [restaurantInfo, setRestaurantInfo] = useState({});
     const navigate = useNavigate();
     const {isOpen, onOpen, onClose} = useDisclosure();
     const [placeId, setPlaceId] = useState(null);
@@ -70,8 +70,7 @@ export function CartList() {
             .catch((err) => {
                 console.error("장바구니 데이터 조회 실패:", err);
             });
-    }, []);
-
+    }, [userId]);
 
     const groupCartByRestaurant = (cartItems) => {
         const grouped = {};
@@ -89,7 +88,7 @@ export function CartList() {
 
     const calculateTotalPrice = (items) => {
         return items.reduce((total, item) => {
-            return total + item.menuCount * item.menuPrice;
+            return total + (item.menuPrice || 0) * item.menuCount; // 가격이 없으면 0으로 처리
         }, 0);
     };
 
@@ -145,7 +144,7 @@ export function CartList() {
                                 onClick={() => navigate(`/menu/${restaurantId}`)}
                                 color="teal.500"
                             >
-                                가게 이름 : {restaurantInfo[restaurantId]?.placenamefull}
+                                {restaurantInfo[restaurantId]?.placenamefull}
                             </Text>
                             <TableContainer>
                                 <Table variant="simple">
@@ -153,7 +152,7 @@ export function CartList() {
                                         <Tr>
                                             <Th>메뉴</Th>
                                             <Th>수량</Th>
-                                            <Th>가격</Th>
+                                            {Object.values(cartItems)[0].items[0]?.menuPrice && <Th>가격</Th>}
                                             <Th>합계 가격</Th>
                                         </Tr>
                                     </Thead>
@@ -166,14 +165,23 @@ export function CartList() {
                                                     {item.menuCount}
                                                     <Button ml={2}>+</Button>
                                                 </Td>
-                                                <Td>{item.menuPrice.toLocaleString()} 원</Td>
-                                                <Td>
-                                                    {(
-                                                        item.menuCount *
-                                                        item.menuPrice
-                                                    ).toLocaleString()}
-                                                    원
-                                                </Td>
+                                                {item.menuPrice !== null ? (
+                                                    <>
+                                                        <Td>{item.menuPrice.toLocaleString()} 원</Td>
+                                                        <Td>
+                                                            {(
+                                                                item.menuCount *
+                                                                item.menuPrice
+                                                            ).toLocaleString()}
+                                                            원
+                                                        </Td>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Td>-</Td>
+                                                        <Td>-</Td>
+                                                    </>
+                                                )}
                                             </Tr>
                                         ))}
                                         <Tr>
@@ -223,5 +231,4 @@ export function CartList() {
             )}
         </Box>
     );
-
 }

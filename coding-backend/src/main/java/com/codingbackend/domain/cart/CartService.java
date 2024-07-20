@@ -14,7 +14,7 @@ public class CartService {
     private final CartMapper cartMapper;
 
     public void saveOrUpdate(Cart cart) {
-        int count = cartMapper.selectByRestaurantIdAndMenuNameAndUserIdAndPaymentStatusFalse(cart.getRestaurantId(), cart.getMenuName(), cart.getUserId());
+        int count = cartMapper.selectByRestaurantIdAndMenuNameAndUserIdAndOrderId(cart.getRestaurantId(), cart.getMenuName(), cart.getUserId());
         if (count == 0) {
             cartMapper.insert(cart);
         } else {
@@ -39,10 +39,6 @@ public class CartService {
         cartMapper.deleteByRestaurantIdAndUserId(restaurantId, userId);
 
     }
-//
-//    public void updatePaymentStatus(Integer userId, Long restaurantId) {
-//        cartMapper.updateByUserIdAndRestaurantId(userId, restaurantId);
-//    }
 
     public List<Cart> getOrdersByUserId(Integer userId) {
         List<Cart> test = cartMapper.selectByUserIdAndPaymentStatusTrue(userId);

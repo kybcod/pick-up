@@ -157,7 +157,7 @@ export function OrderList() {
                                     <Text fontWeight="bold">{item.menuName}</Text>
                                     <Text>{item.menuCount}개</Text>
                                 </Flex>
-                                <Text color="gray.600">가격: {item.menuPrice.toLocaleString()}원</Text>
+                                {item.menuPrice === null || <Text color="gray.600">가격: {item.menuPrice}원</Text>}
                             </Box>
                         ))}
                         <Divider mt={3} mb={3}/>

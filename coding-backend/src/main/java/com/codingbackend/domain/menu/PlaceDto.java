@@ -39,11 +39,28 @@ class MenuInfoDto {
 
 @Data
 class MenuDto {
-    private int price;
+    private String price;
     private String menu;
     private String img;
 
+    public boolean isNumeric(String str) {
+        if (str == null || str.isEmpty()) {
+            return false;
+        }
+        try {
+            Integer.parseInt(str.replace(",", ""));
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     public void setPrice(String price) {
-        this.price = Integer.parseInt(price.replace(",", ""));
+        if (isNumeric(price)) {
+            this.price = price.replace(",", "");
+        } else {
+            // 숫자가 아닌 경우 입력된 문자열을 그대로 사용
+            this.price = price;
+        }
     }
 }

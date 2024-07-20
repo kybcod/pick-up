@@ -1,5 +1,18 @@
 import {Box, Button, Flex, Image, Text, VStack} from "@chakra-ui/react";
 
+// 숫자 확인 함수
+function isNumeric(value) {
+    return !isNaN(value) && !isNaN(parseInt(value));
+}
+
+// 숫자 포맷팅 함수
+function formatPrice(value) {
+    if (isNumeric(value)) {
+        return parseInt(value).toLocaleString() + '원';
+    }
+    return value;
+}
+
 export function MenuList({menuList, cart, handleAdd, handleRemove}) {
     return (
         <VStack spacing={4} align="stretch">
@@ -17,7 +30,7 @@ export function MenuList({menuList, cart, handleAdd, handleRemove}) {
                         <Text fontWeight="bold" mt={2}>
                             {menu.menu}
                         </Text>
-                        <Text>{menu.price.toLocaleString()}원</Text>
+                        <Text>{formatPrice(menu.price)}</Text>
                     </Box>
                     <Flex alignItems="center">
                         <Button
