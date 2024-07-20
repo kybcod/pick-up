@@ -31,9 +31,9 @@ export default function RestaurantMapView() {
     const {currentPosition, currentAddress, categoryImage} = location.state || {};
 
     const bgColor = useColorModeValue("white", "gray.800");
-    const mapContainerStyle = useColorModeValue({width: "100%", height: "400px"}, {
+    const mapContainerStyle = useColorModeValue({width: "100%", height: "100%"}, {
         width: "100%",
-        height: "400px",
+        height: "100%",
         bg: "gray.900"
     });
     const mapMarkerStyle = useColorModeValue({width: 50, height: 50}, {width: 50, height: 50});
@@ -134,14 +134,14 @@ export default function RestaurantMapView() {
                 식당 및 카페 목록
             </Heading>
             <Text mb={4}>현재 주소: {currentAddress}</Text>
-            <Flex direction="row" h="100vh">
+            <Flex direction="row" height="100vh">
                 <Box width="30%" mr={4} bg={bgColor} p={4} boxShadow="md" borderRadius="md">
                     <RestaurantList
                         restaurants={markers}
                         onRestaurantClick={handleRestaurantClick}
                     />
                 </Box>
-                <Box width="70%" bg={bgColor} p={4} boxShadow="md" borderRadius="md" height={"100%"}>
+                <Box width="70%" bg={bgColor} p={4} boxShadow="md" borderRadius="md" height="100%">
                     <Box id="map" style={mapContainerStyle}>
                         {map && (
                             <Map
@@ -187,7 +187,7 @@ export default function RestaurantMapView() {
                                                 p={4}
                                                 borderRadius="md"
                                                 boxShadow="md"
-                                                w={"auto"}
+                                                w="auto"
                                                 minWidth="200px"
                                             >
                                                 <PopoverArrow/>
