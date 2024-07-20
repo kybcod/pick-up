@@ -17,7 +17,7 @@ import {faStar as emptyStar} from "@fortawesome/free-regular-svg-icons";
 import {faStar as fullStar} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
-export function ReviewModal({isOpen, onClose, selectedRestaurant, userId}) {
+export function ReviewModal({isOpen, onClose, selectedRestaurant, userId, restaurantName}) {
     const [files, setFiles] = useState([]);
     const [content, setContent] = useState("");
     const [rating, setRating] = useState(0);
@@ -49,7 +49,7 @@ export function ReviewModal({isOpen, onClose, selectedRestaurant, userId}) {
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay/>
             <ModalContent>
-                <ModalHeader>{selectedRestaurant} 리뷰 작성</ModalHeader>
+                <ModalHeader>{restaurantName}</ModalHeader>
                 <ModalBody>
                     {[1, 2, 3, 4, 5].map((num) => (
                         <Box onClick={() => handleStar(num)} key={num} display="inline-block" cursor="pointer">

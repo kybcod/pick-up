@@ -12,9 +12,6 @@ export function OrderList() {
     const [restaurantInfo, setRestaurantInfo] = useState({});
     const navigate = useNavigate();
     const {onClose, onOpen, isOpen} = useDisclosure();
-    const [files, setFiles] = useState([]);
-    const [content, setContent] = useState("");
-    const [rating, setRating] = useState(0);
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
     useEffect(() => {
@@ -23,7 +20,7 @@ export function OrderList() {
             const groupedOrders = groupOrders(res.data);
             setOrderList(groupedOrders);
 
-            const restaurantIds = Object.keys(groupedOrders);
+            const restaurantIds = [...new Set(res.data.map(order => order.restaurantId))];
             console.log("레스토랑 ID들:", restaurantIds);
 
             Promise.all(
@@ -54,7 +51,7 @@ export function OrderList() {
 
     const groupOrders = (orders) => {
         return orders.reduce((acc, order) => {
-            const key = order.restaurantId;
+            const key = `${order.orderId}`;
             if (!acc[key]) {
                 acc[key] = {
                     restaurantId: order.restaurantId,
@@ -78,7 +75,6 @@ export function OrderList() {
         onOpen();
     }
 
-
     return (
         <Box maxW="800px" margin="auto" p={5}>
             <Heading mb={6}>주문 내역</Heading>
@@ -86,7 +82,6 @@ export function OrderList() {
                 {Object.values(orderList).map((group, index) => (
                     <Box key={index} borderWidth={1} borderRadius="lg" p={4} boxShadow="md">
                         <Box>
-
                             {group.pickUpStatus ?
                                 <Badge>픽업완료</Badge> : <Badge>픽업대기</Badge>
                             }
@@ -120,21 +115,20 @@ export function OrderList() {
                         <Divider mt={3} mb={3}/>
                         <Flex justify="flex-end">
                             <Text fontWeight="bold">
-                                총
-                                금액: {group.items.reduce((sum, item) => {
+                                총 금액: {group.items.reduce((sum, item) => {
                                 return sum + item.menuCount * item.menuPrice;
                             }, 0).toLocaleString()}원
                             </Text>
                         </Flex>
+                        <ReviewModal
+                            restaurantName={restaurantInfo[group.restaurantId]?.placenamefull || "정보 없음"}
+                            isOpen={isOpen}
+                            onClose={onClose}
+                            selectedRestaurant={selectedRestaurant}
+                            userId={userId}
+                        />
                     </Box>
                 ))}
-                <ReviewModal
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    selectedRestaurant={selectedRestaurant}
-                    userId={userId}
-                />
-
             </VStack>
         </Box>
     );

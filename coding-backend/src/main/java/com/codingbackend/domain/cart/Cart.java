@@ -12,8 +12,6 @@ public class Cart {
     private String menuName;
     private Integer menuCount;
     private Integer menuPrice;
-    //    private String totalPrice;
-    private Boolean paymentStatus;
     private LocalDateTime inserted;
 
     //결제

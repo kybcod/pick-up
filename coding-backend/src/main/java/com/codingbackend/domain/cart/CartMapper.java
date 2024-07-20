@@ -62,7 +62,7 @@ public interface CartMapper {
              JOIN orders o ON c.order_id = o.id
              WHERE c.user_id = #{userId}
             """)
-    List<Cart> selectByUserIdAndPaymentStatusTrue(Integer userId);
+    List<Cart> selectOrdersByUserId(Integer userId);
 
     @Update({"""
             <script>

@@ -41,10 +41,7 @@ public class CartService {
     }
 
     public List<Cart> getOrdersByUserId(Integer userId) {
-        List<Cart> test = cartMapper.selectByUserIdAndPaymentStatusTrue(userId);
-        test.forEach(cart -> {
-            System.out.println("cart " + cart);
-        });
-        return test;
+        List<Cart> cartList = cartMapper.selectOrdersByUserId(userId);
+        return cartList;
     }
 }
