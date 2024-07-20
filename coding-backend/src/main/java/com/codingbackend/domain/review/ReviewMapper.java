@@ -16,8 +16,7 @@ public interface ReviewMapper {
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Review review);
-
-
+    
     @Insert("""
             INSERT INTO review_file (review_id, file_name)
             VALUES (#{reviewId}, #{fileName})

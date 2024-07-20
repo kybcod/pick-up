@@ -15,7 +15,7 @@ import {
     VStack
 } from "@chakra-ui/react";
 import {RestaurantList} from "./RestaurantList.jsx";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 
 export default function RestaurantMapView() {
@@ -26,6 +26,7 @@ export default function RestaurantMapView() {
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
     const [category, setCategory] = useState(null);
     const {categoryId} = useParams();
+    const navigate = useNavigate();
 
     const location = useLocation();
     const {currentPosition, currentAddress, categoryImage} = location.state || {};
@@ -196,7 +197,7 @@ export default function RestaurantMapView() {
                                                     <VStack spacing={2} align="stretch">
                                                         <Link
                                                             href={info.place.place_url}
-                                                            isExternal
+                                                            // onClick={() => navigate(`/menu/${info.place.id}`)}
                                                             fontWeight="bold"
                                                             fontSize="md"
                                                             color="teal.500"
