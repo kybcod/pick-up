@@ -1,4 +1,4 @@
-import {Box, Flex, Heading, Spinner} from "@chakra-ui/react";
+import {Box, Flex, Heading, Image, Spinner} from "@chakra-ui/react";
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {useParams} from "react-router-dom";
@@ -92,8 +92,9 @@ export function RestaurantMenuList() {
     return (
         <Box p={4}>
             <Heading size="lg" mb={4}>
-                메뉴 정보
+                메뉴 정보 {placeInfo.basicInfo.placenamefull}
             </Heading>
+            <Image src={placeInfo.basicInfo.mainphotourl}/>
             <Flex spacing={6} align="stretch" justifyContent="space-between">
                 <Box flex="1" mr={20}>
                     <MenuList
