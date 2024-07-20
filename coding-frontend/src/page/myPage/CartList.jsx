@@ -55,13 +55,17 @@ export function CartList() {
             if (!grouped[key]) {
                 grouped[key] = {
                     items: [],
-                    // totalPrice: 0,
                 };
             }
             grouped[key].items.push(item);
-            // grouped[key].totalPrice += parseInt(item.totalPrice);
         });
         return grouped;
+    };
+
+    const calculateTotalPrice = (items) => {
+        return items.reduce((total, item) => {
+            return total + item.menuCount * item.menuPrice;
+        }, 0);
     };
 
     if (cartItems === null) {
@@ -137,22 +141,22 @@ export function CartList() {
                                                     {item.menuCount}
                                                     <Button ml={2}>+</Button>
                                                 </Td>
-                                                <Td>{item.menuPrice} 원</Td>
+                                                <Td>{item.menuPrice.toLocaleString()} 원</Td>
                                                 <Td>
                                                     {(
                                                         item.menuCount *
-                                                        parseInt(item.menuPrice.replace(/,/g, ""))
+                                                        item.menuPrice
                                                     ).toLocaleString()}
                                                     원
                                                 </Td>
                                             </Tr>
                                         ))}
                                         <Tr>
-                                            <Td colSpan={2} fontWeight="bold" textAlign="right">
+                                            <Td colSpan={3} fontWeight="bold" textAlign="right">
                                                 총 가격:
                                             </Td>
                                             <Td fontWeight="bold">
-                                                {/*{cartItems[restaurantId].totalPrice.toLocaleString()} 원*/}
+                                                {calculateTotalPrice(cartItems[restaurantId].items).toLocaleString()} 원
                                             </Td>
                                         </Tr>
                                     </Tbody>
@@ -169,7 +173,8 @@ export function CartList() {
                                 >
                                     장바구니 삭제
                                 </Button>
-                                <Button colorScheme="teal" variant="solid" size="lg" mt={3}>
+                                <Button colorScheme="teal" variant="solid" size="lg" mt={3}
+                                        onClick={() => navigate(`/pay/buyer/${account.id}/restaurant/${restaurantId}`)}>
                                     주문하기
                                 </Button>
                             </Flex>

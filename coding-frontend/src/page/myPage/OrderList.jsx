@@ -129,7 +129,9 @@ export function OrderList() {
                         <Flex justify="flex-end">
                             <Text fontWeight="bold">
                                 총
-                                {/*금액: {group.items.reduce((sum, item) => parseInt(item.totalPrice), 0).toLocaleString()}원*/}
+                                금액: {group.items.reduce((sum, item) => {
+                                return sum + item.menuCount * item.menuPrice;
+                            }, 0).toLocaleString()}원
                             </Text>
                         </Flex>
                     </Box>
