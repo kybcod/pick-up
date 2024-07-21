@@ -1,5 +1,20 @@
 import React, {useContext} from "react";
-import {Box, Button, Divider, Flex, Heading, Text, VStack,} from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Divider,
+    Flex,
+    Heading,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Text,
+    useDisclosure,
+    VStack,
+} from "@chakra-ui/react";
 import axios from "axios";
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import {useNavigate} from "react-router-dom";
@@ -12,6 +27,7 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
     }, 0);
     const userId = account.id;
     const navigate = useNavigate();
+    const {isOpen, onOpen, onClose} = useDisclosure();
 
     const handleSaveCart = async () => {
         const cartItems = Object.values(cart).map((item) => ({
@@ -30,6 +46,7 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
             } else {
                 await axios.put("/api/carts", cartItems);
                 console.log("성공 : ", cartItems);
+                navigate("/carts");
             }
         } catch (error) {
             console.log("실패");
@@ -82,7 +99,7 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
 
                     </Box>
                     <Flex>
-                        <Button w={"100%"} mr={2} onClick={handleSaveCart}>
+                        <Button w={"100%"} mr={2} onClick={onOpen}>
                             장바구니 담기
                         </Button>
                         <Button
@@ -98,10 +115,41 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
                 </>
             )}
             {Object.keys(cart).length === 0 && (
-                <Button w={"100%"} mr={2} onClick={handleSaveCart}>
+                <Button w={"100%"} mr={2} onClick={isOpen}>
                     장바구니 담기
                 </Button>
             )}
+
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay/>
+                <ModalContent maxWidth="300px" width="90%">
+                    <ModalHeader
+                        display="flex"
+                        justifyContent="flex-end"
+                        cursor="pointer"
+                        onClick={onClose}
+                    >
+                        x
+                    </ModalHeader>
+                    <ModalBody display="flex"
+                               justifyContent="center">상품이 장바구니에 담겼습니다.</ModalBody>
+                    <ModalFooter display="flex"
+                                 justifyContent="center">
+                        <Button
+                            w={"90%"}
+                            border="1px solid"
+                            borderColor="#2AC1BC"
+                            color="#2AC1BC"
+                            background="white"
+                            _hover={{background: "#f0f0f0"}}
+                            onClick={handleSaveCart}
+                        >
+                            장바구니 바로가기 &gt;
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
         </VStack>
     );
 }
