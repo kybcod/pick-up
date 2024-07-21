@@ -36,6 +36,7 @@ export function CartList() {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const [placeId, setPlaceId] = useState(null);
 
+
     useEffect(() => {
         axios.get(`/api/carts/${userId}`)
             .then((res) => {
@@ -116,6 +117,68 @@ export function CartList() {
         onOpen();
     }
 
+    function handleRemove(restaurantId, menuId) {
+        setCartItems(prevItems => {
+            const updatedItems = {...prevItems};
+            const restaurant = updatedItems[restaurantId];
+            const itemIndex = restaurant.items.findIndex(item => item.id === menuId);
+
+            if (itemIndex !== -1) {
+                if (restaurant.items[itemIndex].menuCount > 1) {
+                    restaurant.items[itemIndex].menuCount -= 1;
+                } else {
+                    restaurant.items.splice(itemIndex, 1);
+                    if (restaurant.items.length === 0) {
+                        delete updatedItems[restaurantId];
+                    }
+                }
+            }
+
+            return updatedItems;
+        });
+    }
+
+    function handleAdd(restaurantId, menuId) {
+        setCartItems(prevItems => {
+            const updatedItems = {...prevItems};
+            const restaurant = updatedItems[restaurantId];
+            const item = restaurant.items.find(item => item.id === menuId);
+
+            if (item) {
+                item.menuCount += 1;
+            }
+            return updatedItems;
+        });
+    }
+
+    function handleSaveCart() {
+        const carts = Object.entries(cartItems).flatMap(([restaurantId, restaurantData]) =>
+            restaurantData.items.map((item) => ({
+                restaurantId: restaurantId,
+                userId: account.id,
+                menuName: item.menuName,
+                menuCount: item.menuCount,
+                menuPrice: item.menuPrice,
+                totalPrice: item.menuCount * item.menuPrice,
+            }))
+        );
+
+        if (carts.length === 0) {
+            axios.delete(`/api/carts/${userId}`)
+                .then(() => {
+                    console.log("장바구니 삭제 성공");
+                    setCartItems({});
+                })
+                .catch((error) => console.error("장바구니 삭제 실패", error));
+        } else {
+            axios.put("/api/carts", carts)
+                .then(() => {
+                    console.log("장바구니 업데이트 성공");
+                })
+                .catch((error) => console.error("장바구니 업데이트 실패", error));
+        }
+    }
+
     return (
         <Box maxW="800px" margin="auto" p={5}>
             <Heading mb={6}>장바구니</Heading>
@@ -123,7 +186,7 @@ export function CartList() {
                 <Flex direction="column" align="center" justify="center" height="500px">
                     <Image src={"/img/cart_clear.png"} boxSize="150px" mb={4}/>
                     <Text fontSize="2xl" textAlign="center" color="gray.500">
-                        장바구니가 텅 비었어요
+                        장바구니가 텅 비었어요.
                     </Text>
                 </Flex>
             ) : (
@@ -136,16 +199,20 @@ export function CartList() {
                             borderRadius="md"
                             boxShadow="sm"
                         >
-                            <Text
-                                cursor="pointer"
-                                fontSize="2xl"
-                                fontWeight="bold"
-                                mb={4}
-                                onClick={() => navigate(`/menu/${restaurantId}`)}
-                                color="teal.500"
-                            >
-                                {restaurantInfo[restaurantId]?.placenamefull}
-                            </Text>
+                            <Flex display={"flex"} justifyContent={"space-between"}>
+
+                                <Text
+                                    cursor="pointer"
+                                    fontSize="2xl"
+                                    fontWeight="bold"
+                                    mb={4}
+                                    onClick={() => navigate(`/menu/${restaurantId}`)}
+                                    color="teal.500"
+                                >
+                                    {restaurantInfo[restaurantId]?.placenamefull}
+                                </Text>
+                                <Button onClick={() => handleConfirmDelete(restaurantId)}>x</Button>
+                            </Flex>
                             <TableContainer>
                                 <Table variant="simple">
                                     <Thead>
@@ -161,9 +228,11 @@ export function CartList() {
                                             <Tr key={index}>
                                                 <Td>{item.menuName}</Td>
                                                 <Td>
-                                                    <Button mr={2}>-</Button>
+                                                    <Button mr={2}
+                                                            onClick={() => handleRemove(restaurantId, item.id)}>-</Button>
                                                     {item.menuCount}
-                                                    <Button ml={2}>+</Button>
+                                                    <Button ml={2}
+                                                            onClick={() => handleAdd(restaurantId, item.id)}>+</Button>
                                                 </Td>
                                                 {item.menuPrice !== null ? (
                                                     <>
@@ -197,14 +266,14 @@ export function CartList() {
                             </TableContainer>
                             <Flex justifyContent={"flex-end"}>
                                 <Button
-                                    onClick={() => handleConfirmDelete(restaurantId)}
+                                    onClick={handleSaveCart}
                                     colorScheme="teal"
                                     variant="solid"
                                     size="lg"
                                     mt={3}
                                     mr={3}
                                 >
-                                    장바구니 삭제
+                                    담기
                                 </Button>
                                 <Button colorScheme="teal" variant="solid" size="lg" mt={3}
                                         onClick={() => navigate(`/pay/buyer/${account.id}/restaurant/${restaurantId}`)}>
