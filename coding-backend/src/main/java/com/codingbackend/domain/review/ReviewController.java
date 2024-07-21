@@ -14,7 +14,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public void insertReview(@ModelAttribute Review review, @RequestParam("files") MultipartFile[] files) throws IOException {
+    public void insertReview(Review review, @RequestParam(value = "files[]", required = false) MultipartFile[] files) throws IOException {
         reviewService.insertReview(review, files);
     }
 

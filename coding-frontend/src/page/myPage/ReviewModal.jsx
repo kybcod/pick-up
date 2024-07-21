@@ -22,18 +22,39 @@ export function ReviewModal({isOpen, onClose, selectedRestaurant, userId, restau
     const [content, setContent] = useState("");
     const [rating, setRating] = useState(0);
 
+    // function handleReview() {
+    //     const formData = new FormData();
+    //     formData.append('restaurantId', selectedRestaurant);
+    //     formData.append('userId', userId);
+    //     formData.append('rating', rating);
+    //     formData.append('content', content);
+    //
+    //     for (let i = 0; i < files.length; i++) {
+    //         formData.append('files', files[i]);
+    //     }
+    //
+    //     axios.postForm('/api/reviews', formData)
+    //         .then((res) => {
+    //             console.log("리뷰 저장");
+    //             onClose();
+    //         })
+    //         .catch((error) => console.log("리뷰 저장 실패", error));
+    // }
+
     function handleReview() {
-        const formData = new FormData();
-        formData.append('restaurantId', selectedRestaurant);
-        formData.append('userId', userId);
-        formData.append('rating', rating);
-        formData.append('content', content);
 
-        for (let i = 0; i < files.length; i++) {
-            formData.append('files', files[i]);
-        }
+        // for (let i = 0; i < files.length; i++) {
+        //     formData.append('files', files[i]);
+        // }
 
-        axios.postForm('/api/reviews', formData)
+        axios.postForm('/api/reviews',
+            {
+                restaurantId: selectedRestaurant,
+                userId: userId,
+                rating: rating,
+                content: content,
+                files: files,
+            })
             .then((res) => {
                 console.log("리뷰 저장");
                 onClose();
