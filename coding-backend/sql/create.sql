@@ -21,13 +21,15 @@ CREATE TABLE authority
 
 CREATE TABLE restaurant
 (
-    restaurant_id     BIGINT PRIMARY KEY,
-    user_id           INT          NOT NULL REFERENCES user (id),
-    restaurant_name   VARCHAR(100) NOT NULL,
-    restaurant_number VARCHAR(20),
-    address           VARCHAR(100) NOT NULL,
-    inserted          DATETIME     NOT NULL DEFAULT NOW()
+    restaurant_id   BIGINT PRIMARY KEY,
+    user_id         INT          NOT NULL REFERENCES user (id),
+    restaurant_name VARCHAR(100) NOT NULL,
+    restaurant_tel  VARCHAR(20),
+    address         VARCHAR(100) NOT NULL,
+    inserted        DATETIME     NOT NULL DEFAULT NOW(),
+    logo            VARCHAR(500)
 );
+
 
 CREATE TABLE menu
 (
@@ -60,6 +62,7 @@ CREATE TABLE category
     name       VARCHAR(10) NOT NULL,
     group_code VARCHAR(10) NOT NULL
 );
+
 
 CREATE TABLE orders
 (
