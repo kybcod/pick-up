@@ -16,7 +16,7 @@ import { CartList } from "./page/myPage/CartList.jsx";
 import { Payment } from "./page/payment/Payment.jsx";
 import { OrderList } from "./page/myPage/OrderList.jsx";
 import ReviewList from "./page/myPage/ReviewList.jsx";
-import RestaurantRegistrationProcess from "./page/RegisterRestaurants/RestaurantRegistrationProcess.jsx";
+import RestaurantRegistrationProcess from "./page/register/RestaurantRegistrationProcess.jsx";
 
 const router = createBrowserRouter([
   {
