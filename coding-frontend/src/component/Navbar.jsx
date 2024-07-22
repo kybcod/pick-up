@@ -102,6 +102,16 @@ function DrawerExample() {
                                 리뷰 내역
                             </Text>
                         </Box>
+                        {/*TODO: 판매자만 입점하기*/}
+                        <Box
+                            mb={4}
+                            cursor="pointer"
+                            onClick={() => handleNavigateTo("/register")}
+                        >
+                            <Text fontWeight="bold" mb={2}>
+                                입점하기
+                            </Text>
+                        </Box>
                     </DrawerBody>
 
                     <DrawerFooter>

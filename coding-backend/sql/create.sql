@@ -17,11 +17,12 @@ CREATE TABLE authority
     name    VARCHAR(20) NOT NULL,
     PRIMARY KEY (user_id, name)
 );
-#TODO : userId, category NOT NULL로 변경, id INT PRIMARY KEY AUTO_INCREMENT,
+
+
 CREATE TABLE restaurant
 (
     restaurant_id     BIGINT PRIMARY KEY,
-    user_id           INT,
+    user_id           INT          NOT NULL REFERENCES user (id),
     restaurant_name   VARCHAR(100) NOT NULL,
     restaurant_number VARCHAR(20),
     address           VARCHAR(100) NOT NULL,
@@ -44,13 +45,14 @@ CREATE TABLE cart
     id            INT PRIMARY KEY AUTO_INCREMENT,
     restaurant_id BIGINT,
     user_id       INT,
-    menu_name     VARCHAR(50) NOT NULL,
+    menu_name     VARCHAR(50) NOT NULL REFERENCES user (id),
     menu_count    INT         NOT NULL,
     menu_price    VARCHAR(50) NULL,
     total_price   INT         NOT NULL,
     order_id      INT,
     inserted      DATETIME    NOT NULL DEFAULT NOW()
 );
+
 
 CREATE TABLE category
 (
@@ -64,7 +66,7 @@ CREATE TABLE orders
     id            INT PRIMARY KEY AUTO_INCREMENT,
     merchant_uid  VARCHAR(50) NOT NULL,
     restaurant_id LONG        NOT NULL,
-    user_id       INT         NOT NULL,
+    user_id       INT         NOT NULL REFERENCES user (id),
     inserted      DATETIME    NOT NULL DEFAULT NOW(),
     pick_up_state BOOLEAN     NOT NULL DEFAULT FALSE,
     review_status BOOLEAN     NOT NULL DEFAULT FALSE
@@ -74,7 +76,7 @@ CREATE TABLE review
 (
     id            INT PRIMARY KEY AUTO_INCREMENT,
     restaurant_id BIGINT       NOT NULL,
-    user_id       INT          NOT NULL,
+    user_id       INT          NOT NULL REFERENCES user (id),
     rating        INT          NOT NULL,
     content       VARCHAR(100) NOT NULL,
     inserted      DATETIME     NOT NULL DEFAULT NOW()
