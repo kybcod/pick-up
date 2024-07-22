@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class Restaurant {
+public class RestaurantRequestDto {
     private Integer id;
     private Long restaurantId;
     private Integer userId;
@@ -15,5 +15,7 @@ public class Restaurant {
     private Double latitude;
     private Double longitude;
     private LocalDateTime inserted;
-}
 
+    // 카테고리 이름
+    private String categoryName;
+}

@@ -27,9 +27,10 @@ CREATE TABLE restaurant
     restaurant_tel  VARCHAR(20),
     address         VARCHAR(100) NOT NULL,
     inserted        DATETIME     NOT NULL DEFAULT NOW(),
-    logo            VARCHAR(500)
+    logo            VARCHAR(500),
+    latitude        DOUBLE,
+    longitude       DOUBLE
 );
-
 
 CREATE TABLE menu
 (
