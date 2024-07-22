@@ -10,6 +10,7 @@ import {MainPage} from "./page/mainPage/MainPage.jsx";
 import {RestaurantMenuList} from "./page/menuSelector/RestaurantMenuList.jsx";
 import Login from "./page/user/Login.jsx";
 import {Signup} from "./page/user/Signup.jsx";
+import { OAuthRedirectHandler } from "./page/user/OAuthRedirectHandler.jsx";
 import {LoginProvider} from "./component/LoginProvider.jsx";
 import {CartList} from "./page/myPage/CartList.jsx";
 import {Payment} from "./page/payment/Payment.jsx";
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
             {index: true, element: <MainPage/>},
             {path: "signup", element: <Signup/>},
             {path: "login", element: <Login/>},
-
+            {path: "oauth/login", element: <OAuthRedirectHandler /> },
             // map
             {path: "restaurant/:categoryId", element: <RestaurantMapView/>},
             {path: "menu/:placeId", element: <RestaurantMenuList/>},
