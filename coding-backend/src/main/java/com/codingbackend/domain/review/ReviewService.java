@@ -56,7 +56,7 @@ public class ReviewService {
         for (Review review : reviews) {
             List<String> fileNames = reviewMapper.selectFileNamesByReviewId(review.getId());
             List<ReviewFile> files = fileNames.stream()
-                    .map(name -> new ReviewFile(name, STR."\{srcPrefix}prj4/review/\{review.getId()}/\{name}"))
+                    .map(name -> new ReviewFile(name, STR."\{srcPrefix}review/\{review.getId()}/\{name}"))
                     .toList();
             review.setFileList(files);
         }
