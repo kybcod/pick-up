@@ -1,4 +1,4 @@
-import {Box, Flex, Heading, Spinner} from "@chakra-ui/react";
+import {Box, Flex, Heading, Image, Spinner, VStack} from "@chakra-ui/react";
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {useParams} from "react-router-dom";
@@ -17,7 +17,7 @@ export function RestaurantMenuList() {
         axios
             .get(`/api/menus/${placeId}`)
             .then((res) => {
-                console.log(res.data);
+                console.log(res.data)
                 setPlaceInfo(res.data);
             })
             .catch((err) => {
@@ -27,7 +27,6 @@ export function RestaurantMenuList() {
         axios
             .get(`/api/carts/${userId}/${placeId}`)
             .then((res) => {
-                console.log(res.data);
                 const cartData = res.data.reduce((acc, item) => {
                     acc[item.menuName] = {
                         menu: item.menuName,
@@ -86,29 +85,50 @@ export function RestaurantMenuList() {
     };
 
     if (placeInfo === null) {
-        return <Spinner/>;
+        return <Spinner size="xl" color="teal.500"/>;
     }
 
     return (
-        <Box p={4}>
-            <Heading size="lg" mb={4}>
-                메뉴 정보
+        <Box p={4} bg="gray.50" minHeight="100vh">
+            <Heading size="lg" mb={4} color="teal.600">
+                {placeInfo.basicInfo.placenamefull}
             </Heading>
+            <Box
+                mb={6}
+                borderRadius="md"
+                overflow="hidden"
+                boxShadow="lg"
+                maxWidth="100%"
+                height="300px"
+            >
+                <Image
+                    src={placeInfo.basicInfo.mainphotourl}
+                    alt={placeInfo.basicInfo.placenamefull}
+                    width="100%"
+                    height="100%"
+                />
+            </Box>
             <Flex spacing={6} align="stretch" justifyContent="space-between">
-                <Box flex="1" mr={20}>
-                    <MenuList
-                        menuList={placeInfo.menuInfo.menuList}
-                        cart={cart}
-                        handleAdd={handleAdd}
-                        handleRemove={handleRemove}
-                    />
+                <Box flex="1" mr={6} p={4} bg="white" borderRadius="md" boxShadow="md">
+                    <VStack spacing={4} align="stretch">
+                        <MenuList
+                            menuList={placeInfo.menuInfo.menuList}
+                            cart={cart}
+                            handleAdd={handleAdd}
+                            handleRemove={handleRemove}
+                        />
+                    </VStack>
                 </Box>
                 <Box
                     flex="1"
                     position="sticky"
                     top="0"
-                    maxHeight="calc(100vh - 100px)"
+                    maxHeight="calc(100vh - 150px)"
                     overflowY="auto"
+                    p={4}
+                    bg="white"
+                    borderRadius="md"
+                    boxShadow="md"
                 >
                     <SelectedMenuList
                         cart={cart}

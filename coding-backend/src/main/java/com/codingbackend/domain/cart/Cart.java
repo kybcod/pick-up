@@ -11,9 +11,7 @@ public class Cart {
     private Integer userId;
     private String menuName;
     private Integer menuCount;
-    private String menuPrice;
-    private String totalPrice;
-    private Boolean paymentStatus;
+    private Integer menuPrice;
     private LocalDateTime inserted;
 
     //결제
@@ -22,4 +20,5 @@ public class Cart {
     //리뷰
     private Boolean reviewStatus;
 
+    private Integer orderId;
 }

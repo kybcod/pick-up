@@ -27,11 +27,6 @@ public class OrderController {
         orderService.insert(order);
     }
 
-    @PutMapping
-    public void updatePayment(@RequestBody Order order) {
-        cartService.updatePaymentStatus(order.getUserId(), order.getRestaurantId());
-    }
-
     @GetMapping("{userId}")
     @Description("결제 내역 => paymentStatus=TRUE 일때")
     public List<Cart> getPaymentList(@PathVariable Integer userId) {

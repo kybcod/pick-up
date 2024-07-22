@@ -8,16 +8,16 @@ import java.util.List;
 public interface CartMapper {
 
     @Insert("""
-            INSERT INTO cart (restaurant_id, user_id, menu_name, menu_count, menu_price, total_price, payment_status)
-            VALUES (#{restaurantId}, #{userId}, #{menuName}, #{menuCount}, #{menuPrice}, #{totalPrice}, FALSE)
+            INSERT INTO cart (restaurant_id, user_id, menu_name, menu_count, menu_price, order_id)
+            VALUES (#{restaurantId}, #{userId}, #{menuName}, #{menuCount}, #{menuPrice}, #{orderId})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Cart cart);
 
-    @Select("SELECT COUNT(*) FROM cart WHERE restaurant_id=#{restaurantId} AND menu_name = #{menuName} And user_id=#{userId} AND payment_status = FALSE")
-    int selectByRestaurantIdAndMenuNameAndUserIdAndPaymentStatusFalse(Long restaurantId, String menuName, Integer userId);
+    @Select("SELECT COUNT(*) FROM cart WHERE restaurant_id=#{restaurantId} AND menu_name = #{menuName} And user_id=#{userId} AND order_id IS NULL")
+    int selectByRestaurantIdAndMenuNameAndUserIdAndOrderId(Long restaurantId, String menuName, Integer userId);
 
-    @Delete("DELETE FROM cart WHERE restaurant_id=#{restaurantId} AND user_id=#{userId}")
+    @Delete("DELETE FROM cart WHERE restaurant_id=#{restaurantId} AND user_id=#{userId} AND order_id IS NULL")
     int deleteByRestaurantIdAndUserId(Long restaurantId, Integer userId);
 
     @Select("SELECT * FROM cart WHERE user_id=#{userId} AND restaurant_id=#{restaurantId}")
@@ -26,32 +26,24 @@ public interface CartMapper {
     @Select("""
             SELECT id, restaurant_id, user_id, 
                    menu_name, menu_count, menu_price, 
-                   total_price, inserted, payment_status 
+                   inserted, order_id
             FROM cart 
             WHERE user_id=#{userId} 
-              AND payment_status = FALSE
+              AND order_id IS NULL
             """)
     List<Cart> selectByUserId(Integer userId);
 
     @Delete("DELETE FROM cart WHERE user_id=#{userId} AND restaurant_id=#{restaurantId} AND menu_name=#{menuName}")
     int deleteByUserIdAndRestaurantIdAndMenuName(Integer userId, Long restaurantId, String menuName);
 
-    @Update("""
-            UPDATE cart
-            SET payment_status = TRUE
-            WHERE user_id = #{userId} AND restaurant_id = #{restaurantId}
-            """)
-    void updateByUserIdAndRestaurantId(Integer userId, Long restaurantId);
-
-
     @Select("""
             SELECT id, restaurant_id, user_id, 
                    menu_name, menu_count, menu_price, 
-                   total_price, inserted, payment_status 
+                   inserted, order_id
             FROM cart 
             WHERE user_id=#{userId} 
               AND restaurant_id=#{restaurantId} 
-              AND payment_status = FALSE
+              AND order_id IS NULL
             """)
     List<Cart> selectByUserIdAndRestaurantIdAndPaymentStatus(Integer userId, Long restaurantId);
 
@@ -62,15 +54,26 @@ public interface CartMapper {
                     c.menu_name,
                     c.menu_count,
                     c.menu_price,
-                    c.total_price,
                     c.inserted,
-                    c.payment_status,
+                    c.order_id,
                     o.pick_up_status,
                     o.review_status
              FROM cart c
-                      JOIN orders o ON c.restaurant_id = o.restaurant_id
+             JOIN orders o ON c.order_id = o.id
              WHERE c.user_id = #{userId}
-               AND c.payment_status = TRUE
             """)
-    List<Cart> selectByUserIdAndPaymentStatusTrue(Integer userId);
+    List<Cart> selectOrdersByUserId(Integer userId);
+
+    @Update({"""
+            <script>
+            UPDATE cart
+            SET order_id=#{orderId}
+            WHERE id IN
+            <foreach item='id' collection='cartIds' open='(' separator=',' close=')'>
+            #{id}
+            </foreach>
+            </script>
+            """
+    })
+    void updateOrderId(Integer orderId, List<Integer> cartIds);
 }

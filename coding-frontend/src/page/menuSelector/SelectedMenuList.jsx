@@ -1,5 +1,20 @@
 import React, {useContext} from "react";
-import {Box, Button, Divider, Flex, Heading, Text, VStack,} from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Divider,
+    Flex,
+    Heading,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Text,
+    useDisclosure,
+    VStack,
+} from "@chakra-ui/react";
 import axios from "axios";
 import {LoginContext} from "../../component/LoginProvider.jsx";
 import {useNavigate} from "react-router-dom";
@@ -7,12 +22,12 @@ import {useNavigate} from "react-router-dom";
 export function SelectedMenuList({cart, placeId, handleReset}) {
     const account = useContext(LoginContext);
     const totalAmount = Object.values(cart).reduce((total, item) => {
-        const priceWithoutComma = item.price.replace(/,/g, "");
-        const priceNumber = parseInt(priceWithoutComma, 10);
-        return total + priceNumber * item.count;
+        console.log(item)
+        return total + item.price * item.count;
     }, 0);
     const userId = account.id;
     const navigate = useNavigate();
+    const {isOpen, onOpen, onClose} = useDisclosure();
 
     const handleSaveCart = async () => {
         const cartItems = Object.values(cart).map((item) => ({
@@ -31,6 +46,7 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
             } else {
                 await axios.put("/api/carts", cartItems);
                 console.log("성공 : ", cartItems);
+                navigate("/carts");
             }
         } catch (error) {
             console.log("실패");
@@ -46,7 +62,6 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
         handleKakaoPay();
     }
 
-
     return (
         <VStack spacing={4} align="stretch" p={4} borderWidth={1} borderRadius="lg">
             {Object.keys(cart).length === 0 ? (
@@ -61,7 +76,7 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
                             </Button>
                         </Flex>
                         <Flex justifyContent="space-between" alignItems="center">
-                            <Text>{item.price}원</Text>
+                            {item.price !== null && <Text>{parseInt(item.price).toLocaleString()}원</Text>}
                             <Text>수량: {item.count}</Text>
                         </Flex>
                     </Box>
@@ -71,20 +86,27 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
             {Object.keys(cart).length > 0 && (
                 <>
                     <Box>
-                        <Heading size="md" mt={4}>
-                            합계
-                        </Heading>
-                        <Text>총 금액: {totalAmount.toLocaleString()}원</Text>
+                        {totalAmount !== 0 ?
+                            <>
+                                <Heading size="md" mt={4}>
+                                    합계
+                                </Heading>
+                                <Text>총 금액: {totalAmount.toLocaleString()}원</Text>
+                            </>
+                            :
+                            <Text>가게에서 직접 계산하세요.</Text>
+                        }
+
                     </Box>
                     <Flex>
-                        <Button w={"100%"} mr={2} onClick={handleSaveCart}>
+                        <Button w={"100%"} mr={2} onClick={onOpen}>
                             장바구니 담기
                         </Button>
                         <Button
                             w={"100%"}
                             bgColor={"#2AC1BC"}
-                            _hover={{bgColor: "#2AC1BC"}} // 호버 효과 제거
-                            _active={{bgColor: "#23a19d"}} // 클릭 시 배경색 변경
+                            _hover={{bgColor: "#2AC1BC"}}
+                            _active={{bgColor: "#23a19d"}}
                             onClick={handleSaveCartAndKakaoPay}
                         >
                             주문하기
@@ -93,10 +115,41 @@ export function SelectedMenuList({cart, placeId, handleReset}) {
                 </>
             )}
             {Object.keys(cart).length === 0 && (
-                <Button w={"100%"} mr={2} onClick={handleSaveCart}>
+                <Button w={"100%"} mr={2} onClick={isOpen}>
                     장바구니 담기
                 </Button>
             )}
+
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay/>
+                <ModalContent maxWidth="300px" width="90%">
+                    <ModalHeader
+                        display="flex"
+                        justifyContent="flex-end"
+                        cursor="pointer"
+                        onClick={onClose}
+                    >
+                        x
+                    </ModalHeader>
+                    <ModalBody display="flex"
+                               justifyContent="center">상품이 장바구니에 담겼습니다.</ModalBody>
+                    <ModalFooter display="flex"
+                                 justifyContent="center">
+                        <Button
+                            w={"90%"}
+                            border="1px solid"
+                            borderColor="#2AC1BC"
+                            color="#2AC1BC"
+                            background="white"
+                            _hover={{background: "#f0f0f0"}}
+                            onClick={handleSaveCart}
+                        >
+                            장바구니 바로가기 &gt;
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
         </VStack>
     );
 }

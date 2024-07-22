@@ -6,9 +6,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -36,14 +40,26 @@ public class ReviewService {
                 orderMapper.updateReviewStatus(review.getUserId(), review.getRestaurantId());
 
                 //실제 S2 파일 저장
-//                String key = STR."prj4/review/\{review.getId()}/\{file.getOriginalFilename()}";
-//                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-//                        .bucket(bucketName)
-//                        .key(key)
-//                        .acl(ObjectCannedACL.PUBLIC_READ)
-//                        .build();
-//                s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+                String key = STR."prj4/review/\{review.getId()}/\{file.getOriginalFilename()}";
+                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .acl(ObjectCannedACL.PUBLIC_READ)
+                        .build();
+                s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             }
         }
+    }
+
+    public List<Review> getAllReviews(Integer userId) {
+        List<Review> reviews = reviewMapper.selectAllReviews(userId);
+        for (Review review : reviews) {
+            List<String> fileNames = reviewMapper.selectFileNamesByReviewId(review.getId());
+            List<ReviewFile> files = fileNames.stream()
+                    .map(name -> new ReviewFile(name, STR."\{srcPrefix}prj4/review/\{review.getId()}/\{name}"))
+                    .toList();
+            review.setFileList(files);
+        }
+        return reviews;
     }
 }

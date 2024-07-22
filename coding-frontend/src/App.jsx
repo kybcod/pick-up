@@ -15,6 +15,8 @@ import {LoginProvider} from "./component/LoginProvider.jsx";
 import {CartList} from "./page/myPage/CartList.jsx";
 import {Payment} from "./page/payment/Payment.jsx";
 import {OrderList} from "./page/myPage/OrderList.jsx";
+import ReviewList from "./page/myPage/ReviewList.jsx";
+import RegisterRestaurant from "./page/myPage/RegisterRestaurant.jsx";
 
 const router = createBrowserRouter([
     {
@@ -27,12 +29,14 @@ const router = createBrowserRouter([
             {path: "login", element: <Login/>},
             {path: "oauth/login", element: <OAuthRedirectHandler /> },
             // map
-            {path: "restaurant", element: <RestaurantMapView/>},
+            {path: "restaurant/:categoryId", element: <RestaurantMapView/>},
             {path: "menu/:placeId", element: <RestaurantMenuList/>},
 
             //drawer
             {path: "carts", element: <CartList/>},
             {path: "orders", element: <OrderList/>},
+            {path: "reviews", element: <ReviewList/>},
+            {path: "register", element: <RegisterRestaurant/>},
 
             //pay
             {path: "pay/buyer/:userId/restaurant/:restaurantId", element: <Payment/>},

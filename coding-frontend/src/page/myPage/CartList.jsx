@@ -31,17 +31,42 @@ export function CartList() {
     const account = useContext(LoginContext);
     const userId = account.id;
     const [cartItems, setCartItems] = useState(null);
+    const [restaurantInfo, setRestaurantInfo] = useState({});
     const navigate = useNavigate();
     const {isOpen, onOpen, onClose} = useDisclosure();
     const [placeId, setPlaceId] = useState(null);
 
+
     useEffect(() => {
-        axios
-            .get(`/api/carts/${userId}`)
+        axios.get(`/api/carts/${userId}`)
             .then((res) => {
                 console.log("장바구니 데이터 조회 성공:", res.data);
                 const groupedByRestaurant = groupCartByRestaurant(res.data);
                 setCartItems(groupedByRestaurant);
+
+                const restaurantIds = Object.keys(groupedByRestaurant);
+                console.log("레스토랑 ID들:", restaurantIds);
+
+                Promise.all(
+                    restaurantIds.map((id) =>
+                        axios.get(`/api/menus/${id}`)
+                            .then((res) => ({
+                                id,
+                                data: res.data
+                            }))
+                    )
+                )
+                    .then((responses) => {
+                        console.log("응답 데이터들:", responses);
+                        const info = {};
+                        responses.forEach(({id, data}) => {
+                            info[id] = data.basicInfo;
+                        });
+                        setRestaurantInfo(info);
+                    })
+                    .catch((err) => {
+                        console.error("가게 데이터 조회 실패:", err);
+                    });
             })
             .catch((err) => {
                 console.error("장바구니 데이터 조회 실패:", err);
@@ -55,17 +80,21 @@ export function CartList() {
             if (!grouped[key]) {
                 grouped[key] = {
                     items: [],
-                    totalPrice: 0,
                 };
             }
             grouped[key].items.push(item);
-            grouped[key].totalPrice += parseInt(item.totalPrice);
         });
         return grouped;
     };
 
-    if (cartItems === null) {
-        return <Spinner size="xl"/>;
+    const calculateTotalPrice = (items) => {
+        return items.reduce((total, item) => {
+            return total + (item.menuPrice || 0) * item.menuCount; // 가격이 없으면 0으로 처리
+        }, 0);
+    };
+
+    if (cartItems === null || restaurantInfo === null) {
+        return <Spinner/>;
     }
 
     function handleCartDelete() {
@@ -88,6 +117,68 @@ export function CartList() {
         onOpen();
     }
 
+    function handleRemove(restaurantId, menuId) {
+        setCartItems(prevItems => {
+            const updatedItems = {...prevItems};
+            const restaurant = updatedItems[restaurantId];
+            const itemIndex = restaurant.items.findIndex(item => item.id === menuId);
+
+            if (itemIndex !== -1) {
+                if (restaurant.items[itemIndex].menuCount > 1) {
+                    restaurant.items[itemIndex].menuCount -= 1;
+                } else {
+                    restaurant.items.splice(itemIndex, 1);
+                    if (restaurant.items.length === 0) {
+                        delete updatedItems[restaurantId];
+                    }
+                }
+            }
+
+            return updatedItems;
+        });
+    }
+
+    function handleAdd(restaurantId, menuId) {
+        setCartItems(prevItems => {
+            const updatedItems = {...prevItems};
+            const restaurant = updatedItems[restaurantId];
+            const item = restaurant.items.find(item => item.id === menuId);
+
+            if (item) {
+                item.menuCount += 1;
+            }
+            return updatedItems;
+        });
+    }
+
+    function handleSaveCart() {
+        const carts = Object.entries(cartItems).flatMap(([restaurantId, restaurantData]) =>
+            restaurantData.items.map((item) => ({
+                restaurantId: restaurantId,
+                userId: account.id,
+                menuName: item.menuName,
+                menuCount: item.menuCount,
+                menuPrice: item.menuPrice,
+                totalPrice: item.menuCount * item.menuPrice,
+            }))
+        );
+
+        if (carts.length === 0) {
+            axios.delete(`/api/carts/${userId}`)
+                .then(() => {
+                    console.log("장바구니 삭제 성공");
+                    setCartItems({});
+                })
+                .catch((error) => console.error("장바구니 삭제 실패", error));
+        } else {
+            axios.put("/api/carts", carts)
+                .then(() => {
+                    console.log("장바구니 업데이트 성공");
+                })
+                .catch((error) => console.error("장바구니 업데이트 실패", error));
+        }
+    }
+
     return (
         <Box maxW="800px" margin="auto" p={5}>
             <Heading mb={6}>장바구니</Heading>
@@ -95,7 +186,7 @@ export function CartList() {
                 <Flex direction="column" align="center" justify="center" height="500px">
                     <Image src={"/img/cart_clear.png"} boxSize="150px" mb={4}/>
                     <Text fontSize="2xl" textAlign="center" color="gray.500">
-                        장바구니가 텅 비었어요
+                        장바구니가 텅 비었어요.
                     </Text>
                 </Flex>
             ) : (
@@ -108,23 +199,27 @@ export function CartList() {
                             borderRadius="md"
                             boxShadow="sm"
                         >
-                            <Text
-                                cursor="pointer"
-                                fontSize="2xl"
-                                fontWeight="bold"
-                                mb={4}
-                                onClick={() => navigate(`/menu/${restaurantId}`)}
-                                color="teal.500"
-                            >
-                                가게 ID: {restaurantId}
-                            </Text>
+                            <Flex display={"flex"} justifyContent={"space-between"}>
+
+                                <Text
+                                    cursor="pointer"
+                                    fontSize="2xl"
+                                    fontWeight="bold"
+                                    mb={4}
+                                    onClick={() => navigate(`/menu/${restaurantId}`)}
+                                    color="teal.500"
+                                >
+                                    {restaurantInfo[restaurantId]?.placenamefull}
+                                </Text>
+                                <Button onClick={() => handleConfirmDelete(restaurantId)}>x</Button>
+                            </Flex>
                             <TableContainer>
                                 <Table variant="simple">
                                     <Thead>
                                         <Tr>
                                             <Th>메뉴</Th>
                                             <Th>수량</Th>
-                                            <Th>가격</Th>
+                                            {Object.values(cartItems)[0].items[0]?.menuPrice && <Th>가격</Th>}
                                             <Th>합계 가격</Th>
                                         </Tr>
                                     </Thead>
@@ -133,26 +228,37 @@ export function CartList() {
                                             <Tr key={index}>
                                                 <Td>{item.menuName}</Td>
                                                 <Td>
-                                                    <Button mr={2}>-</Button>
+                                                    <Button mr={2}
+                                                            onClick={() => handleRemove(restaurantId, item.id)}>-</Button>
                                                     {item.menuCount}
-                                                    <Button ml={2}>+</Button>
+                                                    <Button ml={2}
+                                                            onClick={() => handleAdd(restaurantId, item.id)}>+</Button>
                                                 </Td>
-                                                <Td>{item.menuPrice} 원</Td>
-                                                <Td>
-                                                    {(
-                                                        item.menuCount *
-                                                        parseInt(item.menuPrice.replace(/,/g, ""))
-                                                    ).toLocaleString()}
-                                                    원
-                                                </Td>
+                                                {item.menuPrice !== null ? (
+                                                    <>
+                                                        <Td>{item.menuPrice.toLocaleString()} 원</Td>
+                                                        <Td>
+                                                            {(
+                                                                item.menuCount *
+                                                                item.menuPrice
+                                                            ).toLocaleString()}
+                                                            원
+                                                        </Td>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Td>-</Td>
+                                                        <Td>-</Td>
+                                                    </>
+                                                )}
                                             </Tr>
                                         ))}
                                         <Tr>
-                                            <Td colSpan={2} fontWeight="bold" textAlign="right">
+                                            <Td colSpan={3} fontWeight="bold" textAlign="right">
                                                 총 가격:
                                             </Td>
                                             <Td fontWeight="bold">
-                                                {cartItems[restaurantId].totalPrice.toLocaleString()} 원
+                                                {calculateTotalPrice(cartItems[restaurantId].items).toLocaleString()} 원
                                             </Td>
                                         </Tr>
                                     </Tbody>
@@ -160,16 +266,17 @@ export function CartList() {
                             </TableContainer>
                             <Flex justifyContent={"flex-end"}>
                                 <Button
-                                    onClick={() => handleConfirmDelete(restaurantId)}
+                                    onClick={handleSaveCart}
                                     colorScheme="teal"
                                     variant="solid"
                                     size="lg"
                                     mt={3}
                                     mr={3}
                                 >
-                                    장바구니 삭제
+                                    담기
                                 </Button>
-                                <Button colorScheme="teal" variant="solid" size="lg" mt={3}>
+                                <Button colorScheme="teal" variant="solid" size="lg" mt={3}
+                                        onClick={() => navigate(`/pay/buyer/${account.id}/restaurant/${restaurantId}`)}>
                                     주문하기
                                 </Button>
                             </Flex>
