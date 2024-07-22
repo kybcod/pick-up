@@ -35,4 +35,11 @@ public interface UserMapper {
             WHERE user_id = #{userId}
             """)
     List<String> selectAuthorityByUserId(Integer userId);
+
+    @Select("""
+            SELECT id, email, password, nick_name
+            FROM user
+            WHERE id = #{id}
+            """)
+    User selectById(Integer id);
 }

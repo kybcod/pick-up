@@ -11,6 +11,7 @@ import {
   DrawerOverlay,
   Flex,
   Image,
+  Spacer,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -29,6 +30,7 @@ export function Navbar() {
           <Image src={"/img/pickUp_black.png"} />
         </Box>
       </Box>
+      <Spacer />
       {account.isLoggedIn() || (
         <Center>
           <Center onClick={() => navigate("login")}>login</Center>
@@ -76,7 +78,12 @@ function DrawerExample() {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>{account.nickName}</DrawerHeader>
+          <DrawerHeader
+            onClick={() => navigate(`/mypage/${account.id}`)}
+            cursor={"pointer"}
+          >
+            {account.nickName}
+          </DrawerHeader>
 
           <DrawerBody>
             <Box

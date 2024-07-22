@@ -101,4 +101,9 @@ public class UserService {
         }
         return result;
     }
+
+
+    public User getById(Integer id) {
+        return mapper.selectById(id);
+    }
 }
