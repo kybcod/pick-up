@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Box,
   Button,
@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import PostCode from "./PostCode.jsx";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 const MenuItem = ({ item, index, handleChange, handleRemove, handleAdd }) => (
   <Box
@@ -58,31 +59,18 @@ function RegisterRestaurant(props) {
   const [logo, setLogo] = useState("");
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-
-  const handleChange = (e, index, key) => {
-    const updatedItems = [...menuItems];
-    updatedItems[index][key] = e.target.value;
-    setMenuItems(updatedItems);
-  };
-
-  const handleAddItem = () => {
-    setMenuItems([...menuItems, { img: "", name: "", price: 0 }]);
-  };
-
-  const handleRemoveItem = (index) => {
-    if (index > 0) {
-      const updatedItems = menuItems.filter((_, i) => i !== index);
-      setMenuItems(updatedItems);
-    }
-  };
+  const account = useContext(LoginContext);
 
   function handleRegisterRestaurant() {
     axios
       .postForm("/api/restaurants", {
         restaurantId: restaurantId,
+        userId: account.id,
         restaurantName: restaurantName,
         restaurantTel: restaurantTel,
         address: address,
+        latitude: latitude,
+        longitude: longitude,
         name: categoryName,
         logo: logo,
       })

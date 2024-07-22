@@ -9,10 +9,10 @@ import org.apache.ibatis.annotations.Update;
 public interface RestaurantMapper {
 
     @Insert("""
-            INSERT INTO restaurant (restaurant_id, restaurant_name, restaurant_number, address)
-            VALUES (#{restaurantId}, #{restaurantName}, #{restaurantNumber}, #{address})
+            INSERT INTO restaurant (restaurant_id, user_id, restaurant_name, restaurant_tel, address, logo, latitude, longitude)
+            VALUES (#{restaurantId},#{userId}, #{restaurantName}, #{restaurantTel}, #{address}, #{logo}, #{latitude}, #{longitude})
             """)
-    void insert(Restaurant restaurant);
+    void insert(RestaurantRequestDto restaurant);
 
     @Select("SELECT COUNT(*) FROM restaurant WHERE restaurant_id = #{restaurantId}")
     int selectIsRestaurantId(Long restaurantId);

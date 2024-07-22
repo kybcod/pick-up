@@ -43,7 +43,7 @@ const PostCode = ({ onSelectAddress }) => {
         const latitude = result[0].y;
         const longitude = result[0].x;
         console.log(fullAddress, latitude, longitude);
-        onSelectAddress(fullAddress, latitude, longitude); // 선택된 주소와 위도, 경도를 부모 컴포넌트로 전달
+        onSelectAddress(fullAddress, latitude, longitude); // 주소,위도,경도를 prop 전달
       }
     });
   };
