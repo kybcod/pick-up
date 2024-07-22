@@ -27,8 +27,6 @@ public class RestaurantService {
     String srcPrefix;
 
     public void insertRestaurantInfo(RestaurantRequestDto restaurant, MultipartFile file) throws IOException {
-        System.out.println("logo = " + file);
-
         // 데이터베이스에 저장
         restaurantMapper.insert(restaurant);
 
@@ -40,7 +38,6 @@ public class RestaurantService {
                     .key(key)
                     .acl(ObjectCannedACL.PUBLIC_READ)
                     .build();
-
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             restaurant.setLogo(file.getOriginalFilename());
             restaurantMapper.updateLogo(restaurant);

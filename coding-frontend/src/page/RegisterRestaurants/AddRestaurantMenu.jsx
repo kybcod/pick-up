@@ -1,8 +1,13 @@
-import React, { useState } from "react";
-import { Box, Button, Input, VStack } from "@chakra-ui/react";
+import React, { useRef, useState } from "react";
+import { Box, Button, Image, Input, VStack } from "@chakra-ui/react";
+import axios from "axios";
 
-function AddRestaurantMenu({ onSubmit }) {
-  const [menuItems, setMenuItems] = useState([{ name: "", price: 0 }]);
+function AddRestaurantMenu({ onSubmit, restaurantData }) {
+  const [menuItems, setMenuItems] = useState([
+    { img: null, name: "", price: 0 },
+  ]);
+  const [filePreviews, setFilePreviews] = useState([""]);
+  const fileInputRefs = useRef([]);
 
   const handleChange = (e, index, key) => {
     const updatedItems = [...menuItems];
@@ -10,18 +15,63 @@ function AddRestaurantMenu({ onSubmit }) {
     setMenuItems(updatedItems);
   };
 
+  const handleImageChange = (e, index) => {
+    const file = e.target.files[0];
+    const updatedItems = [...menuItems];
+    updatedItems[index].img = file;
+    setMenuItems(updatedItems);
+    console.log(updatedItems);
+
+    const updatedPreviews = [...filePreviews];
+    updatedPreviews[index] = URL.createObjectURL(file);
+    setFilePreviews(updatedPreviews);
+  };
+
   const handleAdd = () => {
-    setMenuItems([...menuItems, { img: "", name: "", price: 0 }]);
+    setMenuItems([...menuItems, { img: null, name: "", price: 0 }]);
+    setFilePreviews([...filePreviews, ""]);
   };
 
   const handleRemove = (index) => {
-    if (index > 0) {
+    if (menuItems.length > 1) {
       const updatedItems = menuItems.filter((_, i) => i !== index);
       setMenuItems(updatedItems);
+
+      const updatedPreviews = filePreviews.filter((_, i) => i !== index);
+      setFilePreviews(updatedPreviews);
+
+      if (fileInputRefs.current[index]) {
+        fileInputRefs.current[index].value = "";
+      }
     }
   };
 
-  function handleFormSubmit() {}
+  const handleFormSubmit = () => {
+    const menuData = menuItems.map((item) => ({
+      name: item.name,
+      price: item.price,
+      files: item.img,
+    }));
+
+    const payload = {
+      restaurantId: restaurantData.restaurantId,
+      menuItems: menuData,
+    };
+
+    axios
+      .post("/api/menus", payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then(() => {
+        alert("메뉴 등록 성공!");
+        onSubmit();
+      })
+      .catch((error) => {
+        console.error("메뉴 등록 실패:", error);
+      });
+  };
 
   return (
     <Box>
@@ -37,11 +87,12 @@ function AddRestaurantMenu({ onSubmit }) {
             borderRadius="md"
             bg="gray.50"
           >
+            <Image height="180px" src={filePreviews[index]} />
             <Input
               type="file"
               mr={2}
-              value={item.img}
-              onChange={(e) => handleChange(e, index, "img")}
+              onChange={(e) => handleImageChange(e, index)}
+              ref={(el) => (fileInputRefs.current[index] = el)}
             />
             <Input
               placeholder="제품명"
@@ -59,9 +110,11 @@ function AddRestaurantMenu({ onSubmit }) {
             <Button colorScheme="purple" onClick={() => handleRemove(index)}>
               -
             </Button>
-            <Button colorScheme="purple" onClick={handleAdd}>
-              +
-            </Button>
+            {index === menuItems.length - 1 && (
+              <Button colorScheme="purple" onClick={handleAdd}>
+                +
+              </Button>
+            )}
           </Box>
         ))}
         <Button colorScheme="blue" onClick={handleFormSubmit}>

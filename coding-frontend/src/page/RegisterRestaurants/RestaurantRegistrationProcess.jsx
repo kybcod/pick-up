@@ -36,8 +36,6 @@ function RestaurantRegistrationProcess() {
   };
 
   const handleMenuSubmit = (menuData) => {
-    console.log("Restaurant Data:", restaurantData);
-    console.log("Menu Data:", menuData);
     setActiveStep(2);
   };
 
@@ -66,7 +64,12 @@ function RestaurantRegistrationProcess() {
       {activeStep === 0 && (
         <RegisterRestaurant onSubmit={handleRestaurantInfoSubmit} />
       )}
-      {activeStep === 1 && <AddRestaurantMenu onSubmit={handleMenuSubmit} />}
+      {activeStep === 1 && (
+        <AddRestaurantMenu
+          onSubmit={handleMenuSubmit}
+          restaurantData={restaurantData}
+        />
+      )}
       {activeStep === 2 && (
         <Box textAlign="center" p={8}>
           <Heading size="xl">등록에 성공했습니다!</Heading>
