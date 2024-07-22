@@ -54,7 +54,7 @@ function ReviewList() {
       .catch((err) => {
         console.error(err);
       });
-  }, [account.id]);
+  }, []);
 
   const renderStars = (rating) => {
     return (
