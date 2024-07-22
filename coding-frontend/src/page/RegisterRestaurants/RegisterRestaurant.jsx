@@ -74,6 +74,17 @@ function RegisterRestaurant({ onSubmit }) {
     }
   }
 
+  let disableRegisterButton = false;
+  if (
+    restaurantId === 0 ||
+    restaurantName === "" ||
+    restaurantTel === "" ||
+    address === "" ||
+    categoryName === ""
+  ) {
+    disableRegisterButton = true;
+  }
+
   return (
     <Container maxW="container.md" py={10}>
       <VStack spacing={8} align="stretch">
@@ -148,6 +159,7 @@ function RegisterRestaurant({ onSubmit }) {
           size="lg"
           width="100%"
           onClick={handleRegisterRestaurant}
+          isDisabled={disableRegisterButton}
         >
           다음
         </Button>
