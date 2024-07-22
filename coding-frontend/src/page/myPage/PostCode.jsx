@@ -11,7 +11,11 @@ const PostCode = ({ onSelectAddress }) => {
   useEffect(() => {
     const script = document.createElement("script");
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_API_KEY}&autoload=false&libraries=services`;
-    script.onload = () => setKakaoLoaded(true);
+    script.onload = () => {
+      kakao.maps.load(() => {
+        setKakaoLoaded(true);
+      });
+    };
     document.body.appendChild(script);
 
     return () => {
@@ -20,7 +24,10 @@ const PostCode = ({ onSelectAddress }) => {
   }, []);
 
   const handleComplete = (data) => {
-    if (!kakaoLoaded) return;
+    if (!kakaoLoaded) {
+      console.error("Kakao Maps API is not loaded yet");
+      return;
+    }
 
     let fullAddress = data.address;
     let extraAddress = "";
@@ -47,11 +54,17 @@ const PostCode = ({ onSelectAddress }) => {
       }
     });
   };
+
   const handleClick = () => {
+    if (!kakaoLoaded) return;
     open({ onComplete: handleComplete });
   };
 
-  return <Button onClick={handleClick}>주소 찾기</Button>;
+  return (
+    <Button onClick={handleClick} isDisabled={!kakaoLoaded}>
+      주소 찾기
+    </Button>
+  );
 };
 
 export default PostCode;
