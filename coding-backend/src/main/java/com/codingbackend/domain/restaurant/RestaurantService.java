@@ -26,21 +26,26 @@ public class RestaurantService {
     @Value("${image.src.prefix}")
     String srcPrefix;
 
-    public void insertRestaurantInfo(RestaurantRequestDto restaurant, MultipartFile logo) throws IOException {
+    public void insertRestaurantInfo(RestaurantRequestDto restaurant, MultipartFile file) throws IOException {
+        System.out.println("logo = " + file);
 
+        // 데이터베이스에 저장
         restaurantMapper.insert(restaurant);
 
-        //s3에 저장
-        String key = STR."prj4/restaurant/\{restaurant.getRestaurantId()}/\{logo.getOriginalFilename()}";
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .acl(ObjectCannedACL.PUBLIC_READ)
-                .build();
-        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(logo.getInputStream(), logo.getSize()));
+        //s3 저장
+        if (file != null) {
+            String key = STR."prj4/restaurant/\{restaurant.getRestaurantId()}/\{file.getOriginalFilename()}";
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .acl(ObjectCannedACL.PUBLIC_READ)
+                    .build();
 
-
-        // 카테고리 테이블에 연결시키기 (카테고리 value 값(1,2,3,,,))
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            restaurant.setLogo(file.getOriginalFilename());
+            restaurantMapper.updateLogo(restaurant);
+        }
+        System.out.println("restaurant = " + restaurant);
     }
 
     public Category getcategory(Integer category) {

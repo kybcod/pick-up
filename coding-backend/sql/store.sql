@@ -3,6 +3,9 @@ USE prj4;
 SELECT *
 FROM restaurant;
 
+DELETE
+FROM restaurant;
+
 SELECT *
 FROM cart;
 

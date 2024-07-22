@@ -13,8 +13,8 @@ public class RestaurantController {
     private final RestaurantService restaurantService;
 
     @PostMapping
-    public void insert(RestaurantRequestDto restaurant, @RequestParam(value = "logo", required = false) MultipartFile logo) throws IOException {
-        restaurantService.insertRestaurantInfo(restaurant, logo);
+    public void insert(RestaurantRequestDto restaurant, @RequestParam(required = false) MultipartFile file) throws IOException {
+        restaurantService.insertRestaurantInfo(restaurant, file);
     }
 
     @GetMapping("{category}")

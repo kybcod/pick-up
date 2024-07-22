@@ -6,16 +6,14 @@ import java.time.LocalDateTime;
 
 @Data
 public class RestaurantRequestDto {
-    private Long restaurantId;
-    private Integer userId;
+    private int restaurantId;
+    private int userId;
     private String restaurantName;
     private String restaurantTel;
     private String address;
-    private Double latitude;
-    private Double longitude;
+    private double latitude;
+    private double longitude;
+    private String categoryName;
     private String logo;
     private LocalDateTime inserted;
-
-    // 카테고리 이름
-    private String categoryName;
 }

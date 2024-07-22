@@ -22,4 +22,11 @@ public interface RestaurantMapper {
 
     @Select("SELECT * FROM category WHERE id = #{category}")
     Category select(Integer category);
+
+    @Update("""
+            UPDATE restaurant 
+            SET logo=#{logo}
+            WHERE restaurant_id=#{restaurantId}
+            """)
+    void updateLogo(RestaurantRequestDto restaurant);
 }
