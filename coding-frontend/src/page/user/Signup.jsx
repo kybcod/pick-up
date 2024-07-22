@@ -81,7 +81,7 @@ export function Signup() {
 
   function handleCheckNickName() {
     axios
-      .get(`/api/user?nickName=${nickName}`)
+      .get(`/api/user/check?nickName=${nickName}`)
       .then(() => {
         toast({
           status: "warning",
