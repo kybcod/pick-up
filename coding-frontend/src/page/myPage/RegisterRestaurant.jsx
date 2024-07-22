@@ -56,7 +56,8 @@ function RegisterRestaurant(props) {
   const [address, setAddress] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [logo, setLogo] = useState("");
-  const [isPostCodeOpen, setIsPostCodeOpen] = useState(false);
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
 
   const handleChange = (e, index, key) => {
     const updatedItems = [...menuItems];
@@ -90,6 +91,12 @@ function RegisterRestaurant(props) {
       });
   }
 
+  const handleSelectAddress = (selectedAddress, lat, lng) => {
+    setAddress(selectedAddress);
+    setLatitude(lat);
+    setLongitude(lng);
+  };
+
   return (
     <Box>
       <Box mb={8}>
@@ -108,9 +115,7 @@ function RegisterRestaurant(props) {
 
         <FormLabel>가게 주소</FormLabel>
         <Input value={address} readOnly />
-        <PostCode
-          onSelectAddress={(selectedAddress) => setAddress(selectedAddress)}
-        />
+        <PostCode onSelectAddress={handleSelectAddress} />
 
         <FormLabel>카테고리 선택</FormLabel>
         <Select
