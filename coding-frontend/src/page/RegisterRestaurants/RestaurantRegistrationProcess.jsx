@@ -31,6 +31,7 @@ function RestaurantRegistrationProcess() {
   const [restaurantData, setRestaurantData] = useState({});
 
   const handleRestaurantInfoSubmit = (data) => {
+    console.log("data:", data);
     setRestaurantData(data);
     setActiveStep(1);
   };
@@ -67,7 +68,7 @@ function RestaurantRegistrationProcess() {
       {activeStep === 1 && (
         <AddRestaurantMenu
           onSubmit={handleMenuSubmit}
-          restaurantData={restaurantData}
+          restaurantData={restaurantData} // Passing restaurantData
         />
       )}
       {activeStep === 2 && (

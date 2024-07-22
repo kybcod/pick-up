@@ -2,6 +2,7 @@ package com.codingbackend.domain.menu;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,5 +30,5 @@ class MenuRequest {
 class MenuItem {
     private String name;
     private String price;
-    private String img;
+    private MultipartFile img;
 }

@@ -17,7 +17,7 @@ public class MenuController {
     }
 
     @PostMapping
-    public void insertMenu(@RequestBody MenuRequest menuRequest) throws IOException {
+    public void insertMenu(MenuRequest menuRequest) throws IOException {
         menuService.insertMenu(menuRequest.getRestaurantId(), menuRequest.getMenuItems());
     }
 }

@@ -35,12 +35,11 @@ CREATE TABLE restaurant
 CREATE TABLE menu
 (
     id            INT PRIMARY KEY AUTO_INCREMENT,
-    restaurant_id BIGINT,
+    restaurant_id BIGINT       NOT NULL REFERENCES restaurant (restaurant_id),
     name          VARCHAR(100) NOT NULL,
     price         VARCHAR(20)  NOT NULL,
     img           VARCHAR(300),
-    inserted      DATETIME     NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id)
+    inserted      DATETIME     NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE cart

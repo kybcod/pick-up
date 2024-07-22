@@ -42,7 +42,6 @@ public class RestaurantService {
             restaurant.setLogo(file.getOriginalFilename());
             restaurantMapper.updateLogo(restaurant);
         }
-        System.out.println("restaurant = " + restaurant);
     }
 
     public Category getcategory(Integer category) {

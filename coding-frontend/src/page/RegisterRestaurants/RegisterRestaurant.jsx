@@ -34,9 +34,14 @@ function RegisterRestaurant({ onSubmit }) {
   const [filePreview, setFilePreview] = useState("/img/pickUp_black.png");
 
   function handleRegisterRestaurant() {
+    const newRestaurantId = parseInt(
+      restaurantId1 + restaurantId2 + restaurantId3,
+    );
+    setRestaurantId(newRestaurantId);
+
     axios
       .postForm("/api/restaurants", {
-        restaurantId: parseInt(restaurantId1 + restaurantId2 + restaurantId3),
+        restaurantId: newRestaurantId,
         userId: account.id,
         restaurantName,
         restaurantTel,
@@ -49,7 +54,7 @@ function RegisterRestaurant({ onSubmit }) {
       .then(() => {
         alert("저장 성공");
         onSubmit({
-          restaurantId,
+          restaurantId: newRestaurantId,
           userId: account.id,
           categoryName,
         });
@@ -80,7 +85,9 @@ function RegisterRestaurant({ onSubmit }) {
 
   let disableRegisterButton = false;
   if (
-    restaurantId === 0 ||
+    restaurantId1 === 0 ||
+    restaurantId2 === 0 ||
+    restaurantId3 === 0 ||
     restaurantName === "" ||
     restaurantTel === "" ||
     address === "" ||

@@ -1,11 +1,18 @@
 package com.codingbackend.domain.menu;
 
+import com.codingbackend.domain.restaurant.RestaurantMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -14,6 +21,14 @@ import java.util.List;
 public class MenuService {
 
     private final MenuMapper menuMapper;
+    private final S3Client s3Client;
+    private final RestaurantMapper restaurantMapper;
+
+    @Value("${aws.s3.bucket.name}")
+    String bucketName;
+
+    @Value("${image.src.prefix}")
+    String srcPrefix;
 
     public PlaceDto getMenu(Integer placeId) {
         RestTemplate restTemplate = new RestTemplate();
@@ -21,14 +36,32 @@ public class MenuService {
         return responseEntity.getBody();
     }
 
-    public void insertMenu(Long restaurantId, List<MenuItem> menuItems) {
-        menuItems.forEach(item -> {
+    public void insertMenu(Long restaurantId, List<MenuItem> menuItems) throws IOException {
+        if (restaurantMapper.findById(restaurantId) == null) {
+            throw new IllegalArgumentException("Restaurant with id " + restaurantId + " does not exist");
+        }
+
+        for (MenuItem item : menuItems) {
             Menu menu = new Menu();
             menu.setRestaurantId(restaurantId);
             menu.setName(item.getName());
             menu.setPrice(item.getPrice());
-            menu.setImg(item.getImg());
+
+            if (item.getImg() != null && !item.getImg().isEmpty()) {
+                String key = STR."prj4/restaurant/\{restaurantId}/\{item.getImg().getOriginalFilename()}";
+                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .acl(ObjectCannedACL.PUBLIC_READ)
+                        .build();
+
+                s3Client.putObject(putObjectRequest,
+                        RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
+
+                menu.setImg(item.getImg().getOriginalFilename());
+            }
+
             menuMapper.insert(menu);
-        });
+        }
     }
 }

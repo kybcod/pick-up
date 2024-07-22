@@ -20,7 +20,6 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
     const updatedItems = [...menuItems];
     updatedItems[index].img = file;
     setMenuItems(updatedItems);
-    console.log(updatedItems);
 
     const updatedPreviews = [...filePreviews];
     updatedPreviews[index] = URL.createObjectURL(file);
@@ -47,23 +46,19 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
   };
 
   const handleFormSubmit = () => {
-    const menuData = menuItems.map((item) => ({
-      name: item.name,
-      price: item.price,
-      files: item.img,
-    }));
+    const formData = new FormData();
+    formData.append("restaurantId", restaurantData.restaurantId); // Ensure restaurantId is passed
 
-    const payload = {
-      restaurantId: restaurantData.restaurantId,
-      menuItems: menuData,
-    };
+    menuItems.forEach((item, index) => {
+      formData.append(`menuItems[${index}].name`, item.name);
+      formData.append(`menuItems[${index}].price`, item.price);
+      if (item.img) {
+        formData.append(`menuItems[${index}].img`, item.img);
+      }
+    });
 
     axios
-      .post("/api/menus", payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      .postForm("/api/menus", formData)
       .then(() => {
         alert("메뉴 등록 성공!");
         onSubmit();
@@ -90,20 +85,19 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
             <Image height="180px" src={filePreviews[index]} />
             <Input
               type="file"
+              accept={"image/*"}
               mr={2}
               onChange={(e) => handleImageChange(e, index)}
               ref={(el) => (fileInputRefs.current[index] = el)}
             />
             <Input
               placeholder="제품명"
-              value={item.name}
               onChange={(e) => handleChange(e, index, "name")}
               mr={2}
             />
             <Input
               type="number"
               placeholder="가격"
-              value={item.price}
               onChange={(e) => handleChange(e, index, "price")}
               mr={2}
             />

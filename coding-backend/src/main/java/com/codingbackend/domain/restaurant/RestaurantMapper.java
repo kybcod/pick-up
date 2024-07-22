@@ -29,4 +29,7 @@ public interface RestaurantMapper {
             WHERE restaurant_id=#{restaurantId}
             """)
     void updateLogo(RestaurantRequestDto restaurant);
+
+    @Select("SELECT restaurant_id FROM restaurant WHERE restaurant_id = #{id}")
+    Long findById(Long id);
 }
