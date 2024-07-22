@@ -1,8 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import {
   Box,
   Button,
   Container,
+  Flex,
   FormControl,
   FormLabel,
   Heading,
@@ -19,6 +20,9 @@ import { LoginContext } from "../../component/LoginProvider.jsx";
 
 function RegisterRestaurant({ onSubmit }) {
   const [restaurantId, setRestaurantId] = useState(0);
+  const [restaurantId1, setRestaurantId1] = useState("");
+  const [restaurantId2, setRestaurantId2] = useState("");
+  const [restaurantId3, setRestaurantId3] = useState("");
   const [restaurantName, setRestaurantName] = useState("");
   const [restaurantTel, setRestaurantTel] = useState("");
   const [address, setAddress] = useState("");
@@ -32,7 +36,7 @@ function RegisterRestaurant({ onSubmit }) {
   function handleRegisterRestaurant() {
     axios
       .postForm("/api/restaurants", {
-        restaurantId,
+        restaurantId: parseInt(restaurantId1 + restaurantId2 + restaurantId3),
         userId: account.id,
         restaurantName,
         restaurantTel,
@@ -85,6 +89,27 @@ function RegisterRestaurant({ onSubmit }) {
     disableRegisterButton = true;
   }
 
+  // Input Ref
+  const inputRef1 = useRef(null);
+  const inputRef2 = useRef(null);
+  const inputRef3 = useRef(null);
+
+  const handleInputChange = (e, setValue, nextRef, maxLength) => {
+    const value = e.target.value;
+    setValue(value);
+
+    if (value.length === maxLength && nextRef) {
+      nextRef.current.focus();
+    }
+  };
+
+  const handleInput3Change = (e) => {
+    const value = e.target.value;
+    if (value.length <= 5) {
+      setRestaurantId3(value);
+    }
+  };
+
   return (
     <Container maxW="container.md" py={10}>
       <VStack spacing={8} align="stretch">
@@ -97,11 +122,35 @@ function RegisterRestaurant({ onSubmit }) {
             <SimpleGrid columns={2} spacing={6} width="100%">
               <FormControl>
                 <FormLabel>사업장 번호</FormLabel>
-                <Input
-                  type="number"
-                  placeholder="10자리 입력"
-                  onChange={(e) => setRestaurantId(e.target.value)}
-                />
+                <Flex display={"flex"} justifyContent={"space-between"}>
+                  <Input
+                    type="number"
+                    placeholder="3자리"
+                    value={restaurantId1}
+                    onChange={(e) =>
+                      handleInputChange(e, setRestaurantId1, inputRef2, 3)
+                    }
+                    ref={inputRef1}
+                  />
+                  -
+                  <Input
+                    type="number"
+                    placeholder="2자리"
+                    value={restaurantId2}
+                    onChange={(e) =>
+                      handleInputChange(e, setRestaurantId2, inputRef3, 2)
+                    }
+                    ref={inputRef2}
+                  />
+                  -
+                  <Input
+                    type="number"
+                    placeholder="5자리"
+                    value={restaurantId3}
+                    onChange={handleInput3Change}
+                    ref={inputRef3}
+                  />
+                </Flex>
               </FormControl>
               <FormControl>
                 <FormLabel>가게 이름 (상호명)</FormLabel>
