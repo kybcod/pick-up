@@ -79,7 +79,7 @@ function DrawerExample() {
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader
-            onClick={() => navigate(`/mypage/${account.id}`)}
+            onClick={() => handleNavigateTo(`/mypage/${account.id}`)}
             cursor={"pointer"}
           >
             {account.nickName}

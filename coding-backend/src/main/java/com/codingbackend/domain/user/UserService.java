@@ -77,7 +77,6 @@ public class UserService {
         if (db != null) {
             if (passwordEncoder.matches(user.getPassword(), db.getPassword())) {
                 result = new HashMap<>();
-                String token = "";
                 Instant now = Instant.now();
 
                 List<String> authority = mapper.selectAuthorityByUserId(db.getId());
@@ -88,7 +87,7 @@ public class UserService {
 
                 // https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/java/jwt/login/src/main/java/example/web/TokenController.java
                 JwtClaimsSet claims = JwtClaimsSet.builder()
-                        .issuer("self")
+                        .issuer("pickup")
                         .issuedAt(now)
                         .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
                         .subject(db.getId().toString())
@@ -96,7 +95,7 @@ public class UserService {
                         .claim("nickName", db.getNickName())
                         .build();
 
-                token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+                String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
                 result.put("token", token);
             }
@@ -107,7 +106,6 @@ public class UserService {
     public User getById(Integer id) {
         return mapper.selectById(id);
     }
-
 
     public boolean hasAccessEdit(User user, Authentication authentication) {
         if (!authentication.getName().equals(user.getId().toString())) {

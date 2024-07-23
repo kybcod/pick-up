@@ -47,18 +47,6 @@ export function MyPage() {
     setIsEditing(true);
   }
 
-  let isDisableNickNameButton = false;
-
-  if (user.nickName === prevNickName) {
-    isDisableNickNameButton = true;
-  }
-  if (user.nickName === null) {
-    isDisableNickNameButton = true;
-  }
-  if (nickNameCheck) {
-    isDisableNickNameButton = true;
-  }
-
   function handleClickCheckNickName() {
     axios
       .get(`/api/user/check?nickName=${user.nickName}`)
@@ -101,11 +89,35 @@ export function MyPage() {
           description: "회원정보 수정을 실패했습니다. 다시 시도해주세요.",
           position: "top",
         });
+        setIsEditing(true);
       })
       .finally(() => {
         onClose();
         setPrevPassword("");
       });
+  }
+
+  let isDisableNickNameCheckButton = false;
+
+  if (user.nickName === prevNickName) {
+    isDisableNickNameCheckButton = true;
+  }
+
+  if (user.nickName.trim().length === 0) {
+    isDisableNickNameCheckButton = true;
+  }
+  if (nickNameCheck) {
+    isDisableNickNameCheckButton = true;
+  }
+
+  let isDisableSaveButton = false;
+
+  if (user.nickName.trim().length === 0) {
+    isDisableSaveButton = true;
+  }
+
+  if (!nickNameCheck) {
+    isDisableSaveButton = true;
   }
 
   return (
@@ -158,7 +170,7 @@ export function MyPage() {
               <InputRightElement>
                 <Button
                   onClick={handleClickCheckNickName}
-                  isDisabled={isDisableNickNameButton}
+                  isDisabled={isDisableNickNameCheckButton}
                 >
                   중복확인
                 </Button>
@@ -172,7 +184,11 @@ export function MyPage() {
           <Button onClick={handleClickEdit}>수정하기</Button>
         </Box>
       )}
-      {isEditing && <Button onClick={onOpen}>수정완료</Button>}
+      {isEditing && (
+        <Button onClick={onOpen} isDisabled={isDisableSaveButton}>
+          수정완료
+        </Button>
+      )}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

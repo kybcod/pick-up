@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function Signup() {
   const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ export function Signup() {
   const [passwordCheck, setPasswordCheck] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [nickName, setNickName] = useState("");
+  const navigate = useNavigate();
   // const [address, setAddress] = useState("");
 
   let toast = useToast();
@@ -38,6 +40,7 @@ export function Signup() {
           description: "회원가입이 완료되었습니다",
           position: "top",
         });
+        navigate("/login");
       })
       .catch((err) => {
         if (err.response.status === 400) {
