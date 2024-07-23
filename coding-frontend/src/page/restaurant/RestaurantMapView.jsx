@@ -30,6 +30,7 @@ export default function RestaurantMapView() {
   const { categoryId } = useParams();
   const navigate = useNavigate();
   const [restaurantsDb, setRestaurantsDb] = useState(null);
+  const [combinedRestaurants, setCombinedRestaurants] = useState([]);
 
   const location = useLocation();
   const { currentPosition, currentAddress, categoryImage } =
@@ -69,7 +70,6 @@ export default function RestaurantMapView() {
 
             const newMap = new window.kakao.maps.Map(mapContainer, options);
             setMap(newMap);
-          } else {
           }
         }, 100); // 100ms 지연
       });
@@ -92,19 +92,6 @@ export default function RestaurantMapView() {
       setRestaurantsDb(res.data);
     });
   }, []);
-
-  useEffect(() => {
-    if (restaurantsDb !== null) {
-      const markersArray = restaurantsDb.map((restaurant) => ({
-        position: { lat: restaurant.latitude, lng: restaurant.longitude },
-        content: restaurant.name,
-        place: restaurant,
-        imageUrl: categoryImage,
-      }));
-
-      setMarkers(markersArray);
-    }
-  }, [restaurantsDb, categoryImage]);
 
   const searchNearbyPlaces = (latitude, longitude) => {
     if (!window.kakao || !window.kakao.maps) return;
@@ -137,21 +124,39 @@ export default function RestaurantMapView() {
                   (restaurant) => restaurant.categoryId === categoryId,
                 );
 
-                // 기존 필터링된 places와 DB에서 가져온 필터링된 restaurantsDb를 합침
+                // 외부 API 데이터와 DB 데이터를 결합
                 const combinedPlaces = [
-                  ...filtered,
+                  ...filtered.map((place) => ({
+                    position: { lat: place.y, lng: place.x },
+                    content: place.place_name,
+                    place: {
+                      ...place,
+                      id: place.id,
+                    },
+                    markerImage: categoryImage,
+                    listImage: categoryImage,
+                    isFromApi: true,
+                  })),
                   ...filteredRestaurantsDb.map((restaurant) => ({
-                    id: restaurant.id,
-                    place_name: restaurant.name,
-                    address_name: restaurant.address,
-                    road_address_name: restaurant.roadAddress,
-                    x: restaurant.longitude,
-                    y: restaurant.latitude,
-                    phone: restaurant.phone,
+                    position: {
+                      lat: restaurant.latitude,
+                      lng: restaurant.longitude,
+                    },
+                    content: restaurant.name,
+                    place: {
+                      id: restaurant.restaurantId,
+                      place_name: restaurant.restaurantName,
+                      address_name: restaurant.address,
+                      phone: restaurant.restaurantTel,
+                    },
+                    markerImage: categoryImage,
+                    listImage: restaurant.logo || categoryImage,
+                    isFromDb: true,
                   })),
                 ];
 
-                displayPlacesOnMap(filtered, groupCode);
+                setCombinedRestaurants(combinedPlaces);
+                setMarkers(combinedPlaces);
               }
             } else {
               console.error("Failed to fetch places:", status);
@@ -162,17 +167,6 @@ export default function RestaurantMapView() {
       };
       searchPlaces();
     });
-  };
-
-  const displayPlacesOnMap = (places, categoryCode) => {
-    const markersArray = places.map((place) => ({
-      position: { lat: place.y, lng: place.x },
-      content: place.place_name,
-      place: place,
-      imageUrl: categoryImage,
-    }));
-
-    setMarkers((prevMarkers) => [...prevMarkers, ...markersArray]);
   };
 
   const handleRestaurantClick = (restaurant) => {
@@ -210,8 +204,10 @@ export default function RestaurantMapView() {
           boxShadow="md"
         >
           <RestaurantList
-            restaurantsDb={restaurantsDb}
-            restaurants={markers}
+            restaurants={combinedRestaurants.map((restaurant) => ({
+              ...restaurant,
+              imageUrl: restaurant.listImage, // listImage를 사용
+            }))}
             onRestaurantClick={handleRestaurantClick}
           />
         </Box>
@@ -250,7 +246,7 @@ export default function RestaurantMapView() {
                     key={`marker-${index}`}
                     position={marker.position}
                     image={{
-                      src: marker.imageUrl,
+                      src: marker.markerImage,
                       size: mapMarkerStyle,
                     }}
                     onClick={() => {
@@ -276,12 +272,7 @@ export default function RestaurantMapView() {
                         <PopoverBody padding="2">
                           <VStack spacing={2} align="stretch">
                             <Link
-                              // href={info.place.place_url}
-                              onClick={() =>
-                                navigate(
-                                  `/menu/${info.place.id || info.place.restaurantId}`,
-                                )
-                              }
+                              onClick={() => navigate(`/menu/${info.place.id}`)}
                               fontWeight="bold"
                               fontSize="md"
                               color="teal.500"
@@ -290,7 +281,7 @@ export default function RestaurantMapView() {
                               overflow="hidden"
                               textOverflow="ellipsis"
                             >
-                              {info.content || info.place.restaurantName}
+                              {info.content || info.place.place_name}
                             </Link>
                             <Text
                               fontSize="xs"
@@ -301,10 +292,10 @@ export default function RestaurantMapView() {
                             >
                               {info.place.road_address_name
                                 ? `${info.place.road_address_name} ${info.place.address_name || ""}`
-                                : info.place.address_name || info.place.address}
+                                : info.place.address_name}
                             </Text>
                             <Text fontSize="xs" color="gray.500">
-                              {info.place.phone || info.place.restaurantTel}
+                              {info.place.phone}
                             </Text>
                           </VStack>
                         </PopoverBody>
