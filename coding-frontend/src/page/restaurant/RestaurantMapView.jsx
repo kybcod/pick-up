@@ -271,8 +271,12 @@ export default function RestaurantMapView() {
                         <PopoverBody padding="2">
                           <VStack spacing={2} align="stretch">
                             <Link
-                              href={info.place.place_url}
-                              // onClick={() => navigate(`/menu/${info.place.id}`)}
+                              // href={info.place.place_url}
+                              onClick={() =>
+                                navigate(
+                                  `/menu/${info.place.id || info.place.restaurantId}`,
+                                )
+                              }
                               fontWeight="bold"
                               fontSize="md"
                               color="teal.500"
@@ -281,7 +285,7 @@ export default function RestaurantMapView() {
                               overflow="hidden"
                               textOverflow="ellipsis"
                             >
-                              {info.content}
+                              {info.content || info.place.restaurantName}
                             </Link>
                             <Text
                               fontSize="xs"
@@ -290,11 +294,12 @@ export default function RestaurantMapView() {
                               overflow="hidden"
                               textOverflow="ellipsis"
                             >
-                              {info.place.road_address_name ||
-                                info.place.address_name}
+                              {info.place.road_address_name
+                                ? `${info.place.road_address_name} ${info.place.address_name || ""}`
+                                : info.place.address_name || info.place.address}
                             </Text>
                             <Text fontSize="xs" color="gray.500">
-                              {info.place.phone}
+                              {info.place.phone || info.place.restaurantTel}
                             </Text>
                           </VStack>
                         </PopoverBody>
