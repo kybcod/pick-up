@@ -90,8 +90,6 @@ export function MyPage() {
           description: "회원정보 수정을 실패했습니다. 다시 시도해주세요.",
           position: "top",
         });
-        console.log(prevPassword);
-        console.log(user.password);
         setIsEditing(true);
       })
       .finally(() => {
