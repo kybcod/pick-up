@@ -18,7 +18,22 @@ import { OrderList } from "./page/myPage/OrderList.jsx";
 import ReviewList from "./page/myPage/ReviewList.jsx";
 import RegisterRestaurant from "./page/myPage/RegisterRestaurant.jsx";
 import { MyPage } from "./page/user/MyPage.jsx";
+import axios from "axios";
 
+axios.interceptors.request.use(
+  function (config) {
+    // Do something before request is sent
+    let token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  },
+);
 const router = createBrowserRouter([
   {
     path: "/",

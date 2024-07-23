@@ -1,7 +1,9 @@
 package com.codingbackend.domain.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -102,8 +104,47 @@ public class UserService {
         return result;
     }
 
-
     public User getById(Integer id) {
         return mapper.selectById(id);
+    }
+
+
+    public boolean hasAccessEdit(User user, Authentication authentication) {
+        if (!authentication.getName().equals(user.getId().toString())) {
+            return false;
+        }
+
+        User dbUser = mapper.selectById(user.getId());
+        if (dbUser == null) {
+            return false;
+        }
+
+        if (!passwordEncoder.matches(user.getPrevPassword(), dbUser.getPassword())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public Map<String, Object> edit(User user, Authentication authentication) {
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            User db = mapper.selectById(user.getId());
+            user.setPassword(db.getPassword());
+        }
+        mapper.update(user);
+
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+
+        Map<String, Object> claims = jwt.getClaims();
+        JwtClaimsSet.Builder jwtClaimsSetBuilder = JwtClaimsSet.builder();
+        claims.forEach(jwtClaimsSetBuilder::claim);
+        jwtClaimsSetBuilder.claim("nickName", user.getNickName());
+
+        JwtClaimsSet jwtClaimsSet = jwtClaimsSetBuilder.build();
+
+        String token = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
+        return Map.of("token", token);
     }
 }

@@ -3,6 +3,7 @@ package com.codingbackend.domain.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,6 +66,17 @@ public class UserController {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(user);
+        }
+    }
+
+    @PutMapping("edit")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity edit(@RequestBody User user, Authentication authentication) {
+        if (service.hasAccessEdit(user, authentication)) {
+            Map<String, Object> result = service.edit( user, authentication);
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 }
