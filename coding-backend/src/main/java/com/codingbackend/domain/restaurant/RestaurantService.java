@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -52,6 +53,12 @@ public class RestaurantService {
     }
 
     public List<RestaurantRequestDto> getAll() {
-        return restaurantMapper.selectAll();
+        List<RestaurantRequestDto> restaurants = restaurantMapper.selectAll();
+        return restaurants.stream().map(restaurant -> {
+            String logoPath = STR."\{srcPrefix}restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
+            restaurant.setLogo(logoPath);
+            return restaurant;
+        }).collect(Collectors.toList());
     }
+
 }

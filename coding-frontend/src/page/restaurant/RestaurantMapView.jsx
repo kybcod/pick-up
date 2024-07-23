@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CustomOverlayMap, Map, MapMarker } from "react-kakao-maps-sdk";
 import {
   Box,
+  Container,
   Flex,
   Heading,
   Link,
@@ -190,19 +191,23 @@ export default function RestaurantMapView() {
   }
 
   return (
-    <Box>
-      <Heading size="md" mb={4} color="teal.500">
-        식당 및 카페 목록
-      </Heading>
-      <Text mb={4}>현재 주소: {currentAddress}</Text>
-      <Flex direction="row" height="100vh">
+    <Container maxW="container.xl" p={0}>
+      <Box bg="#2AC1BC" color="white" py={4} px={6} borderRadius="lg" mb={4}>
+        <Heading size="lg">픽업</Heading>
+        <Text mt={2}>현재 주소: {currentAddress}</Text>
+      </Box>
+      <Flex
+        direction={["column", "column", "row"]}
+        height={["auto", "auto", "calc(100vh - 100px)"]}
+      >
         <Box
-          width="30%"
-          mr={4}
+          width={["100%", "100%", "40%"]}
+          mr={[0, 0, 4]}
+          mb={[4, 4, 0]}
           bg={bgColor}
-          p={4}
+          borderRadius="lg"
+          overflow="hidden"
           boxShadow="md"
-          borderRadius="md"
         >
           <RestaurantList
             restaurantsDb={restaurantsDb}
@@ -211,12 +216,12 @@ export default function RestaurantMapView() {
           />
         </Box>
         <Box
-          width="70%"
+          width={["100%", "100%", "60%"]}
           bg={bgColor}
-          p={4}
+          borderRadius="lg"
+          overflow="hidden"
           boxShadow="md"
-          borderRadius="md"
-          height="100%"
+          height={["400px", "400px", "100%"]}
         >
           <Box id="map" style={mapContainerStyle}>
             {map && (
@@ -312,6 +317,6 @@ export default function RestaurantMapView() {
           </Box>
         </Box>
       </Flex>
-    </Box>
+    </Container>
   );
 }
