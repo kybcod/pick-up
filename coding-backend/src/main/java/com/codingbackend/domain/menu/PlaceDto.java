@@ -1,6 +1,8 @@
 package com.codingbackend.domain.menu;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -32,6 +34,8 @@ class FeedbackDto {
 }
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 class MenuInfoDto {
     private Integer menucount;
     private List<MenuDto> menuList;

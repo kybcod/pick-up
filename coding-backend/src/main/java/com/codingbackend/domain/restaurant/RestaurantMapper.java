@@ -29,4 +29,9 @@ public interface RestaurantMapper {
     @Select("SELECT * FROM restaurant")
     List<RestaurantRequestDto> selectAll();
 
+    @Select("""
+            SELECT * FROM restaurant WHERE restaurant_id=#{restaurantId}
+            """)
+    Restaurant selectByRestaurantId(Long restaurantId);
+
 }
