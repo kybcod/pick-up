@@ -16,7 +16,7 @@ public interface ReviewMapper {
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Review review);
-    
+
     @Insert("""
             INSERT INTO review_file (review_id, file_name)
             VALUES (#{reviewId}, #{fileName})
@@ -26,6 +26,6 @@ public interface ReviewMapper {
     @Select("SELECT * FROM review WHERE user_id=#{userId}")
     List<Review> selectAllReviews(Integer userId);
 
-    @Select("SELECT file_name FROM review_file WHERE id=#{id}")
+    @Select("SELECT file_name FROM review_file WHERE review_id=#{id}")
     List<String> selectFileNamesByReviewId(Integer id);
 }

@@ -4,6 +4,9 @@ SELECT *
 FROM restaurant;
 
 SELECT *
+FROM menu;
+
+SELECT *
 FROM cart;
 
 SELECT *
