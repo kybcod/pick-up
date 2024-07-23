@@ -17,7 +17,23 @@ import { Payment } from "./page/payment/Payment.jsx";
 import { OrderList } from "./page/myPage/OrderList.jsx";
 import ReviewList from "./page/myPage/ReviewList.jsx";
 import RestaurantRegistrationProcess from "./page/register/RestaurantRegistrationProcess.jsx";
+import { MyPage } from "./page/user/MyPage.jsx";
+import axios from "axios";
 
+axios.interceptors.request.use(
+  function (config) {
+    // Do something before request is sent
+    let token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  },
+);
 const router = createBrowserRouter([
   {
     path: "/",
@@ -28,6 +44,7 @@ const router = createBrowserRouter([
       { path: "signup", element: <Signup /> },
       { path: "login", element: <Login /> },
       { path: "oauth/login", element: <OAuthRedirectHandler /> },
+      { path: "mypage/:userId", element: <MyPage /> },
       // map
       { path: "restaurant/:categoryId", element: <RestaurantMapView /> },
       { path: "menu/:placeId", element: <RestaurantMenuList /> },

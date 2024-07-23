@@ -3,6 +3,7 @@ package com.codingbackend.domain.user;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -35,4 +36,19 @@ public interface UserMapper {
             WHERE user_id = #{userId}
             """)
     List<String> selectAuthorityByUserId(Integer userId);
+
+    @Select("""
+            SELECT id, email, password, nick_name
+            FROM user
+            WHERE id = #{id}
+            """)
+    User selectById(Integer id);
+
+    @Update("""
+            UPDATE user
+            SET password = #{password}
+                , nick_name = #{nickName}
+            WHERE id = #{id}
+            """)
+    void update(User user);
 }
