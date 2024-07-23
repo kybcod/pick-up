@@ -1,4 +1,3 @@
-// Navbar.jsx
 import { Box, Button, Flex, Image, Spacer } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import React from "react";

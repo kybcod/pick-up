@@ -19,6 +19,7 @@ import { LoginContext } from "./LoginProvider.jsx";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faBars,
   faClipboardList,
   faHeart,
   faRightFromBracket,
@@ -54,7 +55,7 @@ export function DrawerExample() {
         bg="transparent"
         _hover={{ bg: "whiteAlpha.300" }}
       >
-        <FontAwesomeIcon icon={faRightFromBracket} color="white" size="lg" />
+        <FontAwesomeIcon icon={faBars} color="white" size="lg" />
       </Button>
       <Drawer
         isOpen={isOpen}
@@ -88,10 +89,9 @@ export function DrawerExample() {
               ))}
             </VStack>
           </DrawerBody>
-
           <DrawerFooter borderTopWidth="1px">
-            <Button variant="outline" onClick={onClose} colorScheme="teal">
-              닫기
+            <Button variant="outline" onClick={"/logout"} colorScheme="teal">
+              <FontAwesomeIcon icon={faRightFromBracket} />
             </Button>
           </DrawerFooter>
         </DrawerContent>

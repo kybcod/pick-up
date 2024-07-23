@@ -17,6 +17,7 @@ import { Payment } from "./page/payment/Payment.jsx";
 import { OrderList } from "./page/myPage/OrderList.jsx";
 import ReviewList from "./page/myPage/ReviewList.jsx";
 import RestaurantRegistrationProcess from "./page/register/RestaurantRegistrationProcess.jsx";
+import SellerMainPage from "./page/mainPage/SellerMainPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,9 @@ const router = createBrowserRouter([
         path: "pay/buyer/:userId/restaurant/:restaurantId",
         element: <Payment />,
       },
+
+      //seller
+      { path: "seller", element: <SellerMainPage /> },
     ],
   },
 ]);
