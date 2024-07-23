@@ -14,6 +14,7 @@ export function Navbar() {
       alignItems="center"
       px={4}
       boxShadow="0 2px 4px rgba(0,0,0,0.1)"
+      mb={10}
     >
       <Box cursor="pointer" w="150px" onClick={() => navigate("/")}>
         <Image src="/img/pickUp_black.png" alt="Logo" />

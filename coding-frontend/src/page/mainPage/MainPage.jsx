@@ -1,13 +1,16 @@
 import {
   Box,
   Center,
+  Container,
   Grid,
   GridItem,
+  Heading,
   Image,
   Input,
   InputGroup,
   InputRightAddon,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -134,56 +137,78 @@ export function MainPage() {
   };
 
   return (
-    <Box p={4}>
-      <Box mb={4} fontSize="2xl" fontWeight="bold">
-        메인 페이지
-      </Box>
-      <InputGroup>
-        <Text>현 위치 </Text>
-        <Input readOnly value={currentAddress} placeholder={"현 위치"} />
-        <InputRightAddon onClick={handleGetCurrentLocation}>
-          <FontAwesomeIcon icon={faLocationCrosshairs} />
-        </InputRightAddon>
-      </InputGroup>
-      <InputGroup>
-        <Text>가게 이름 </Text>
-        <Input type="tel" placeholder="상점명" />
-        <InputRightAddon onClick={handleSearchClick}>
-          <FontAwesomeIcon icon={faSearch} />
-        </InputRightAddon>
-      </InputGroup>
-      <Grid templateColumns="repeat(3, 1fr)" gap={16}>
-        {images.map((imageUrl, index) => (
-          <GridItem
-            key={index}
-            colSpan={1}
-            onClick={() => handleCategoryClick(index)}
-          >
-            <Box
-              maxW="sm"
-              borderWidth="1px"
-              borderRadius="lg"
-              overflow="hidden"
-              boxShadow="md"
-            >
-              <Center p={4}>
-                <Image
-                  borderRadius="full"
-                  boxSize="150px"
-                  src={imageUrl}
-                  transition="transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out"
-                  _hover={{ transform: "scale(1.1)" }}
+    <Box bg="gray.100" minH="100vh">
+      <Container maxW="container.xl" py={8}>
+        <VStack spacing={8} align="stretch">
+          <Heading as="h1" size="xl" color="#2AC1BC" textAlign="center" mb={4}>
+            픽업 주문하기
+          </Heading>
+
+          <Box bg="white" p={6} borderRadius="lg" boxShadow="md">
+            <VStack spacing={4}>
+              <InputGroup size="lg">
+                <Input
+                  readOnly
+                  value={currentAddress}
+                  placeholder="현재 위치를 설정해주세요"
+                  bg="gray.100"
                 />
-              </Center>
-              <Box p={4} textAlign="center">
-                <Text fontSize="xl" fontWeight="bold">
-                  {categories[index]}
-                </Text>
-              </Box>
-            </Box>
-          </GridItem>
-        ))}
-      </Grid>
+                <InputRightAddon
+                  children={<FontAwesomeIcon icon={faLocationCrosshairs} />}
+                  cursor="pointer"
+                  onClick={handleGetCurrentLocation}
+                  bg="#2AC1BC"
+                  color="white"
+                />
+              </InputGroup>
+
+              <InputGroup size="lg">
+                <Input
+                  placeholder="상점명을 검색해보세요"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <InputRightAddon
+                  children={<FontAwesomeIcon icon={faSearch} />}
+                  cursor="pointer"
+                  onClick={handleSearchClick}
+                  bg="#2AC1BC"
+                  color="white"
+                />
+              </InputGroup>
+            </VStack>
+          </Box>
+
+          <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+            {images.map((imageUrl, index) => (
+              <GridItem key={index} onClick={() => handleCategoryClick(index)}>
+                <Box
+                  bg="white"
+                  borderRadius="lg"
+                  overflow="hidden"
+                  boxShadow="md"
+                  transition="all 0.3s"
+                  _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
+                >
+                  <Center p={4}>
+                    <Image
+                      borderRadius="full"
+                      boxSize="120px"
+                      src={imageUrl}
+                      objectFit="cover"
+                    />
+                  </Center>
+                  <Box p={4} textAlign="center">
+                    <Text fontSize="lg" fontWeight="bold" color="#333">
+                      {categories[index]}
+                    </Text>
+                  </Box>
+                </Box>
+              </GridItem>
+            ))}
+          </Grid>
+        </VStack>
+      </Container>
     </Box>
   );
 }
