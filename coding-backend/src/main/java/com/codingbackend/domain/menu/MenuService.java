@@ -38,32 +38,36 @@ public class MenuService {
         ResponseEntity<PlaceDto> responseEntity = restTemplate.getForEntity("https://place.map.kakao.com/main/v/{placeId}", PlaceDto.class, placeId);
         PlaceDto placeDto = responseEntity.getBody();
 
-        // 내부 DB : 메뉴 정보 받아오기
-        List<Menu> menuList = menuMapper.selectMenu(placeId);
-        List<MenuDto> menuDtoList = menuList.stream()
-                .map((menu -> {
-                    MenuDto menuDto = new MenuDto();
-                    menuDto.setMenu(menu.getName());
-                    menuDto.setPrice(menu.getPrice());
-                    menuDto.setImg(s3Img(menu.getImg(), placeId));
-                    return menuDto;
-                })).collect(Collectors.toList());
+        if (placeDto != null && Boolean.TRUE.equals(placeDto.getIsExist())) {
+            return placeDto;
+        } else {
+            // 내부 DB : 메뉴 정보 받아오기
+            List<Menu> menuList = menuMapper.selectMenu(placeId);
+            List<MenuDto> menuDtoList = menuList.stream()
+                    .map((menu -> {
+                        MenuDto menuDto = new MenuDto();
+                        menuDto.setMenu(menu.getName());
+                        menuDto.setPrice(menu.getPrice());
+                        menuDto.setImg(s3Img(menu.getImg(), placeId));
+                        return menuDto;
+                    })).collect(Collectors.toList());
 
-        // 3. PlaceDto의 MenuInfoDto 설정
-        MenuInfoDto menuInfoDto = new MenuInfoDto(menuDtoList.size(), menuDtoList);
+            // 3. PlaceDto의 MenuInfoDto 설정
+            MenuInfoDto menuInfoDto = new MenuInfoDto(menuDtoList.size(), menuDtoList);
 
-        // PlaceDto의 MenuInfoDto 설정
-        placeDto.setMenuInfo(menuInfoDto);
+            // PlaceDto의 MenuInfoDto 설정
+            placeDto.setMenuInfo(menuInfoDto);
 
-        // basicInfo : 가게명, 가게사진, 가게 전화번호
-        Restaurant restaurant = restaurantMapper.selectByRestaurantId(Long.valueOf(placeId));
-        BasicInfo basicInfo = new BasicInfo();
-        basicInfo.setPlacenamefull(restaurant.getRestaurantName());
-        basicInfo.setMainphotourl(restaurant.getLogo());
-        basicInfo.setPhonenum(restaurant.getRestaurantTel());
-        placeDto.setBasicInfo(basicInfo);
+            // basicInfo : 가게명, 가게사진, 가게 전화번호
+            Restaurant restaurant = restaurantMapper.selectByRestaurantId(Long.valueOf(placeId));
+            BasicInfo basicInfo = new BasicInfo();
+            basicInfo.setPlacenamefull(restaurant.getRestaurantName());
+            basicInfo.setMainphotourl(STR."\{srcPrefix}restaurant/\{placeId}/\{restaurant.getLogo()}");
+            basicInfo.setPhonenum(restaurant.getRestaurantTel());
+            placeDto.setBasicInfo(basicInfo);
 
-        return placeDto;
+            return placeDto;
+        }
 
     }
 
@@ -71,7 +75,6 @@ public class MenuService {
         if (img == null || img.trim().isEmpty()) {
             return "";
         }
-        //TODO:restaurant->menu로 변경
         return STR."\{srcPrefix}restaurant/\{placeId}/\{img}";
     }
 
@@ -83,7 +86,7 @@ public class MenuService {
             menu.setPrice(item.getPrice());
 
             if (item.getImg() != null && !item.getImg().isEmpty()) {
-                String key = STR."prj4/menu/\{restaurantId}/\{item.getImg().getOriginalFilename()}";
+                String key = STR."prj4/restaurant/\{restaurantId}/\{item.getImg().getOriginalFilename()}";
                 PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                         .bucket(bucketName)
                         .key(key)

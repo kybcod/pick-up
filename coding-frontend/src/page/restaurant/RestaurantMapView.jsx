@@ -171,7 +171,7 @@ export default function RestaurantMapView() {
       imageUrl: categoryImage,
     }));
 
-    setMarkers(markersArray);
+    setMarkers((prevMarkers) => [...prevMarkers, ...markersArray]);
   };
 
   const handleRestaurantClick = (restaurant) => {

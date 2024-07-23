@@ -10,6 +10,7 @@ import java.util.List;
 public class PlaceDto {
     private BasicInfo basicInfo;
     private MenuInfoDto menuInfo;
+    private Boolean isExist;
 }
 
 @Data
