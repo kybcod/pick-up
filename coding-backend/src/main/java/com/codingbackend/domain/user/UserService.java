@@ -125,16 +125,18 @@ public class UserService {
     }
 
     public Map<String, Object> edit(User user, Authentication authentication) {
+        User dbUser = mapper.selectById(user.getId());
+
+        System.out.println(dbUser);
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-        } else {
-            User db = mapper.selectById(user.getId());
-            user.setPassword(db.getPassword());
+        }
+        if (dbUser.getPrevPassword() == null ) {
+            user.setPassword(dbUser.getPassword());
         }
         mapper.update(user);
 
         Jwt jwt = (Jwt) authentication.getPrincipal();
-
         Map<String, Object> claims = jwt.getClaims();
         JwtClaimsSet.Builder jwtClaimsSetBuilder = JwtClaimsSet.builder();
         claims.forEach(jwtClaimsSetBuilder::claim);

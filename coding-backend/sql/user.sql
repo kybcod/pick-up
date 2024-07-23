@@ -10,4 +10,7 @@ ALTER TABLE user
     ADD CONSTRAINT unique_nick_name UNIQUE (nick_name);
 
 INSERT INTO user (email, password, phone_number, nick_name)
-VALUES ('example@ex', 'aa', '010-1111-1111', 1);
+VALUES ('example@ex', 'aa', '010-1111-1111', 12);
+
+DELETE FROM user
+WHERE id = 17;

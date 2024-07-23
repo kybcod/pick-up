@@ -76,6 +76,7 @@ public class AppConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // deprecated 된 것들 람다식으로 변경
+        /*
         http.csrf(csrf -> csrf.disable());
 
         http.authorizeHttpRequests(authorize -> authorize
@@ -83,6 +84,10 @@ public class AppConfiguration {
                 .permitAll()
         );
 
+        http.oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()));
+
+        */
+        http.csrf(csrf -> csrf.disable());
         http.oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()));
 
         return http.build();

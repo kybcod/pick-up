@@ -89,6 +89,8 @@ export function MyPage() {
           description: "회원정보 수정을 실패했습니다. 다시 시도해주세요.",
           position: "top",
         });
+        console.log(prevPassword);
+        console.log(user.password);
         setIsEditing(true);
       })
       .finally(() => {
@@ -103,7 +105,7 @@ export function MyPage() {
     isDisableNickNameCheckButton = true;
   }
 
-  if (user.nickName.trim().length === 0) {
+  if (user.nickName == null) {
     isDisableNickNameCheckButton = true;
   }
   if (nickNameCheck) {
@@ -112,7 +114,7 @@ export function MyPage() {
 
   let isDisableSaveButton = false;
 
-  if (user.nickName.trim().length === 0) {
+  if (user.password.trim().length === 0) {
     isDisableSaveButton = true;
   }
 
@@ -148,8 +150,15 @@ export function MyPage() {
           <FormControl>
             <FormLabel>패스워드 확인</FormLabel>
             <Input onChange={(e) => setPasswordCheck(e.target.value)} />
-            {user.password === passwordCheck || (
-              <FormHelperText>패스워드가 일치하지 않습니다</FormHelperText>
+            {isEditing &&
+              passwordCheck.trim().length > 0 &&
+              (user.password === passwordCheck ? null : (
+                <FormHelperText>패스워드가 일치하지 않습니다</FormHelperText>
+              ))}
+            {passwordCheck.trim().length === 0 && (
+              <FormHelperText>
+                패스워드를 입력하지 않으면 기존의 패스워드를 유지합니다
+              </FormHelperText>
             )}
           </FormControl>
         </Box>
