@@ -26,7 +26,7 @@ function RegisterRestaurant({ onSubmit }) {
   const [restaurantName, setRestaurantName] = useState("");
   const [restaurantTel, setRestaurantTel] = useState("");
   const [address, setAddress] = useState("");
-  const [categoryName, setCategoryName] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [file, setFile] = useState([]);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
@@ -48,7 +48,7 @@ function RegisterRestaurant({ onSubmit }) {
         address,
         latitude,
         longitude,
-        name: categoryName,
+        name: categoryId,
         file,
       })
       .then(() => {
@@ -56,7 +56,7 @@ function RegisterRestaurant({ onSubmit }) {
         onSubmit({
           restaurantId: newRestaurantId,
           userId: account.id,
-          categoryName,
+          categoryId,
         });
       })
       .catch((error) => {
@@ -91,7 +91,7 @@ function RegisterRestaurant({ onSubmit }) {
     restaurantName === "" ||
     restaurantTel === "" ||
     address === "" ||
-    categoryName === ""
+    categoryId === ""
   ) {
     disableRegisterButton = true;
   }
@@ -185,7 +185,7 @@ function RegisterRestaurant({ onSubmit }) {
               <FormLabel>카테고리 선택</FormLabel>
               <Select
                 placeholder="카테고리 선택"
-                onChange={(e) => setCategoryName(e.target.value)}
+                onChange={(e) => setCategoryId(e.target.value)}
               >
                 <option value="1">한식</option>
                 <option value="2">중식</option>
