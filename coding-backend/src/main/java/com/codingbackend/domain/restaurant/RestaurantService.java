@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -30,6 +31,8 @@ public class RestaurantService {
         // 데이터베이스에 저장
         restaurantMapper.insert(restaurant);
 
+        //카테고리 연결 시키기
+
         //s3 저장
         if (file != null) {
             String key = STR."prj4/restaurant/\{restaurant.getRestaurantId()}/\{file.getOriginalFilename()}";
@@ -45,6 +48,10 @@ public class RestaurantService {
     }
 
     public Category getcategory(Integer category) {
-        return restaurantMapper.select(category);
+        return restaurantMapper.selectCategory(category);
+    }
+
+    public List<RestaurantRequestDto> getAll() {
+        return restaurantMapper.selectAll();
     }
 }

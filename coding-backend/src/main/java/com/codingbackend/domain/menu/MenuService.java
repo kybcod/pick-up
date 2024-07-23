@@ -37,10 +37,6 @@ public class MenuService {
     }
 
     public void insertMenu(Long restaurantId, List<MenuItem> menuItems) throws IOException {
-        if (restaurantMapper.findById(restaurantId) == null) {
-            throw new IllegalArgumentException("Restaurant with id " + restaurantId + " does not exist");
-        }
-
         for (MenuItem item : menuItems) {
             Menu menu = new Menu();
             menu.setRestaurantId(restaurantId);

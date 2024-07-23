@@ -194,7 +194,7 @@ function RegisterRestaurant({ onSubmit }) {
                 <option value="5">양식</option>
                 <option value="6">치킨</option>
                 <option value="7">아시아음식</option>
-                <option value="8">버거</option>
+                <option value="8">패스트푸드</option>
                 <option value="9">카페</option>
               </Select>
             </FormControl>
