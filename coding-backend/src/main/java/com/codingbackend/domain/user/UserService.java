@@ -131,7 +131,11 @@ public class UserService {
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        if (dbUser.getPrevPassword() == null ) {
+        else {
+            user.setPassword(dbUser.getPassword());
+        }
+
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
             user.setPassword(dbUser.getPassword());
         }
         mapper.update(user);

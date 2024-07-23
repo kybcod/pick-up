@@ -48,6 +48,7 @@ export function MyPage() {
   }
 
   function handleClickCheckNickName() {
+    alert(prevPassword);
     axios
       .get(`/api/user/check?nickName=${user.nickName}`)
       .then(() => {
