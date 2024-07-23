@@ -32,7 +32,7 @@ export function RestaurantList({
   );
 
   return (
-    <VStack spacing={2} align="stretch">
+    <VStack spacing={2} align="stretch" height={"95vh"} overflowY={"auto"}>
       {combinedRestaurants.map(
         (restaurant, index) =>
           restaurant &&
