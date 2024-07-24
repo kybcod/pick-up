@@ -23,3 +23,8 @@ FROM review_file;
 
 SELECT *
 FROM category;
+
+SELECT r.content, r.inserted, r.rating, r.restaurant_id, r.user_id, u.nick_name
+FROM review r
+         JOIN user u on u.id = r.user_id
+WHERE user_id = 9;

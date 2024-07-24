@@ -1,13 +1,33 @@
-import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  HStack,
+  Image,
+  Spinner,
+  Text,
+  useColorModeValue,
+  VStack,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faClock,
+  faMotorcycle,
+  faWonSign,
+} from "@fortawesome/free-solid-svg-icons";
 
 export function Payment() {
   const { userId, restaurantId } = useParams();
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [merchantUid, setMerchantUid] = useState("");
   const navigate = useNavigate();
+
+  const bgColor = useColorModeValue("white", "gray.800");
+  const textColor = useColorModeValue("gray.800", "white");
 
   useEffect(() => {
     const iamport = document.createElement("script");
@@ -116,7 +136,11 @@ export function Payment() {
   }
 
   if (paymentInfo === null) {
-    return <Spinner />;
+    return (
+      <Flex justify="center" align="center" height="100vh">
+        <Spinner size="xl" color="blue.500" />
+      </Flex>
+    );
   }
 
   return (
@@ -126,33 +150,79 @@ export function Payment() {
       p={5}
       boxShadow="xl"
       borderRadius="lg"
-      bg="white"
+      bg={bgColor}
     >
-      <Text fontSize="2xl" mb={4}>
-        주문 목록
-      </Text>
-      {paymentInfo.map((item) => (
-        <Box key={item.id} mb={3}>
-          <Text>메뉴: {item.menuName}</Text>
-          {item.menuPrice === null || (
-            <Text>가격: {item.menuPrice.toLocaleString()} 원</Text>
-          )}
-          <Text>수량: {item.menuCount}</Text>
+      {paymentInfo && (
+        <Box mb={6}>
+          <HStack spacing={4}>
+            <Image
+              src={paymentInfo.image || "/img/pickUp_black.png"}
+              boxSize="100px"
+              borderRadius="md"
+            />
+            <VStack align="start" spacing={1}>
+              <Text fontSize="2xl" fontWeight="bold">
+                {paymentInfo.name || "맛있는 음식점"}
+              </Text>
+              <HStack>
+                <FontAwesomeIcon icon={faMotorcycle} />
+                <Text fontSize="sm">
+                  배달비 {paymentInfo.deliveryFee || "2,000"}원
+                </Text>
+              </HStack>
+              <HStack>
+                <FontAwesomeIcon icon={faClock} />
+                <Text fontSize="sm">
+                  예상 배달 시간 {paymentInfo.estimatedTime || "40-50"}분
+                </Text>
+              </HStack>
+            </VStack>
+          </HStack>
         </Box>
-      ))}
-      <Box mb={4}>
-        <Text fontSize="xl" fontWeight="bold">
-          총 금액: {calculateTotalAmount().toLocaleString()} 원
-        </Text>
-      </Box>
-      <Flex>
-        <Button onClick={() => navigate(-1)}>뒤로가기</Button>
+      )}
+
+      <Divider mb={6} />
+
+      <Text fontSize="xl" fontWeight="bold" mb={4}>
+        주문 내역
+      </Text>
+      <VStack spacing={4} align="stretch" mb={6}>
+        {paymentInfo.map((item) => (
+          <HStack key={item.id} justify="space-between">
+            <VStack align="start" spacing={0}>
+              <Text fontWeight="bold">{item.menuName}</Text>
+              <Text fontSize="sm" color="gray.500">
+                수량: {item.menuCount}개
+              </Text>
+            </VStack>
+            <Text>{(item.menuPrice * item.menuCount).toLocaleString()}원</Text>
+          </HStack>
+        ))}
+      </VStack>
+
+      <Divider mb={6} />
+
+      <VStack spacing={2} align="stretch" mb={6}>
+        <HStack justify="space-between" fontWeight="bold">
+          <Text>총 결제 금액</Text>
+          <Text>{(calculateTotalAmount() + 2000).toLocaleString()}원</Text>
+        </HStack>
+      </VStack>
+
+      <Flex justify="space-between">
+        <Button onClick={() => navigate(-1)} colorScheme="gray">
+          뒤로가기
+        </Button>
         {calculateTotalAmount() === 0 ? (
-          <Button onClick={handleDirectOrders} ml={4}>
+          <Button onClick={handleDirectOrders} colorScheme="blue">
             주문하기
           </Button>
         ) : (
-          <Button onClick={onClickPayment} ml={4}>
+          <Button
+            onClick={onClickPayment}
+            colorScheme="blue"
+            leftIcon={<FontAwesomeIcon icon={faWonSign} />}
+          >
             결제하기
           </Button>
         )}
