@@ -34,8 +34,13 @@ export function DrawerExample() {
   const navigate = useNavigate();
 
   const handleNavigateTo = (path) => {
-    navigate(path);
-    onClose();
+    if (account.isLoggedIn()) {
+      navigate(path);
+      onClose();
+    } else {
+      navigate("/login");
+      onClose();
+    }
   };
 
   const menuItems = [
@@ -68,10 +73,15 @@ export function DrawerExample() {
           <DrawerHeader
             borderBottomWidth="1px"
             color="#2AC1BC"
-            onClick={() => handleNavigateTo(`/mypage/${account.id}`)}
             cursor={"pointer"}
           >
-            {account.nickName}님 안녕하세요!
+            {account.isLoggedIn() ? (
+              <Box onClick={() => handleNavigateTo(`/mypage/${account.id}`)}>
+                {account.nickName}님 안녕하세요!
+              </Box>
+            ) : (
+              <Box onClick={() => handleNavigateTo("/login")}>로그인</Box>
+            )}
           </DrawerHeader>
 
           <DrawerBody>
