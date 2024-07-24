@@ -14,5 +14,6 @@ public class Order {
     private Integer userId;
     private LocalDateTime inserted;
     private Boolean pickUpStatus;
+    private Integer totalPrice;
     private List<Integer> cartIds;
 }

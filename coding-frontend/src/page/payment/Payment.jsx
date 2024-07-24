@@ -68,6 +68,7 @@ export function Payment() {
             restaurantId,
             userId,
             cartIds,
+            totalPrice: calculateTotalAmount(),
           })
           .then(() => {
             alert(`결제성공`);

@@ -10,8 +10,9 @@ public class ReceivedOrder {
     private String restaurantName;
     private String logo;
 
-    private String menuName;
     private Integer orderUserId;
+    private Integer totalPrice;
+    private String merchantUid;
 
     private String nickName;
     private String phoneNumber;

@@ -9,8 +9,8 @@ import org.apache.ibatis.annotations.Update;
 public interface OrderMapper {
 
     @Insert("""
-            INSERT INTO orders (merchant_uid, restaurant_id, user_id, pick_up_status, review_status)
-            VALUES (#{merchantUid}, #{restaurantId}, #{userId}, FALSE, FALSE)
+            INSERT INTO orders (merchant_uid, restaurant_id, user_id, pick_up_status, review_status, total_price)
+            VALUES (#{merchantUid}, #{restaurantId}, #{userId}, FALSE, FALSE, #{totalPrice})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Order order);

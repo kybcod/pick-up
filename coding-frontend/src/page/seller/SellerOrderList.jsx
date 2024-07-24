@@ -49,11 +49,11 @@ function SellerOrderList(props) {
                 boxShadow="md"
                 bg="white"
               >
-                <Text fontSize="xl" fontWeight="bold" mb={3}>
-                  주문 번호: {orderUserId}
-                </Text>
                 {orders.map((order, index) => (
                   <Box key={index} mt={4}>
+                    <Text fontSize="xl" fontWeight="bold" mb={3}>
+                      주문 번호: {order.merchantUid}
+                    </Text>
                     <HStack spacing={4} align="center" mb={2}>
                       <Image
                         src={order.logo}
@@ -74,7 +74,7 @@ function SellerOrderList(props) {
                         가게 전화번호: {order.phoneNumber}
                       </Text>
                       <Text fontSize="sm" fontWeight="bold">
-                        주문 금액: 추후 추가
+                        주문 금액: {order.totalPrice.toLocaleString()} 원
                       </Text>
                     </HStack>
                   </Box>

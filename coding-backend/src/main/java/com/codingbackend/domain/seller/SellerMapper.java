@@ -16,6 +16,8 @@ public interface SellerMapper {
                    r.restaurant_name,
                    r.logo,
                    o.user_id       AS orderUserId,
+                   o.total_price,
+                   o.merchant_uid,
                    ou.nick_name    AS buyerName,
                    ou.phone_number AS buyerTel
             FROM user u
