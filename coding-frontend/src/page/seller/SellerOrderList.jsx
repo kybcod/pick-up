@@ -66,6 +66,20 @@ function SellerOrderList(props) {
       .catch(() => alert("시간 실패"));
   }
 
+  function handlePickUpClear(merchantUid) {
+    axios
+      .put("/api/orders/pick-up", { merchantUid })
+      .then(() => {
+        alert("픽업성공");
+        console.log(merchantUid);
+
+        axios.get(`/api/seller/orders/${userId}`).then((res) => {
+          setReceivedOrders(res.data);
+        });
+      })
+      .catch(() => alert("픽업 실패"));
+  }
+
   return (
     <Box maxWidth="800px" margin="auto" p={4}>
       {receivedOrders.length === 0 ? (
@@ -93,15 +107,27 @@ function SellerOrderList(props) {
                 <Image src={order.logo} boxSize="50px" borderRadius="full" />
                 <VStack align="start" spacing={1}>
                   <Text fontWeight="bold">{order.restaurantName}</Text>
-                  <Badge
-                    colorScheme="green"
-                    onClick={() =>
-                      handleOrderReception(order.orderUserId, order.merchantUid)
-                    }
-                    cursor={"pointer"}
-                  >
-                    주문 접수
-                  </Badge>
+                  <Flex display={"flex"} justifyContent={"center"}>
+                    <Badge
+                      colorScheme="green"
+                      onClick={() =>
+                        handleOrderReception(
+                          order.orderUserId,
+                          order.merchantUid,
+                        )
+                      }
+                      cursor={"pointer"}
+                    >
+                      {order.estimatedTime === null ? "주문 접수" : "조리중"}
+                    </Badge>
+                    {order.estimatedTime !== null && (
+                      <Button
+                        onClick={() => handlePickUpClear(order.merchantUid)}
+                      >
+                        픽업 완료
+                      </Button>
+                    )}
+                  </Flex>
                 </VStack>
               </HStack>
               <Divider my={2} />

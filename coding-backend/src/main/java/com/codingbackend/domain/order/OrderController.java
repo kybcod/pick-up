@@ -41,7 +41,11 @@ public class OrderController {
     @PutMapping("time")
     public void updateTime(@RequestBody Order order) {
         orderService.updateTime(order);
+    }
 
+    @PutMapping("pick-up")
+    public void updatePickUpStatus(@RequestBody Order order) {
+        orderService.updatePickUpStatus(order);
     }
 
 }

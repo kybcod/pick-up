@@ -31,7 +31,8 @@ public interface OrderMapper {
                    c.inserted,
                    c.order_id,
                    o.total_price,
-                   o.merchant_uid
+                   o.merchant_uid,
+                   o.estimated_time
             FROM cart c
                      JOIN orders o ON c.order_id = o.id
             WHERE c.user_id = #{userId}
@@ -45,4 +46,11 @@ public interface OrderMapper {
             WHERE merchant_uid=#{merchantUid}
             """)
     void updateEstimatedTime(String estimatedTime, String merchantUid);
+
+    @Update("""
+            UPDATE orders
+            SET pick_up_status = TRUE
+            WHERE merchant_uid=#{merchantUid}
+            """)
+    void updatePickUpStatus(String merchantUid);
 }

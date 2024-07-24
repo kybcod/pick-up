@@ -28,4 +28,8 @@ public class OrderService {
     public void updateTime(Order order) {
         orderMapper.updateEstimatedTime(order.getEstimatedTime(), order.getMerchantUid());
     }
+
+    public void updatePickUpStatus(Order order) {
+        orderMapper.updatePickUpStatus(order.getMerchantUid());
+    }
 }

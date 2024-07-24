@@ -18,6 +18,7 @@ public interface SellerMapper {
                    o.user_id       AS orderUserId,
                    o.total_price,
                    o.merchant_uid,
+                   o.estimated_time,
                    ou.nick_name    AS buyerName,
                    ou.phone_number AS buyerTel
             FROM user u

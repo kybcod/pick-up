@@ -15,4 +15,5 @@ public class CustomerOrderResponse {
     private Integer orderId;
     private Integer totalPrice;
     private String merchantUid;
+    private String estimatedTime;
 }
