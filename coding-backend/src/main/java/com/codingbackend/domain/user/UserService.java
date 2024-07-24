@@ -1,7 +1,9 @@
 package com.codingbackend.domain.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -75,7 +77,6 @@ public class UserService {
         if (db != null) {
             if (passwordEncoder.matches(user.getPassword(), db.getPassword())) {
                 result = new HashMap<>();
-                String token = "";
                 Instant now = Instant.now();
 
                 List<String> authority = mapper.selectAuthorityByUserId(db.getId());
@@ -86,7 +87,7 @@ public class UserService {
 
                 // https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/java/jwt/login/src/main/java/example/web/TokenController.java
                 JwtClaimsSet claims = JwtClaimsSet.builder()
-                        .issuer("self")
+                        .issuer("pickup")
                         .issuedAt(now)
                         .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
                         .subject(db.getId().toString())
@@ -94,11 +95,59 @@ public class UserService {
                         .claim("nickName", db.getNickName())
                         .build();
 
-                token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+                String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
                 result.put("token", token);
             }
         }
         return result;
+    }
+
+    public User getById(Integer id) {
+        return mapper.selectById(id);
+    }
+
+    public boolean hasAccessEdit(User user, Authentication authentication) {
+        if (!authentication.getName().equals(user.getId().toString())) {
+            return false;
+        }
+
+        User dbUser = mapper.selectById(user.getId());
+        if (dbUser == null) {
+            return false;
+        }
+
+        if (!passwordEncoder.matches(user.getPrevPassword(), dbUser.getPassword())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public Map<String, Object> edit(User user, Authentication authentication) {
+        User dbUser = mapper.selectById(user.getId());
+
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        else {
+            user.setPassword(dbUser.getPassword());
+        }
+
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            user.setPassword(dbUser.getPassword());
+        }
+        mapper.update(user);
+
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        Map<String, Object> claims = jwt.getClaims();
+        JwtClaimsSet.Builder jwtClaimsSetBuilder = JwtClaimsSet.builder();
+        claims.forEach(jwtClaimsSetBuilder::claim);
+        jwtClaimsSetBuilder.claim("nickName", user.getNickName());
+
+        JwtClaimsSet jwtClaimsSet = jwtClaimsSetBuilder.build();
+
+        String token = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
+        return Map.of("token", token);
     }
 }

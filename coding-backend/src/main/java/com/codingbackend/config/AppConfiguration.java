@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -75,6 +76,7 @@ public class AppConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // deprecated 된 것들 람다식으로 변경
+        /*
         http.csrf(csrf -> csrf.disable());
 
         http.authorizeHttpRequests(authorize -> authorize
@@ -82,6 +84,11 @@ public class AppConfiguration {
                 .permitAll()
         );
 
+        http.oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()));
+
+        */
+        http.csrf(csrf -> csrf.disable());
+        http.oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()));
 
         return http.build();
     }

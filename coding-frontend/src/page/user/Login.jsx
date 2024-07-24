@@ -34,6 +34,7 @@ function Login(props) {
           description: "로그인 되었습니다",
           position: "top",
         });
+        navigate("/");
       })
       .catch(() => {
         account.logout();
@@ -42,8 +43,7 @@ function Login(props) {
           description: "이메일과 패스워드를 확인해주세요",
           position: "top",
         });
-      })
-      .finally(() => navigate("/"));
+      });
   }
 
   return (

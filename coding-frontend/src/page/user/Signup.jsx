@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function Signup() {
   const [email, setEmail] = useState("");
@@ -19,6 +20,8 @@ export function Signup() {
   const [passwordCheck, setPasswordCheck] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [nickName, setNickName] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
+  const navigate = useNavigate();
   // const [address, setAddress] = useState("");
 
   let toast = useToast();
@@ -38,6 +41,7 @@ export function Signup() {
           description: "회원가입이 완료되었습니다",
           position: "top",
         });
+        navigate("/login");
       })
       .catch((err) => {
         if (err.response.status === 400) {
@@ -75,13 +79,14 @@ export function Signup() {
             position: "top",
           });
         }
+        setIsChecked(true);
       })
       .finally();
   }
 
   function handleCheckNickName() {
     axios
-      .get(`/api/user?nickName=${nickName}`)
+      .get(`/api/user/check?nickName=${nickName}`)
       .then(() => {
         toast({
           status: "warning",
@@ -97,6 +102,7 @@ export function Signup() {
             position: "top",
           });
         }
+        setIsChecked(true);
       })
       .finally();
   }
@@ -121,7 +127,9 @@ export function Signup() {
           <InputGroup>
             <Input onChange={(e) => setEmail(e.target.value)} />
             <InputRightElement>
-              <Button onClick={handleCheckEmail}>중복확인</Button>
+              <Button onClick={handleCheckEmail} isDisabled={isChecked}>
+                중복확인
+              </Button>
             </InputRightElement>
           </InputGroup>
           <FormHelperText>올바른 이메일 형식으로 입력해주세요</FormHelperText>
@@ -160,7 +168,9 @@ export function Signup() {
           <InputGroup>
             <Input onChange={(e) => setNickName(e.target.value)} />
             <InputRightElement>
-              <Button onClick={handleCheckNickName}>중복확인</Button>
+              <Button onClick={handleCheckNickName} isDisabled={isChecked}>
+                중복확인
+              </Button>
             </InputRightElement>
           </InputGroup>
         </FormControl>
