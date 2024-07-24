@@ -78,6 +78,7 @@ export function OrderList() {
           pickUpStatus: order.pickUpStatus,
           paymentStatus: order.paymentStatus,
           estimatedTime: order.estimatedTime,
+          reviewStatus: order.reviewStatus,
           items: [],
         };
       }
@@ -126,14 +127,22 @@ export function OrderList() {
                 {group.pickUpStatus ? (
                   <>
                     <Badge>픽업완료</Badge>
-                    <Button onClick={() => handleOpenModal(group.restaurantId)}>
-                      리뷰쓰기
-                    </Button>
+                    {group.reviewStatus ? (
+                      <Button onClick={() => navigate("/reviews")}>
+                        리뷰 보러 가기
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => handleOpenModal(group.restaurantId)}
+                      >
+                        리뷰쓰기
+                      </Button>
+                    )}
                   </>
                 ) : (
                   <>
                     {group.estimatedTime === null ? (
-                      <Badge>픽업대기</Badge>
+                      <Badge>접수 완료</Badge>
                     ) : (
                       <Badge>픽업대기 : {group.estimatedTime}</Badge>
                     )}
