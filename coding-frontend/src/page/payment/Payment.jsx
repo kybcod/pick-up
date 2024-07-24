@@ -7,7 +7,6 @@ import {
   Image,
   Spinner,
   Text,
-  useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -26,8 +25,7 @@ export function Payment() {
   const [merchantUid, setMerchantUid] = useState("");
   const navigate = useNavigate();
 
-  const bgColor = useColorModeValue("white", "gray.800");
-  const textColor = useColorModeValue("gray.800", "white");
+  const primaryColor = "#2AC1BC"; // 배달의민족 메인 색상
 
   useEffect(() => {
     const iamport = document.createElement("script");
@@ -46,7 +44,6 @@ export function Payment() {
     });
   }, [userId, restaurantId]);
 
-  // 주문번호 랜덤으로 받기
   function generateMerchantUid() {
     const date = new Date();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -64,14 +61,14 @@ export function Payment() {
     IMP.init(import.meta.env.VITE_KAKAO_KEY);
 
     const data = {
-      // pg: "nice_v2", // 나이스/
-      pg: "kakaopay", // 카카오페이
-      pay_method: "card", // 결제수단
-      merchant_uid: merchantUid, // 주문번호
-      amount: calculateTotalAmount(), // 결제금액
-      name: restaurantId, // 주문명
-      buyer_name: userId, // 구매자 이름
-      m_redirect_url: "/", // 모바일 결제 후 리디렉션될 URL : 채팅방으로
+      // pg: "nice_v2", // 나이스
+      pg: "kakaopay",
+      pay_method: "card",
+      merchant_uid: merchantUid,
+      amount: calculateTotalAmount(),
+      name: restaurantId,
+      buyer_name: userId,
+      m_redirect_url: "/",
     };
 
     IMP.request_pay(data, callback);
@@ -106,7 +103,6 @@ export function Payment() {
     }
   }
 
-  // 총 금액 계산 함수
   function calculateTotalAmount() {
     if (!paymentInfo) return 0;
     return paymentInfo.reduce((total, item) => {
@@ -138,95 +134,139 @@ export function Payment() {
   if (paymentInfo === null) {
     return (
       <Flex justify="center" align="center" height="100vh">
-        <Spinner size="xl" color="blue.500" />
+        <Spinner size="xl" />
       </Flex>
     );
   }
 
   return (
-    <Box
-      maxW="600px"
-      mx="auto"
-      p={5}
-      boxShadow="xl"
-      borderRadius="lg"
-      bg={bgColor}
-    >
-      {paymentInfo && (
-        <Box mb={6}>
-          <HStack spacing={4}>
-            <Image
-              src={paymentInfo.image || "/img/pickUp_black.png"}
-              boxSize="100px"
-              borderRadius="md"
-            />
-            <VStack align="start" spacing={1}>
-              <Text fontSize="2xl" fontWeight="bold">
-                {paymentInfo.name || "맛있는 음식점"}
-              </Text>
-              <HStack>
-                <FontAwesomeIcon icon={faMotorcycle} />
-                <Text fontSize="sm">
-                  배달비 {paymentInfo.deliveryFee || "2,000"}원
-                </Text>
-              </HStack>
-              <HStack>
-                <FontAwesomeIcon icon={faClock} />
-                <Text fontSize="sm">
-                  예상 배달 시간 {paymentInfo.estimatedTime || "40-50"}분
-                </Text>
-              </HStack>
-            </VStack>
-          </HStack>
-        </Box>
-      )}
-
-      <Divider mb={6} />
-
-      <Text fontSize="xl" fontWeight="bold" mb={4}>
-        주문 내역
-      </Text>
-      <VStack spacing={4} align="stretch" mb={6}>
-        {paymentInfo.map((item) => (
-          <HStack key={item.id} justify="space-between">
-            <VStack align="start" spacing={0}>
-              <Text fontWeight="bold">{item.menuName}</Text>
-              <Text fontSize="sm" color="gray.500">
-                수량: {item.menuCount}개
-              </Text>
-            </VStack>
-            <Text>{(item.menuPrice * item.menuCount).toLocaleString()}원</Text>
-          </HStack>
-        ))}
-      </VStack>
-
-      <Divider mb={6} />
-
-      <VStack spacing={2} align="stretch" mb={6}>
-        <HStack justify="space-between" fontWeight="bold">
-          <Text>총 결제 금액</Text>
-          <Text>{(calculateTotalAmount() + 2000).toLocaleString()}원</Text>
-        </HStack>
-      </VStack>
-
-      <Flex justify="space-between">
-        <Button onClick={() => navigate(-1)} colorScheme="gray">
-          뒤로가기
-        </Button>
-        {calculateTotalAmount() === 0 ? (
-          <Button onClick={handleDirectOrders} colorScheme="blue">
-            주문하기
-          </Button>
-        ) : (
-          <Button
-            onClick={onClickPayment}
-            colorScheme="blue"
-            leftIcon={<FontAwesomeIcon icon={faWonSign} />}
-          >
+    <Box minH="100vh">
+      <Box
+        maxW="600px"
+        mx="auto"
+        borderRadius="lg"
+        overflow="hidden"
+        border={"1px solid #2AC1BC"}
+      >
+        {/* 헤더 */}
+        <Box bg={primaryColor} color="white" p={4}>
+          <Text fontSize="2xl" fontWeight="bold">
             결제하기
-          </Button>
-        )}
-      </Flex>
+          </Text>
+        </Box>
+
+        {/* 콘텐츠 */}
+        <Box p={6}>
+          {paymentInfo && (
+            <Flex mb={6} align="center">
+              <Image
+                src={paymentInfo.image || "/img/restaurant-default.jpg"}
+                boxSize="80px"
+                borderRadius="md"
+                mr={4}
+              />
+              <VStack align="start" spacing={1}>
+                <Text fontSize="xl" fontWeight="bold">
+                  {paymentInfo.name || "맛있는 음식점"}
+                </Text>
+                <HStack color="gray.500">
+                  <FontAwesomeIcon icon={faMotorcycle} />
+                  <Text fontSize="sm">
+                    배달비 {paymentInfo.deliveryFee || "2,000"}원
+                  </Text>
+                </HStack>
+                <HStack color="gray.500">
+                  <FontAwesomeIcon icon={faClock} />
+                  <Text fontSize="sm">
+                    예상 배달 시간 {paymentInfo.estimatedTime || "40-50"}분
+                  </Text>
+                </HStack>
+              </VStack>
+            </Flex>
+          )}
+
+          <Divider mb={6} />
+
+          <Text fontSize="xl" fontWeight="bold" mb={4}>
+            주문 내역
+          </Text>
+
+          <VStack spacing={4} align="stretch" mb={6}>
+            {paymentInfo.map((item) => (
+              <Flex
+                key={item.id}
+                bg="gray.100"
+                borderRadius="md"
+                justify="space-between"
+                align="center"
+                p={4}
+              >
+                <Flex align="center" flex={1}>
+                  <Image
+                    src={item.menuImage || "/img/restaurant-default.jpg"}
+                    boxSize="60px"
+                    objectFit="cover"
+                    borderRadius="md"
+                    mr={4}
+                  />
+                  <VStack align="start" spacing={1}>
+                    <Text fontWeight="bold" fontSize="md">
+                      {item.menuName}
+                    </Text>
+                    <Text fontSize="sm" color="gray.500">
+                      {item.menuPrice.toLocaleString()}원 x {item.menuCount}개
+                    </Text>
+                  </VStack>
+                </Flex>
+                <Text fontWeight="bold" fontSize="lg">
+                  {(item.menuPrice * item.menuCount).toLocaleString()}원
+                </Text>
+              </Flex>
+            ))}
+          </VStack>
+
+          <Divider mb={6} />
+
+          <Box bg={primaryColor} color="white" p={4} borderRadius="md" mb={6}>
+            <Flex justify="space-between" align="center">
+              <Text fontSize="lg">총 결제 금액</Text>
+              <Text fontSize="2xl" fontWeight="bold">
+                {(calculateTotalAmount() + 2000).toLocaleString()}원
+              </Text>
+            </Flex>
+          </Box>
+
+          <Flex justify="space-between">
+            <Button
+              onClick={() => navigate(-1)}
+              variant="outline"
+              colorScheme="gray"
+            >
+              뒤로가기
+            </Button>
+            {calculateTotalAmount() === 0 ? (
+              <Button
+                onClick={handleDirectOrders}
+                bg={primaryColor}
+                color="white"
+                _hover={{ bg: "#249A95" }}
+              >
+                주문하기
+              </Button>
+            ) : (
+              <Button
+                onClick={onClickPayment}
+                bg={primaryColor}
+                color="white"
+                _hover={{ bg: "#249A95" }}
+                leftIcon={<FontAwesomeIcon icon={faWonSign} />}
+              >
+                결제하기
+              </Button>
+            )}
+          </Flex>
+        </Box>
+      </Box>
     </Box>
   );
 }
