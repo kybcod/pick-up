@@ -68,7 +68,7 @@ function ReviewList() {
           <FontAwesomeIcon
             key={i}
             icon={i < rating ? fullStar : emptyStar}
-            color={i < rating ? "#FFD700" : "gray"}
+            color={i < rating ? "#FFD43B" : "gray"}
             size="sm"
           />
         ))}
@@ -78,9 +78,7 @@ function ReviewList() {
 
   return (
     <Box maxW="800px" margin="auto" p={5}>
-      <Heading mb={6} color="blue.500">
-        나의 리뷰
-      </Heading>
+      <Heading mb={6}>리뷰내역</Heading>
       {reviewList.length > 0 ? (
         reviewList.map((review) => (
           <Box
@@ -106,7 +104,7 @@ function ReviewList() {
                 <HStack>
                   {renderStars(review.rating)}
                   <Text fontSize="sm" color="gray.500">
-                    {new Date(review.inserted).toLocaleDateString()}
+                    {new Date(review.inserted).toLocaleString("ko-KR")}
                   </Text>
                 </HStack>
               </VStack>
@@ -117,7 +115,7 @@ function ReviewList() {
               fontWeight="bold"
               cursor="pointer"
               onClick={() => navigate(`/menu/${review.restaurantId}`)}
-              color="blue.500"
+              color="#2AC1BC"
               mb={2}
             >
               {restaurantInfo[review.restaurantId]?.placenamefull}
