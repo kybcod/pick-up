@@ -14,8 +14,9 @@ public class Cart {
     private Integer menuPrice;
     private LocalDateTime inserted;
 
-    //결제
+
     private Boolean pickUpStatus;
+    private String estimatedTime;
 
     //리뷰
     private Boolean reviewStatus;

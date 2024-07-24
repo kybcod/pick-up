@@ -39,7 +39,6 @@ export function OrderList() {
         const restaurantIds = [
           ...new Set(res.data.map((order) => order.restaurantId)),
         ];
-        console.log("레스토랑 ID들:", restaurantIds);
 
         Promise.all(
           restaurantIds.map((id) =>
@@ -78,6 +77,8 @@ export function OrderList() {
           inserted: order.inserted,
           pickUpStatus: order.pickUpStatus,
           paymentStatus: order.paymentStatus,
+          estimatedTime: order.estimatedTime,
+          reviewStatus: order.reviewStatus,
           items: [],
         };
       }
@@ -124,16 +125,28 @@ export function OrderList() {
             >
               <Box>
                 {group.pickUpStatus ? (
-                  <Badge>픽업완료</Badge>
+                  <>
+                    <Badge>픽업완료</Badge>
+                    {group.reviewStatus ? (
+                      <Button onClick={() => navigate("/reviews")}>
+                        리뷰 보러 가기
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => handleOpenModal(group.restaurantId)}
+                      >
+                        리뷰쓰기
+                      </Button>
+                    )}
+                  </>
                 ) : (
-                  <Badge>픽업대기</Badge>
-                )}
-                {group.orderId !== null ? (
-                  <Button onClick={() => handleOpenModal(group.restaurantId)}>
-                    리뷰쓰기
-                  </Button>
-                ) : (
-                  <Badge>리뷰 작성 불가</Badge>
+                  <>
+                    {group.estimatedTime === null ? (
+                      <Badge>접수 완료</Badge>
+                    ) : (
+                      <Badge>픽업대기 : {group.estimatedTime}</Badge>
+                    )}
+                  </>
                 )}
               </Box>
               <Flex justify="space-between" align="center" mb={3}>

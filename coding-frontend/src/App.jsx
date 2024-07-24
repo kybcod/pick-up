@@ -16,7 +16,9 @@ import { Payment } from "./page/payment/Payment.jsx";
 import { OrderList } from "./page/myPage/OrderList.jsx";
 import ReviewList from "./page/myPage/ReviewList.jsx";
 import RestaurantRegistrationProcess from "./page/register/RestaurantRegistrationProcess.jsx";
-import SellerMainPage from "./page/mainPage/SellerMainPage.jsx";
+import SellerMainPage from "./page/seller/SellerMainPage.jsx";
+import SellerOrderList from "./page/seller/SellerOrderList.jsx";
+import SellerRestaurantList from "./page/seller/SellerRestaurantList.jsx";
 import { MyPage } from "./page/user/MyPage.jsx";
 import axios from "axios";
 
@@ -64,6 +66,8 @@ const router = createBrowserRouter([
 
       //seller
       { path: "seller", element: <SellerMainPage /> },
+      { path: "seller/orders", element: <SellerOrderList /> },
+      { path: "seller/restaurants", element: <SellerRestaurantList /> },
     ],
   },
 ]);

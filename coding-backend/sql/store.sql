@@ -3,20 +3,6 @@ USE prj4;
 SELECT *
 FROM restaurant;
 
-SELECT m.id,
-       m.restaurant_id,
-       m.name,#(MenuDto.menu)
-       m.price,#(MenuDto.price)
-       m.img,#(MenuDto.img)
-       m.inserted,
-       r.restaurant_name,#(BasicInfo.placenamefull)
-       r.restaurant_tel,#(BasicInfo.phonenum)
-       r.logo,#(BasicInfo.mainphotourl)
-       r.address
-FROM menu m
-         JOIN restaurant r ON m.restaurant_id = r.restaurant_id
-WHERE m.restaurant_id = 2092129811;
-
 SELECT *
 FROM menu;
 
@@ -37,3 +23,8 @@ FROM review_file;
 
 SELECT *
 FROM category;
+
+SELECT r.content, r.inserted, r.rating, r.restaurant_id, r.user_id, u.nick_name
+FROM review r
+         JOIN user u on u.id = r.user_id
+WHERE user_id = 9;
