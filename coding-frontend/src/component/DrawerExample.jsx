@@ -9,7 +9,6 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  Icon,
   Text,
   useDisclosure,
   VStack,
@@ -66,7 +65,12 @@ export function DrawerExample() {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton color="#2AC1BC" />
-          <DrawerHeader borderBottomWidth="1px" color="#2AC1BC">
+          <DrawerHeader
+            borderBottomWidth="1px"
+            color="#2AC1BC"
+            onClick={() => handleNavigateTo(`/mypage/${account.id}`)}
+            cursor={"pointer"}
+          >
             {account.nickName}님 안녕하세요!
           </DrawerHeader>
 
@@ -81,7 +85,7 @@ export function DrawerExample() {
                   cursor="pointer"
                   onClick={() => handleNavigateTo(item.path)}
                 >
-                  <Icon as={FontAwesomeIcon} icon={item.icon} mr={3} />
+                  <FontAwesomeIcon icon={item.icon} mr={3} />
                   <Text display="inline" fontWeight="bold">
                     {item.text}
                   </Text>
@@ -90,9 +94,18 @@ export function DrawerExample() {
             </VStack>
           </DrawerBody>
           <DrawerFooter borderTopWidth="1px">
-            <Button variant="outline" onClick={"/logout"} colorScheme="teal">
-              <FontAwesomeIcon icon={faRightFromBracket} />
-            </Button>
+            {account.isLoggedIn() && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  account.logout();
+                  navigate("/");
+                }}
+                colorScheme="teal"
+              >
+                <FontAwesomeIcon icon={faRightFromBracket} />
+              </Button>
+            )}
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

@@ -1,4 +1,3 @@
-// App.jsx
 import { ChakraProvider } from "@chakra-ui/react";
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -46,6 +45,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "oauth/login", element: <OAuthRedirectHandler /> },
       { path: "mypage/:userId", element: <MyPage /> },
+
       // map
       { path: "restaurant/:categoryId", element: <RestaurantMapView /> },
       { path: "menu/:placeId", element: <RestaurantMenuList /> },
