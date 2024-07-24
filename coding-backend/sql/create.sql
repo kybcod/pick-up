@@ -29,7 +29,8 @@ CREATE TABLE restaurant
     inserted        DATETIME     NOT NULL DEFAULT NOW(),
     logo            VARCHAR(500),
     latitude        DOUBLE,
-    longitude       DOUBLE
+    longitude       DOUBLE,
+    category_id     INT          NOT NULL
 );
 
 CREATE TABLE menu

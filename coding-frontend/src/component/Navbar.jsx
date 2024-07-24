@@ -18,10 +18,15 @@ import {
 import { useNavigate } from "react-router-dom";
 import React, { useContext } from "react";
 import { LoginContext } from "./LoginProvider.jsx";
+import { Box, Button, Flex, Image, Spacer } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import React from "react";
+import { DrawerExample } from "./DrawerExample.jsx";
 
 export function Navbar() {
   const navigate = useNavigate();
   const account = useContext(LoginContext);
+  const navigate = useNavigate();
 
   return (
     <Flex h={"55px"} cursor={"pointer"} backgroundColor={"#2AC1BC"}>
@@ -48,6 +53,31 @@ export function Navbar() {
           </Center>
         </Center>
       )}
+      <DrawerExample />
+    </Flex>
+  );
+  return (
+    <Flex
+      h="60px"
+      backgroundColor="#2AC1BC"
+      alignItems="center"
+      px={4}
+      boxShadow="0 2px 4px rgba(0,0,0,0.1)"
+      mb={10}
+    >
+      <Box cursor="pointer" w="150px" onClick={() => navigate("/")}>
+        <Image src="/img/pickUp_black.png" alt="Logo" />
+      </Box>
+      <Spacer />
+      <Button
+        onClick={() => navigate("login")}
+        variant="ghost"
+        color="white"
+        fontWeight="bold"
+        _hover={{ bg: "whiteAlpha.300" }}
+      >
+        로그인
+      </Button>
       <DrawerExample />
     </Flex>
   );
