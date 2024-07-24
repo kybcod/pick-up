@@ -141,7 +141,7 @@ export function MainPage() {
       <Container maxW="container.xl" py={8}>
         <VStack spacing={8} align="stretch">
           <Heading as="h1" size="xl" color="#2AC1BC" textAlign="center" mb={4}>
-            픽업 주문하기
+            픽업 주문
           </Heading>
 
           <Box bg="white" p={6} borderRadius="lg" boxShadow="md">
