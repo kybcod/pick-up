@@ -95,8 +95,8 @@ export function DrawerExample() {
                   cursor="pointer"
                   onClick={() => handleNavigateTo(item.path)}
                 >
-                  <FontAwesomeIcon icon={item.icon} mr={3} />
-                  <Text display="inline" fontWeight="bold">
+                  <FontAwesomeIcon icon={item.icon} />
+                  <Text ml={3} display="inline" fontWeight="bold">
                     {item.text}
                   </Text>
                 </Box>
