@@ -41,7 +41,8 @@ public class CartService {
     }
 
     public List<Cart> getOrdersByUserId(Integer userId) {
-        List<Cart> cartList = cartMapper.selectOrdersByUserId(userId);
-        return cartList;
+        return cartMapper.selectOrdersByUserId(userId);
     }
+
+
 }

@@ -66,14 +66,15 @@ CREATE TABLE category
 
 CREATE TABLE orders
 (
-    id            INT PRIMARY KEY AUTO_INCREMENT,
-    merchant_uid  VARCHAR(50) NOT NULL,
-    restaurant_id LONG        NOT NULL,
-    user_id       INT         NOT NULL REFERENCES user (id),
-    inserted      DATETIME    NOT NULL DEFAULT NOW(),
-    total_price   INT         NOT NULL,
-    pick_up_state BOOLEAN     NOT NULL DEFAULT FALSE,
-    review_status BOOLEAN     NOT NULL DEFAULT FALSE
+    id             INT PRIMARY KEY AUTO_INCREMENT,
+    merchant_uid   VARCHAR(50) NOT NULL,
+    restaurant_id  LONG        NOT NULL,
+    user_id        INT         NOT NULL REFERENCES user (id),
+    inserted       DATETIME    NOT NULL DEFAULT NOW(),
+    total_price    INT         NOT NULL,
+    pick_up_state  BOOLEAN     NOT NULL DEFAULT FALSE,
+    review_status  BOOLEAN     NOT NULL DEFAULT FALSE,
+    estimated_time VARCHAR(10) NULL
 );
 
 CREATE TABLE review
