@@ -40,7 +40,6 @@ function SellerMainPage(props) {
           {menuItems.map((item, index) => (
             <Button
               key={index}
-              leftIcon={<FontAwesomeIcon icon={item.icon} />}
               onClick={() => navigate(item.path)}
               size="lg"
               height="150"

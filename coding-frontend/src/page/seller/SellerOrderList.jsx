@@ -33,7 +33,8 @@ function SellerOrderList(props) {
   const [merchantUid, setMerchantUid] = useState("");
 
   useEffect(() => {
-    axios.get(`/api/seller/orders/${userId}`).then((res) => {
+    axios.get(`/api/orders/seller/${userId}`).then((res) => {
+      console.log(res.data);
       setReceivedOrders(res.data);
     });
   }, []);
@@ -108,20 +109,27 @@ function SellerOrderList(props) {
                 <VStack align="start" spacing={1}>
                   <Text fontWeight="bold">{order.restaurantName}</Text>
                   <Flex display={"flex"} justifyContent={"center"}>
-                    <Badge
-                      colorScheme="green"
-                      onClick={() =>
-                        handleOrderReception(
-                          order.orderUserId,
-                          order.merchantUid,
-                        )
-                      }
-                      cursor={"pointer"}
-                    >
-                      {order.estimatedTime === null ? "주문 접수" : "조리중"}
-                    </Badge>
+                    {order.estimatedTime === null ? (
+                      <Badge
+                        colorScheme="green"
+                        onClick={() =>
+                          handleOrderReception(
+                            order.orderUserId,
+                            order.merchantUid,
+                          )
+                        }
+                        cursor={"pointer"}
+                      >
+                        주문 접수
+                      </Badge>
+                    ) : (
+                      <Badge colorScheme="green" cursor={"pointer"}>
+                        조리 중
+                      </Badge>
+                    )}
                     {order.estimatedTime !== null && (
                       <Button
+                        isDisabled={order.pickUpStatus === true}
                         onClick={() => handlePickUpClear(order.merchantUid)}
                       >
                         픽업 완료

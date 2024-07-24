@@ -48,4 +48,10 @@ public class OrderController {
         orderService.updatePickUpStatus(order);
     }
 
+    @Description("판매자 주문 확인 내역 ")
+    @GetMapping("/seller/{userId}")
+    public List<ReceivedOrder> getReceivedOrders(@PathVariable Integer userId) {
+        return orderService.get(userId);
+    }
+
 }

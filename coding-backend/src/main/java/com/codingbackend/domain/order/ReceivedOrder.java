@@ -1,4 +1,4 @@
-package com.codingbackend.domain.seller;
+package com.codingbackend.domain.order;
 
 import lombok.Data;
 
@@ -14,6 +14,8 @@ public class ReceivedOrder {
     private Integer totalPrice;
     private String merchantUid;
     private String estimatedTime;
+    private Boolean pickUpStatus;
+
 
     private String nickName;
     private String phoneNumber;
