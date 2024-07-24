@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormHelperText,
   FormLabel,
@@ -21,6 +22,7 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import { useNavigate, useParams } from "react-router-dom";
+import { MyPageDelete } from "./MyPageDelete.jsx";
 
 export function MyPage() {
   const [user, setUser] = useState({ email: "", password: "", nickName: "" });
@@ -122,7 +124,7 @@ export function MyPage() {
 
   return (
     <Box>
-      <Heading>로그인</Heading>
+      <Heading>회원정보</Heading>
       <Box>
         <FormControl>
           <FormLabel>아이디</FormLabel>
@@ -187,14 +189,30 @@ export function MyPage() {
         </FormControl>
       </Box>
       {!isEditing && account.hasAccess && (
-        <Box>
+        <Flex>
           <Button onClick={handleClickEdit}>수정하기</Button>
-        </Box>
+          <MyPageDelete
+            user={user}
+            setUser={setUser}
+            prevPassword={prevPassword}
+            setPrevPassword={setPrevPassword}
+          />
+        </Flex>
       )}
       {isEditing && (
-        <Button onClick={onOpen} isDisabled={isDisableSaveButton}>
-          수정완료
-        </Button>
+        <Flex>
+          <Button onClick={onOpen} isDisabled={isDisableSaveButton}>
+            수정완료
+          </Button>
+          <MyPageDelete
+            user={user}
+            setUser={setUser}
+            prevPassword={prevPassword}
+            setPrevPassword={setPrevPassword}
+          >
+            탈퇴하기
+          </MyPageDelete>
+        </Flex>
       )}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

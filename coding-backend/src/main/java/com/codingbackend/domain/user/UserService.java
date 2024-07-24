@@ -107,7 +107,7 @@ public class UserService {
         return mapper.selectById(id);
     }
 
-    public boolean hasAccessEdit(User user, Authentication authentication) {
+    public boolean hasAccess(User user, Authentication authentication) {
         if (!authentication.getName().equals(user.getId().toString())) {
             return false;
         }
@@ -150,4 +150,9 @@ public class UserService {
         String token = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
         return Map.of("token", token);
     }
+
+    public void delete(Integer id) {
+        mapper.deleteById(id);
+    }
+
 }
