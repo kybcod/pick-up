@@ -20,7 +20,8 @@ export function Signup() {
   const [passwordCheck, setPasswordCheck] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [nickName, setNickName] = useState("");
-  const [isChecked, setIsChecked] = useState(false);
+  const [isEmailChecked, setIsEmailChecked] = useState(false);
+  const [isNickNameChecked, setIsNickNameChecked] = useState(false);
   const navigate = useNavigate();
   // const [address, setAddress] = useState("");
 
@@ -79,7 +80,7 @@ export function Signup() {
             position: "top",
           });
         }
-        setIsChecked(true);
+        setIsEmailChecked(true);
       })
       .finally();
   }
@@ -102,7 +103,7 @@ export function Signup() {
             position: "top",
           });
         }
-        setIsChecked(true);
+        setIsNickNameChecked(true);
       })
       .finally();
   }
@@ -127,7 +128,7 @@ export function Signup() {
           <InputGroup>
             <Input onChange={(e) => setEmail(e.target.value)} />
             <InputRightElement>
-              <Button onClick={handleCheckEmail} isDisabled={isChecked}>
+              <Button onClick={handleCheckEmail} isDisabled={isEmailChecked}>
                 중복확인
               </Button>
             </InputRightElement>
@@ -168,14 +169,18 @@ export function Signup() {
           <InputGroup>
             <Input onChange={(e) => setNickName(e.target.value)} />
             <InputRightElement>
-              <Button onClick={handleCheckNickName} isDisabled={isChecked}>
+              <Button
+                onClick={handleCheckNickName}
+                isDisabled={isNickNameChecked}
+              >
                 중복확인
               </Button>
             </InputRightElement>
           </InputGroup>
         </FormControl>
       </Box>
-      {/*<Box>
+      {/*
+      <Box>
         <FormControl>
           <FormLabel>주소</FormLabel>
           <Input onChange={(e) => setAddress(e.target.value)} />
