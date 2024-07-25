@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
   Heading,
@@ -68,11 +69,16 @@ function Login(props) {
         </FormControl>
       </Box>
       <Button onClick={handleClickLogin}>로그인</Button>
-      <a
-        href={`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=cOENA5ySQ3knmQd0ghMS&redirect_uri=${reUri}&state=${state}`}
-      >
-        <Image boxSize={"50px"} src={"/img/naver.png"} />
-      </a>
+      <Flex mt={10}>
+        <a
+          href={`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=cOENA5ySQ3knmQd0ghMS&redirect_uri=${reUri}&state=${state}`}
+        >
+          <Image boxSize={"50px"} src={"/img/naver.png"} />
+        </a>
+        <Button ml={3} onClick={() => navigate("/signup")}>
+          회원가입
+        </Button>
+      </Flex>
     </Box>
   );
 }
