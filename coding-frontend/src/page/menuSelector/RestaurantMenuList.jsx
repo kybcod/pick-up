@@ -20,8 +20,8 @@ import { SelectedMenuList } from "./SelectedMenuList.jsx";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faCaretUp,
   faExclamationTriangle,
-  faMotorcycle,
   faPhone,
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
@@ -92,6 +92,10 @@ export function RestaurantMenuList() {
 
   if (placeInfo === null) {
     return <Spinner />;
+  }
+
+  function handleTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
@@ -235,11 +239,16 @@ export function RestaurantMenuList() {
         right={4}
         bg="#2AC1BC"
         color="white"
-        borderRadius="full"
-        p={3}
+        width="50px" // 버튼의 너비
+        height="50px" // 버튼의 높이
+        borderRadius="full" // 둥근 모서리
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
         boxShadow="lg"
+        onClick={handleTop}
       >
-        <FontAwesomeIcon icon={faMotorcycle} size="lg" />
+        <FontAwesomeIcon icon={faCaretUp} size={"lg"} />
       </Box>
     </Box>
   );
