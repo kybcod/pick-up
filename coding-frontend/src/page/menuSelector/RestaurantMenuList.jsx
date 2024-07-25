@@ -32,6 +32,7 @@ export function RestaurantMenuList() {
   const { placeId } = useParams();
   const [placeInfo, setPlaceInfo] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [likeRestaurantIdList, setLikeRestaurantIdList] = useState(null);
   const [cart, setCart] = useState({});
   const account = useContext(LoginContext);
   const userId = account.id;
@@ -41,6 +42,13 @@ export function RestaurantMenuList() {
   useEffect(() => {
     axios.get(`/api/menus/${placeId}`).then((res) => {
       setPlaceInfo(res.data);
+    });
+
+    axios.get(`/api/favorites/${userId}`).then((res) => {
+      setLikeRestaurantIdList(res.data);
+      setIsFavorite(
+        res.data.some((favorite) => favorite.restaurantId == placeId),
+      );
     });
 
     axios.get(`/api/carts/${userId}/${placeId}`).then((res) => {
@@ -111,7 +119,7 @@ export function RestaurantMenuList() {
       .then((res) => {
         alert("put 요청 성공");
       })
-      .catch(() => alert("put 실패"));
+      .catch(() => alert("put 실패", restaurantId, userId));
   };
 
   return (
