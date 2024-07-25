@@ -38,4 +38,12 @@ public interface RestaurantMapper {
             SELECT * FROM restaurant WHERE user_id=#{userId}
             """)
     List<Restaurant> selectByUserId(Integer userId);
+
+    @Update("""
+            UPDATE restaurant 
+            SET restaurant_name=#{restaurantName} 
+                        AND restaurant_tel=#{restaurantTel} AND logo=#{logo}
+            WHERE restaurant_id=#{restaurantId}
+            """)
+    void updateRestaurantInfo(Long restaurantId);
 }

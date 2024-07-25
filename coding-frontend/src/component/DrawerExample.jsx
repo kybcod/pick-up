@@ -24,7 +24,6 @@ import {
   faRightFromBracket,
   faShoppingCart,
   faStar,
-  faStore,
 } from "@fortawesome/free-solid-svg-icons";
 
 export function DrawerExample() {
@@ -48,7 +47,6 @@ export function DrawerExample() {
     { icon: faClipboardList, text: "주문 내역", path: "/orders" },
     { icon: faHeart, text: "찜한 가게", path: "/favorites" },
     { icon: faStar, text: "리뷰 내역", path: "/reviews" },
-    { icon: faStore, text: "입점하기", path: "/register" },
   ];
 
   return (

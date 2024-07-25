@@ -15,8 +15,8 @@ import {
   StepTitle,
   useSteps,
 } from "@chakra-ui/react";
-import RegisterRestaurant from "./RegisterRestaurant";
-import AddRestaurantMenu from "./AddRestaurantMenu";
+import RegisterRestaurant from "./RegisterRestaurant.jsx";
+import AddRestaurantMenu from "./AddRestaurantMenu.jsx";
 import { useNavigate } from "react-router-dom";
 
 const steps = [

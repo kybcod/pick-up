@@ -24,7 +24,7 @@ function SellerMainPage(props) {
   const buttonColor = useColorModeValue("blue.500", "blue.200");
 
   const menuItems = [
-    { text: "가게 등록", icon: faStore, path: "/register" },
+    { text: "가게 등록", icon: faStore, path: "/seller/register" },
     { text: "주문 확인", icon: faClipboardList, path: "/seller/orders" },
     { text: "내 정보 관리", icon: faUser, path: `/mypage/${account.id}` },
     { text: "가게 관리", icon: faCog, path: "/seller/restaurants" },

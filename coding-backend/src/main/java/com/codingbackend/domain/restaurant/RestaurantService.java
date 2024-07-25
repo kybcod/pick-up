@@ -1,5 +1,6 @@
 package com.codingbackend.domain.restaurant;
 
+import com.codingbackend.domain.menu.MenuRestaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -66,5 +67,21 @@ public class RestaurantService {
             restaurant.setLogo(logoPath);
             return restaurant;
         }).collect(Collectors.toList());
+    }
+
+    public void updateRestaurant(MenuRestaurant menuRestaurant) throws IOException {
+        Long restaurantId = menuRestaurant.getRestaurantId();
+        restaurantMapper.updateRestaurantInfo(restaurantId);
+        //로고 s3 저장
+        if (menuRestaurant.getLogo() != null) {
+            //실제 S3 파일 저장
+            String key = STR."prj4/restaurant/\{menuRestaurant.getRestaurantId()}/\{menuRestaurant.getLogo()}";
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .acl(ObjectCannedACL.PUBLIC_READ)
+                    .build();
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(menuRestaurant.getLogo().getInputStream(), menuRestaurant.getLogo().getSize()));
+        }
     }
 }
