@@ -32,6 +32,14 @@ export function LoginProvider({ children }) {
     return authority.includes("admin");
   }
 
+  function isSeller() {
+    return authority.includes("seller");
+  }
+
+  function isBuyer() {
+    return authority.includes("buyer");
+  }
+
   // login
   function login(token) {
     localStorage.setItem("token", token);
@@ -61,6 +69,8 @@ export function LoginProvider({ children }) {
         isLoggedIn: isLoggedIn,
         hasAccess: hasAccess,
         isAdmin: isAdmin,
+        isSeller: isSeller,
+        isBuyer: isBuyer,
       }}
     >
       {children}
