@@ -34,6 +34,9 @@ export function Navbar() {
       {account.isLoggedIn() || (
         <Center>
           <Center onClick={() => navigate("login")}>login</Center>
+          <Center ml={1} onClick={() => navigate("signup")}>
+            / sign-up
+          </Center>
         </Center>
       )}
       {account.isLoggedIn() && (
