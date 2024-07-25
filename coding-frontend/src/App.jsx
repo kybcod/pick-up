@@ -15,12 +15,13 @@ import { CartList } from "./page/myPage/CartList.jsx";
 import { Payment } from "./page/payment/Payment.jsx";
 import { OrderList } from "./page/myPage/OrderList.jsx";
 import ReviewList from "./page/myPage/ReviewList.jsx";
-import RestaurantRegistrationProcess from "./page/register/RestaurantRegistrationProcess.jsx";
+import RestaurantRegistrationProcess from "./page/seller/register/RestaurantRegistrationProcess.jsx";
 import SellerMainPage from "./page/seller/SellerMainPage.jsx";
 import SellerOrderList from "./page/seller/SellerOrderList.jsx";
 import SellerRestaurantList from "./page/seller/SellerRestaurantList.jsx";
 import { MyPage } from "./page/user/MyPage.jsx";
 import axios from "axios";
+import SellerMenusDetails from "./page/seller/SellerMenusDetails.jsx";
 
 axios.interceptors.request.use(
   function (config) {
@@ -56,7 +57,6 @@ const router = createBrowserRouter([
       { path: "carts", element: <CartList /> },
       { path: "orders", element: <OrderList /> },
       { path: "reviews", element: <ReviewList /> },
-      { path: "register", element: <RestaurantRegistrationProcess /> },
 
       //pay
       {
@@ -66,8 +66,10 @@ const router = createBrowserRouter([
 
       //seller
       { path: "seller", element: <SellerMainPage /> },
+      { path: "seller/register", element: <RestaurantRegistrationProcess /> },
       { path: "seller/orders", element: <SellerOrderList /> },
       { path: "seller/restaurants", element: <SellerRestaurantList /> },
+      { path: "seller/:restaurantId/menus", element: <SellerMenusDetails /> },
     ],
   },
 ]);

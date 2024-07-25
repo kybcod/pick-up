@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Box,
+  Button,
   Container,
   Heading,
   Step,
@@ -14,8 +15,9 @@ import {
   StepTitle,
   useSteps,
 } from "@chakra-ui/react";
-import RegisterRestaurant from "./RegisterRestaurant";
-import AddRestaurantMenu from "./AddRestaurantMenu";
+import RegisterRestaurant from "./RegisterRestaurant.jsx";
+import AddRestaurantMenu from "./AddRestaurantMenu.jsx";
+import { useNavigate } from "react-router-dom";
 
 const steps = [
   { title: "가게 정보", description: "기본 정보 입력" },
@@ -29,6 +31,7 @@ function RestaurantRegistrationProcess() {
     count: steps.length,
   });
   const [restaurantData, setRestaurantData] = useState({});
+  const navigate = useNavigate();
 
   const handleRestaurantInfoSubmit = (data) => {
     console.log("data:", data);
@@ -75,6 +78,9 @@ function RestaurantRegistrationProcess() {
         <Box textAlign="center" p={8}>
           <Heading size="xl">등록에 성공했습니다!</Heading>
           <Box mt={4}>가게 정보와 메뉴가 성공적으로 등록되었습니다.</Box>
+          <Button onClick={() => naviaget("/seller")}>
+            메인 페이지로 이동
+          </Button>
         </Box>
       )}
     </Container>

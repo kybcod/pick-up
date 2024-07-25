@@ -102,4 +102,31 @@ public class MenuService {
             menuMapper.insert(menu);
         }
     }
+
+    public void updateMenu(MenuRestaurant menuRestaurant) throws IOException {
+        Long restaurantId = menuRestaurant.getRestaurantId();
+
+        for (MenuItem item : menuRestaurant.getMenuItems()) {
+            Menu menu = new Menu();
+            menu.setRestaurantId(restaurantId);
+            menu.setName(item.getName());
+            menu.setPrice(item.getPrice());
+
+            if (item.getImg() != null && !item.getImg().isEmpty()) {
+                String key = STR."prj4/restaurant/\{restaurantId}/\{item.getImg().getOriginalFilename()}";
+                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .acl(ObjectCannedACL.PUBLIC_READ)
+                        .build();
+
+                s3Client.putObject(putObjectRequest,
+                        RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
+
+                menu.setImg(item.getImg().getOriginalFilename());
+            }
+
+            menuMapper.update(menu);
+        }
+    }
 }
