@@ -2,6 +2,7 @@
 import {
   Box,
   Button,
+  Center,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -78,7 +79,14 @@ export function DrawerExample() {
                 {account.nickName}님 안녕하세요!
               </Box>
             ) : (
-              <Box onClick={() => handleNavigateTo("/login")}>로그인</Box>
+              <Center>
+                <Center onClick={() => handleNavigateTo("login")}>
+                  로그인
+                </Center>
+                <Center ml={1} onClick={() => handleNavigateTo("signup")}>
+                  / 회원가입
+                </Center>
+              </Center>
             )}
           </DrawerHeader>
 

@@ -21,27 +21,6 @@ export function Navbar() {
         <Image src="/img/pickUp_black.png" alt="Logo" />
       </Box>
       <Spacer />
-      {account.isLoggedIn() || (
-        <Center>
-          <Center onClick={() => navigate("login")}>login</Center>
-          <Center ml={1} onClick={() => navigate("signup")}>
-            / sign-up
-          </Center>
-        </Center>
-      )}
-      {account.isLoggedIn() && (
-        <Center>
-          <Center
-            onClick={() => {
-              account.logout();
-              navigate("/");
-            }}
-          >
-            logout
-          </Center>
-        </Center>
-      )}
-
       <DrawerExample />
     </Flex>
   );
