@@ -1,9 +1,6 @@
 package com.codingbackend.domain.user;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -14,7 +11,14 @@ public interface UserMapper {
             INSERT INTO user (email, password, phone_number, nick_name, address)
             VALUES           (#{email}, #{password}, #{phoneNum}, #{nickName}, #{address});
             """)
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void inserted(User user);
+
+    @Insert("""
+            INSERT INTO authority (user_id, name)
+            VALUES                (#{userId}, #{name});
+            """)
+    void insertedAuthority(Authority authority);
 
     @Select("""
             SELECT *
@@ -51,4 +55,16 @@ public interface UserMapper {
             WHERE id = #{id}
             """)
     void update(User user);
+
+    @Delete("""
+            DELETE FROM authority
+            WHERE user_id = #{id}
+            """)
+    void deleteAuthorityById(Integer id);
+
+    @Delete("""
+            DELETE FROM user
+            WHERE id = #{id}
+            """)
+    void deleteById(Integer id);
 }

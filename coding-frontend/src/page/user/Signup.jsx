@@ -8,6 +8,9 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Radio,
+  RadioGroup,
+  Stack,
   useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
@@ -20,19 +23,24 @@ export function Signup() {
   const [passwordCheck, setPasswordCheck] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [nickName, setNickName] = useState("");
-  const [isChecked, setIsChecked] = useState(false);
+  const [role, setRole] = useState("");
+  const [isEmailChecked, setIsEmailChecked] = useState(false);
+  const [isNickNameChecked, setIsNickNameChecked] = useState(false);
   const navigate = useNavigate();
   // const [address, setAddress] = useState("");
 
   let toast = useToast();
 
   function handleClick() {
+    const authorities = [{ userId: null, name: role }];
+    alert(role);
     axios
       .post("/api/user/signup", {
         email,
         password,
         phoneNum,
         nickName,
+        authorities,
         // address,
       })
       .then(() => {
@@ -48,6 +56,13 @@ export function Signup() {
           toast({
             status: "error",
             description: "입력값을 확인해 주세요.",
+            position: "top",
+          });
+        }
+        if (!role) {
+          toast({
+            status: "warning",
+            description: "권한을 선택해 주세요.",
             position: "top",
           });
         } else {
@@ -79,7 +94,7 @@ export function Signup() {
             position: "top",
           });
         }
-        setIsChecked(true);
+        setIsEmailChecked(true);
       })
       .finally();
   }
@@ -102,7 +117,7 @@ export function Signup() {
             position: "top",
           });
         }
-        setIsChecked(true);
+        setIsNickNameChecked(true);
       })
       .finally();
   }
@@ -121,13 +136,40 @@ export function Signup() {
       <Box>
         <Heading>회원가입</Heading>
       </Box>
+      <RadioGroup name={"authorities"}>
+        <Stack spacing={5} direction="row">
+          <Radio
+            value="seller"
+            onChange={(e) => {
+              setRole(e.target.value);
+              alert(e.target.value);
+            }}
+          >
+            판매자
+          </Radio>
+          <Radio
+            value="buyer"
+            onChange={(e) => {
+              setRole(e.target.value);
+              alert(e.target.value);
+            }}
+          >
+            구매자
+          </Radio>
+        </Stack>
+      </RadioGroup>
       <Box>
         <FormControl>
           <FormLabel>아이디</FormLabel>
           <InputGroup>
-            <Input onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setIsEmailChecked(false);
+              }}
+            />
             <InputRightElement>
-              <Button onClick={handleCheckEmail} isDisabled={isChecked}>
+              <Button onClick={handleCheckEmail} isDisabled={isEmailChecked}>
                 중복확인
               </Button>
             </InputRightElement>
@@ -166,16 +208,25 @@ export function Signup() {
         <FormControl>
           <FormLabel>닉네임</FormLabel>
           <InputGroup>
-            <Input onChange={(e) => setNickName(e.target.value)} />
+            <Input
+              onChange={(e) => {
+                setNickName(e.target.value);
+                setIsNickNameChecked(false);
+              }}
+            />
             <InputRightElement>
-              <Button onClick={handleCheckNickName} isDisabled={isChecked}>
+              <Button
+                onClick={handleCheckNickName}
+                isDisabled={isNickNameChecked}
+              >
                 중복확인
               </Button>
             </InputRightElement>
           </InputGroup>
         </FormControl>
       </Box>
-      {/*<Box>
+      {/*
+      <Box>
         <FormControl>
           <FormLabel>주소</FormLabel>
           <Input onChange={(e) => setAddress(e.target.value)} />

@@ -41,6 +41,7 @@ export function Navbar() {
           </Center>
         </Center>
       )}
+
       <DrawerExample />
     </Flex>
   );
