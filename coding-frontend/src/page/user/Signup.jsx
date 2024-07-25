@@ -163,7 +163,12 @@ export function Signup() {
         <FormControl>
           <FormLabel>아이디</FormLabel>
           <InputGroup>
-            <Input onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setIsEmailChecked(false);
+              }}
+            />
             <InputRightElement>
               <Button onClick={handleCheckEmail} isDisabled={isEmailChecked}>
                 중복확인
@@ -204,7 +209,12 @@ export function Signup() {
         <FormControl>
           <FormLabel>닉네임</FormLabel>
           <InputGroup>
-            <Input onChange={(e) => setNickName(e.target.value)} />
+            <Input
+              onChange={(e) => {
+                setNickName(e.target.value);
+                setIsNickNameChecked(false);
+              }}
+            />
             <InputRightElement>
               <Button
                 onClick={handleCheckNickName}
