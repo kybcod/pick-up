@@ -3,6 +3,7 @@ package com.codingbackend.domain.user;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class User {
@@ -14,4 +15,6 @@ public class User {
     private String nickName;
     private String address;
     private LocalDateTime inserted;
+
+    private List<Authority> authorities;
 }

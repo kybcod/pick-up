@@ -58,8 +58,13 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setNickName(user.getNickName().trim());
         user.setPhoneNum(user.getPhoneNum().trim());
-
         mapper.inserted(user);
+
+        Integer userId = user.getId();
+        for (Authority authority : user.getAuthorities()) {
+            authority.setUserId(userId);
+            mapper.insertedAuthority(authority);
+        }
     }
 
     public User getEmail(String email) {
@@ -107,7 +112,7 @@ public class UserService {
         return mapper.selectById(id);
     }
 
-    public boolean hasAccessEdit(User user, Authentication authentication) {
+    public boolean hasAccess(User user, Authentication authentication) {
         if (!authentication.getName().equals(user.getId().toString())) {
             return false;
         }
@@ -150,4 +155,10 @@ public class UserService {
         String token = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
         return Map.of("token", token);
     }
+
+    public void delete(Integer id) {
+        mapper.deleteAuthorityById(id);
+        mapper.deleteById(id);
+    }
+
 }

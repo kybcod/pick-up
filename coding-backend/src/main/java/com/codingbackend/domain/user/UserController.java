@@ -48,7 +48,7 @@ public class UserController {
     public ResponseEntity login(@RequestBody User user) {
         Map<String, Object> map = service.getToken(user);
 
-        if (map == null){
+        if (map == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(map);
@@ -73,9 +73,20 @@ public class UserController {
     @PutMapping("edit")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity edit(@RequestBody User user, Authentication authentication) {
-        if (service.hasAccessEdit(user, authentication)) {
-            Map<String, Object> result = service.edit( user, authentication);
+        if (service.hasAccess(user, authentication)) {
+            Map<String, Object> result = service.edit(user, authentication);
             return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+    @DeleteMapping("delete")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity deleteUser(@RequestBody User user, Authentication authentication) {
+        if (service.hasAccess(user, authentication)) {
+            service.delete(user.getId());
+            return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
