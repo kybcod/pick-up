@@ -11,7 +11,14 @@ public interface UserMapper {
             INSERT INTO user (email, password, phone_number, nick_name, address)
             VALUES           (#{email}, #{password}, #{phoneNum}, #{nickName}, #{address});
             """)
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void inserted(User user);
+
+    @Insert("""
+            INSERT INTO authority (user_id, name)
+            VALUES                (#{userId}, #{name});
+            """)
+    void insertedAuthority(Authority authority);
 
     @Select("""
             SELECT *
