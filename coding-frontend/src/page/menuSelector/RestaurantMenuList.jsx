@@ -111,15 +111,10 @@ export function RestaurantMenuList() {
   const handleFavorite = (restaurantId) => {
     setIsFavorite(!isFavorite);
     //찜 업데이트
-    axios
-      .put(`/api/favorites`, {
-        restaurantId,
-        userId,
-      })
-      .then((res) => {
-        alert("put 요청 성공");
-      })
-      .catch(() => alert("put 실패", restaurantId, userId));
+    axios.put(`/api/favorites`, {
+      restaurantId,
+      userId,
+    });
   };
 
   return (
