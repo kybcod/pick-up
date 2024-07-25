@@ -57,6 +57,12 @@ public interface UserMapper {
     void update(User user);
 
     @Delete("""
+            DELETE FROM authority
+            WHERE user_id = #{id}
+            """)
+    void deleteAuthorityById(Integer id);
+
+    @Delete("""
             DELETE FROM user
             WHERE id = #{id}
             """)

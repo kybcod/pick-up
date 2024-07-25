@@ -65,7 +65,6 @@ export function Signup() {
             description: "권한을 선택해 주세요.",
             position: "top",
           });
-          return;
         } else {
           toast({
             status: "error",

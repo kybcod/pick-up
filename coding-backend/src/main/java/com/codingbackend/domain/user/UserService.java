@@ -157,6 +157,7 @@ public class UserService {
     }
 
     public void delete(Integer id) {
+        mapper.deleteAuthorityById(id);
         mapper.deleteById(id);
     }
 
