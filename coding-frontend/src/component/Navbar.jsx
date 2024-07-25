@@ -1,12 +1,10 @@
-import { Box, Center, Flex, Image, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Image, Spacer } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import React, { useContext } from "react";
+import React from "react";
 import { DrawerExample } from "./DrawerExample.jsx";
-import { LoginContext } from "./LoginProvider.jsx";
 
 export function Navbar() {
   const navigate = useNavigate();
-  const account = useContext(LoginContext);
 
   return (
     <Flex
@@ -21,26 +19,6 @@ export function Navbar() {
         <Image src="/img/pickUp_black.png" alt="Logo" />
       </Box>
       <Spacer />
-      {account.isLoggedIn() || (
-        <Center>
-          <Center onClick={() => navigate("login")}>login</Center>
-          <Center ml={1} onClick={() => navigate("signup")}>
-            / sign-up
-          </Center>
-        </Center>
-      )}
-      {account.isLoggedIn() && (
-        <Center>
-          <Center
-            onClick={() => {
-              account.logout();
-              navigate("/");
-            }}
-          >
-            logout
-          </Center>
-        </Center>
-      )}
 
       <DrawerExample />
     </Flex>
