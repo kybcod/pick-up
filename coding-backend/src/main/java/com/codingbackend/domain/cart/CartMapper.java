@@ -56,6 +56,7 @@ public interface CartMapper {
                     c.menu_price,
                     c.inserted,
                     c.order_id,
+                    o.estimated_time,
                     o.pick_up_status,
                     o.review_status
              FROM cart c
@@ -76,4 +77,6 @@ public interface CartMapper {
             """
     })
     void updateOrderId(Integer orderId, List<Integer> cartIds);
+
+
 }

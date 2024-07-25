@@ -5,23 +5,19 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 @Mapper
 public interface RestaurantMapper {
 
     @Insert("""
-            INSERT INTO restaurant (restaurant_id, user_id, restaurant_name, restaurant_tel, address, logo, latitude, longitude)
-            VALUES (#{restaurantId},#{userId}, #{restaurantName}, #{restaurantTel}, #{address}, #{logo}, #{latitude}, #{longitude})
+            INSERT INTO restaurant (restaurant_id, user_id, restaurant_name, restaurant_tel, address, logo, latitude, longitude, category_id)
+            VALUES (#{restaurantId},#{userId}, #{restaurantName}, #{restaurantTel}, #{address}, #{logo}, #{latitude}, #{longitude}, #{categoryId})
             """)
     void insert(RestaurantRequestDto restaurant);
 
-    @Select("SELECT COUNT(*) FROM restaurant WHERE restaurant_id = #{restaurantId}")
-    int selectIsRestaurantId(Long restaurantId);
-
-    @Update("UPDATE restaurant SET category=#{category} WHERE restaurant_id = #{restaurantId}")
-    void updateCategory(Integer restaurantId, String category);
-
     @Select("SELECT * FROM category WHERE id = #{category}")
-    Category select(Integer category);
+    Category selectCategory(Integer category);
 
     @Update("""
             UPDATE restaurant 
@@ -30,6 +26,12 @@ public interface RestaurantMapper {
             """)
     void updateLogo(RestaurantRequestDto restaurant);
 
-    @Select("SELECT restaurant_id FROM restaurant WHERE restaurant_id = #{id}")
-    Long findById(Long id);
+    @Select("SELECT * FROM restaurant")
+    List<RestaurantRequestDto> selectAll();
+
+    @Select("""
+            SELECT * FROM restaurant WHERE restaurant_id=#{restaurantId}
+            """)
+    Restaurant selectByRestaurantId(Long restaurantId);
+
 }

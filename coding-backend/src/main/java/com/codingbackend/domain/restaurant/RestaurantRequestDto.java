@@ -13,7 +13,7 @@ public class RestaurantRequestDto {
     private String address;
     private double latitude;
     private double longitude;
-    private String categoryName;
+    private String categoryId;
     private String logo;
     private LocalDateTime inserted;
 }

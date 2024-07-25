@@ -9,8 +9,11 @@ import {
   Heading,
   Image,
   Input,
+  InputGroup,
+  InputRightElement,
   Select,
   SimpleGrid,
+  Text,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
@@ -26,7 +29,8 @@ function RegisterRestaurant({ onSubmit }) {
   const [restaurantName, setRestaurantName] = useState("");
   const [restaurantTel, setRestaurantTel] = useState("");
   const [address, setAddress] = useState("");
-  const [categoryName, setCategoryName] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [file, setFile] = useState([]);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
@@ -39,16 +43,18 @@ function RegisterRestaurant({ onSubmit }) {
     );
     setRestaurantId(newRestaurantId);
 
+    const newAddress = address + " " + address1;
+
     axios
       .postForm("/api/restaurants", {
         restaurantId: newRestaurantId,
         userId: account.id,
         restaurantName,
         restaurantTel,
-        address,
+        address: newAddress,
         latitude,
         longitude,
-        name: categoryName,
+        categoryId,
         file,
       })
       .then(() => {
@@ -56,7 +62,7 @@ function RegisterRestaurant({ onSubmit }) {
         onSubmit({
           restaurantId: newRestaurantId,
           userId: account.id,
-          categoryName,
+          categoryId,
         });
       })
       .catch((error) => {
@@ -91,7 +97,7 @@ function RegisterRestaurant({ onSubmit }) {
     restaurantName === "" ||
     restaurantTel === "" ||
     address === "" ||
-    categoryName === ""
+    categoryId === ""
   ) {
     disableRegisterButton = true;
   }
@@ -119,16 +125,16 @@ function RegisterRestaurant({ onSubmit }) {
   return (
     <Container maxW="container.md" py={10}>
       <VStack spacing={8} align="stretch">
-        <Heading as="h1" size="xl" textAlign="center" mb={6}>
+        <Heading as="h1" size="xl" textAlign="center" mb={6} color="#2AC1BC">
           가게 등록
         </Heading>
 
-        <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md">
-          <VStack spacing={6}>
+        <Box bg="white" p={8} borderRadius="xl" boxShadow="lg">
+          <VStack spacing={8}>
             <SimpleGrid columns={2} spacing={6} width="100%">
               <FormControl>
-                <FormLabel>사업장 번호</FormLabel>
-                <Flex display={"flex"} justifyContent={"space-between"}>
+                <FormLabel fontWeight="bold">사업장 번호</FormLabel>
+                <Flex>
                   <Input
                     type="number"
                     placeholder="3자리"
@@ -137,8 +143,11 @@ function RegisterRestaurant({ onSubmit }) {
                       handleInputChange(e, setRestaurantId1, inputRef2, 3)
                     }
                     ref={inputRef1}
+                    mr={2}
                   />
-                  -
+                  <Text alignSelf="center" mx={2}>
+                    -
+                  </Text>
                   <Input
                     type="number"
                     placeholder="2자리"
@@ -147,19 +156,23 @@ function RegisterRestaurant({ onSubmit }) {
                       handleInputChange(e, setRestaurantId2, inputRef3, 2)
                     }
                     ref={inputRef2}
+                    mx={2}
                   />
-                  -
+                  <Text alignSelf="center" mx={2}>
+                    -
+                  </Text>
                   <Input
                     type="number"
                     placeholder="5자리"
                     value={restaurantId3}
                     onChange={handleInput3Change}
                     ref={inputRef3}
+                    ml={2}
                   />
                 </Flex>
               </FormControl>
               <FormControl>
-                <FormLabel>가게 이름 (상호명)</FormLabel>
+                <FormLabel fontWeight="bold">가게 이름 (상호명)</FormLabel>
                 <Input
                   placeholder="상호명 입력"
                   onChange={(e) => setRestaurantName(e.target.value)}
@@ -168,7 +181,7 @@ function RegisterRestaurant({ onSubmit }) {
             </SimpleGrid>
 
             <FormControl>
-              <FormLabel>가게 전화번호</FormLabel>
+              <FormLabel fontWeight="bold">가게 전화번호</FormLabel>
               <Input
                 placeholder="전화번호 입력"
                 onChange={(e) => setRestaurantTel(e.target.value)}
@@ -176,16 +189,29 @@ function RegisterRestaurant({ onSubmit }) {
             </FormControl>
 
             <FormControl>
-              <FormLabel>가게 주소</FormLabel>
-              <Input value={address} readOnly />
-              <PostCode onSelectAddress={handleSelectAddress} />
+              <FormLabel fontWeight="bold">가게 주소</FormLabel>
+              <InputGroup>
+                <Input
+                  value={address}
+                  readOnly
+                  placeholder={"도로명/지번 주소"}
+                />
+                <InputRightElement width="4.5rem">
+                  <PostCode onSelectAddress={handleSelectAddress} />
+                </InputRightElement>
+              </InputGroup>
+              <Input
+                mt={2}
+                placeholder={"상세주소"}
+                onChange={(e) => setAddress1(e.target.value)}
+              />
             </FormControl>
 
             <FormControl>
-              <FormLabel>카테고리 선택</FormLabel>
+              <FormLabel fontWeight="bold">카테고리 선택</FormLabel>
               <Select
                 placeholder="카테고리 선택"
-                onChange={(e) => setCategoryName(e.target.value)}
+                onChange={(e) => setCategoryId(e.target.value)}
               >
                 <option value="1">한식</option>
                 <option value="2">중식</option>
@@ -194,29 +220,50 @@ function RegisterRestaurant({ onSubmit }) {
                 <option value="5">양식</option>
                 <option value="6">치킨</option>
                 <option value="7">아시아음식</option>
-                <option value="8">버거</option>
+                <option value="8">패스트푸드</option>
                 <option value="9">카페</option>
               </Select>
             </FormControl>
 
             <FormControl>
-              <FormLabel>로고 등록</FormLabel>
-              <Box mt={"30px"}>
-                <Image boxSize={"180px"} src={filePreview} />
-              </Box>
-              <Input type="file" accept="image/*" onChange={handleChangeLogo} />
+              <FormLabel fontWeight="bold">로고 등록</FormLabel>
+              <Flex direction="column" alignItems="center">
+                <Box
+                  mt={4}
+                  mb={4}
+                  borderWidth={2}
+                  borderStyle="dashed"
+                  borderColor="gray.300"
+                  borderRadius="md"
+                  p={4}
+                >
+                  <Image
+                    boxSize={"180px"}
+                    src={filePreview}
+                    objectFit="contain"
+                  />
+                </Box>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleChangeLogo}
+                />
+              </Flex>
             </FormControl>
           </VStack>
         </Box>
 
         <Button
-          colorScheme="blue"
+          colorScheme="teal"
+          bg="#2AC1BC"
+          color="white"
           size="lg"
           width="100%"
           onClick={handleRegisterRestaurant}
           isDisabled={disableRegisterButton}
+          _hover={{ bg: "#219A95" }}
         >
-          다음
+          등록하기
         </Button>
       </VStack>
     </Container>

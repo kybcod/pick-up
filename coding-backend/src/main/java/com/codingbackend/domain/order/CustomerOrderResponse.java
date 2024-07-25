@@ -3,18 +3,17 @@ package com.codingbackend.domain.order;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
 
 @Data
-public class Order {
-    private Integer id;
-    private String merchantUid;
+public class CustomerOrderResponse {
     private Long restaurantId;
     private Integer userId;
+    private String menuName;
+    private Integer menuCount;
+    private Integer menuPrice;
     private LocalDateTime inserted;
-    private Boolean pickUpStatus;
+    private Integer orderId;
     private Integer totalPrice;
+    private String merchantUid;
     private String estimatedTime;
-    private List<Integer> cartIds;
 }

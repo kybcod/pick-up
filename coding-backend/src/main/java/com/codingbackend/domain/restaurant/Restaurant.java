@@ -12,6 +12,7 @@ public class Restaurant {
     private String restaurantName;
     private String restaurantTel; //전화번호
     private String address;
+    private String logo;
     private Double latitude;
     private Double longitude;
     private LocalDateTime inserted;
