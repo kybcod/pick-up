@@ -93,3 +93,11 @@ CREATE TABLE review_file
     review_id INT          NOT NULL REFERENCES review (id),
     file_name VARCHAR(200) NOT NULL
 );
+
+CREATE TABLE favorites
+(
+    id            INT PRIMARY KEY AUTO_INCREMENT,
+    user_id       INT      NOT NULL,
+    restaurant_id BIGINT   NOT NULL,
+    created_at    DATETIME NOT NULL DEFAULT NOW()
+);

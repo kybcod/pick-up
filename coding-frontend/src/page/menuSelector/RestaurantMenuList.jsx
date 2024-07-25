@@ -22,6 +22,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCaretUp,
   faExclamationTriangle,
+  faHeart,
+  faHeartCircleCheck,
   faPhone,
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
@@ -29,10 +31,10 @@ import {
 export function RestaurantMenuList() {
   const { placeId } = useParams();
   const [placeInfo, setPlaceInfo] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [cart, setCart] = useState({});
   const account = useContext(LoginContext);
   const userId = account.id;
-
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const cardBgColor = useColorModeValue("white", "gray.800");
 
@@ -98,6 +100,20 @@ export function RestaurantMenuList() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  const handleFavorite = (restaurantId) => {
+    setIsFavorite(!isFavorite);
+    //찜 업데이트
+    axios
+      .put(`/api/favorites`, {
+        restaurantId,
+        userId,
+      })
+      .then((res) => {
+        alert("put 요청 성공");
+      })
+      .catch(() => alert("put 실패"));
+  };
+
   return (
     <Box bg={bgColor} minHeight="100vh">
       <Box bg="#2AC1BC" py={6}>
@@ -138,6 +154,28 @@ export function RestaurantMenuList() {
                   <FontAwesomeIcon icon={faExclamationTriangle} size="3x" />
                 </Box>
               )}
+              <Box
+                position="absolute"
+                top={4}
+                right={4}
+                onClick={() => handleFavorite(placeId)}
+                cursor="pointer"
+                bg="white"
+                borderRadius="full"
+                w="40px"
+                h="40px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                boxShadow="md"
+              >
+                <FontAwesomeIcon
+                  icon={isFavorite ? faHeartCircleCheck : faHeart}
+                  color={isFavorite ? "red" : "gray"}
+                  size="lg"
+                />
+              </Box>
+
               <Box
                 position="absolute"
                 bottom={0}
