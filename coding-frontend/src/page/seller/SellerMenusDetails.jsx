@@ -36,9 +36,22 @@ function SellerMenusDetails(props) {
   }, []);
 
   const handleSave = () => {
+    const updatedMenuItems = menuList.menuInfo.menuList.map((item, index) => ({
+      name: item.menu,
+      price: item.price,
+      img: fileInputRefs.current[index + 1].current.files[0],
+    }));
+
     axios
-      .put(`/api/menus/${restaurantId}`, menuList)
-      .then(() => {
+      .putForm(`/api/menus/seller/${restaurantId}`, {
+        restaurantId: restaurantId,
+        restaurantName: menuList.basicInfo.placenamefull,
+        restaurantTel: menuList.basicInfo.phonenum,
+        logo: fileInputRefs.current[0].current.files[0],
+        menuItems: updatedMenuItems,
+      })
+      .then((res) => {
+        console.log("put", res.data);
         toast({
           description: "메뉴 정보가 성공적으로 업데이트되었습니다.",
           status: "success",
