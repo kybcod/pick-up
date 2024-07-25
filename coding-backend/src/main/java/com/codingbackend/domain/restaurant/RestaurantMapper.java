@@ -34,4 +34,8 @@ public interface RestaurantMapper {
             """)
     Restaurant selectByRestaurantId(Long restaurantId);
 
+    @Select("""
+            SELECT * FROM restaurant WHERE user_id=#{userId}
+            """)
+    List<Restaurant> selectByUserId(Integer userId);
 }
