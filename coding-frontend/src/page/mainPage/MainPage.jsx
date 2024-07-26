@@ -17,8 +17,9 @@ import {
   faLocationCrosshairs,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { LoginContext } from "../../component/LoginProvider.jsx";
 
 const categories = [
   "한식",
@@ -49,6 +50,8 @@ export function MainPage() {
   const [currentPosition, setCurrentPosition] = useState(null);
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const account = useContext(LoginContext);
+  const userId = account.id;
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -58,7 +61,7 @@ export function MainPage() {
 
     script.onload = () => {
       window.kakao.maps.load(() => {
-        const savedPosition = localStorage.getItem("currentPosition");
+        const savedPosition = localStorage.getItem(`currentPosition_${userId}`);
         if (savedPosition) {
           const { latitude, longitude } = JSON.parse(savedPosition);
           setCurrentPosition({ latitude, longitude });
@@ -77,10 +80,12 @@ export function MainPage() {
         currentPosition.latitude,
         currentPosition.longitude,
       );
-      // Save position to localStorage
-      localStorage.setItem("currentPosition", JSON.stringify(currentPosition));
+      localStorage.setItem(
+        `currentPosition_${userId}`,
+        JSON.stringify(currentPosition),
+      );
     }
-  }, [currentPosition]);
+  }, [currentPosition, userId]);
 
   const fetchAddressFromCoords = (latitude, longitude) => {
     const geocoder = new window.kakao.maps.services.Geocoder();
