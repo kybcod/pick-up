@@ -64,6 +64,14 @@ public class MenuService {
             basicInfo.setPlacenamefull(restaurant.getRestaurantName());
             basicInfo.setMainphotourl(STR."\{srcPrefix}restaurant/\{placeId}/\{restaurant.getLogo()}");
             basicInfo.setPhonenum(restaurant.getRestaurantTel());
+
+            // 리뷰 정보 설정
+            FeedbackDto feedbackDto = new FeedbackDto();
+            feedbackDto.setScoresum(restaurant.getRating()); // 적절한 메서드로 수정
+            feedbackDto.setScorecnt(feedbackDto.getScorecnt() + 1);  // 적절한 메서드로 수정
+            basicInfo.setFeedback(feedbackDto);
+
+
             placeDto.setBasicInfo(basicInfo);
 
             return placeDto;

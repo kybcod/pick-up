@@ -30,7 +30,10 @@ public interface RestaurantMapper {
     List<RestaurantRequestDto> selectAll();
 
     @Select("""
-            SELECT * FROM restaurant WHERE restaurant_id=#{restaurantId}
+            SELECT *
+            FROM restaurant r
+                     JOIN review rv ON r.restaurant_id = rv.restaurant_id
+            WHERE r.restaurant_id ==#{restaurantId}
             """)
     Restaurant selectByRestaurantId(Long restaurantId);
 

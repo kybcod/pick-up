@@ -158,6 +158,7 @@ export default function RestaurantMapView() {
                 setCombinedRestaurants(combinedPlaces);
                 setMarkers(combinedPlaces);
               }
+              console.log("combi", combinedRestaurants);
             } else {
               console.error("Failed to fetch places:", status);
             }
