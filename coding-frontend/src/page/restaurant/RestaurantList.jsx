@@ -17,39 +17,38 @@ export function RestaurantList({ restaurants, onRestaurantClick }) {
   const navigate = useNavigate();
   const bgColor = useColorModeValue("white", "gray.800");
   const hoverColor = useColorModeValue("gray.100", "gray.700");
-  const [reviewInfo, setReviewInfo] = useState({});
+  const [restaurantData, setRestaurantData] = useState([]);
 
   useEffect(() => {
-    async function fetchReviewInfo() {
-      const reviews = await Promise.all(
+    async function fetchRestaurantData() {
+      const data = await Promise.all(
         restaurants.map(async (restaurant) => {
           try {
             const response = await axios.get(
               `/api/menus/${restaurant.place.id}`,
             );
-            return { id: restaurant.place.id, data: response.data };
+            return { ...restaurant, ...response.data };
           } catch (error) {
             console.error(
-              `Failed to fetch reviews for restaurant ID ${restaurant.place.id}:`,
+              `Failed to fetch data for restaurant ID ${restaurant.place.id}:`,
               error,
             );
-            return { id: restaurant.place.id, data: null };
+            return {
+              ...restaurant,
+              basicInfo: { feedback: { scoresum: 0, scorecnt: 0 } },
+            }; // Default feedback in case of error
           }
         }),
       );
-      const reviewData = {};
-      reviews.forEach(({ id, data }) => {
-        reviewData[id] = data;
-      });
-      setReviewInfo(reviewData);
+      setRestaurantData(data);
     }
 
-    fetchReviewInfo();
+    fetchRestaurantData();
   }, [restaurants]);
 
   return (
     <VStack spacing={0} align="stretch" height="100%" overflowY="auto">
-      {restaurants.length === 0 ? (
+      {restaurantData.length === 0 ? (
         <Flex direction="column" align="center" justify="center" height="500px">
           <Image src={"/img/cart_clear.png"} boxSize="150px" mb={4} />
           <Text fontSize="2xl" textAlign="center" color="gray.500">
@@ -57,19 +56,16 @@ export function RestaurantList({ restaurants, onRestaurantClick }) {
           </Text>
         </Flex>
       ) : (
-        restaurants.map((restaurant, index) => {
-          const feedback = reviewInfo[restaurant.place.id]?.basicInfo
-            ?.feedback || { scoresum: 0, scorecnt: 0 };
-          const { scoresum, scorecnt } = feedback;
+        restaurantData.map((restaurant, index) => {
+          const { scoresum, scorecnt } = restaurant.basicInfo.feedback;
           const averageScore =
             scorecnt > 0 ? (scoresum / scorecnt).toFixed(1) : "리뷰 없음";
-          const basicInfo = reviewInfo[restaurant.place.id]?.basicInfo || {};
           const {
             placenamefull,
             mainphotourl,
             road_address_name,
             address_name,
-          } = basicInfo;
+          } = restaurant.basicInfo;
 
           return (
             <Box
