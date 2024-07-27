@@ -28,4 +28,11 @@ public interface ReviewMapper {
 
     @Select("SELECT file_name FROM review_file WHERE review_id=#{id}")
     List<String> selectFileNamesByReviewId(Integer id);
+
+    @Select("""
+            SELECT *, COUNT(*) AS reviewCount
+            FROM review
+            WHERE restaurant_id =#{restaurantId}
+            """)
+    Review selectReviewByRestaurantId(Long restaurantId);
 }

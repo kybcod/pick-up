@@ -2,6 +2,8 @@ package com.codingbackend.domain.menu;
 
 import com.codingbackend.domain.restaurant.Restaurant;
 import com.codingbackend.domain.restaurant.RestaurantMapper;
+import com.codingbackend.domain.review.Review;
+import com.codingbackend.domain.review.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ public class MenuService {
     private final MenuMapper menuMapper;
     private final S3Client s3Client;
     private final RestaurantMapper restaurantMapper;
+    private final ReviewMapper reviewMapper;
 
     @Value("${aws.s3.bucket.name}")
     String bucketName;
@@ -66,9 +69,10 @@ public class MenuService {
             basicInfo.setPhonenum(restaurant.getRestaurantTel());
 
             // 리뷰 정보 설정
+            Review restaurantReview = reviewMapper.selectReviewByRestaurantId(Long.valueOf(placeId));
             FeedbackDto feedbackDto = new FeedbackDto();
-            feedbackDto.setScoresum(restaurant.getRating()); // 적절한 메서드로 수정
-            feedbackDto.setScorecnt(feedbackDto.getScorecnt() + 1);  // 적절한 메서드로 수정
+            feedbackDto.setScoresum(restaurantReview.getRating()); // 적절한 메서드로 수정
+            feedbackDto.setScorecnt(restaurantReview.getReviewCount());  // 적절한 메서드로 수정
             basicInfo.setFeedback(feedbackDto);
 
 

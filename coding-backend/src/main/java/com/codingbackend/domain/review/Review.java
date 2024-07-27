@@ -12,6 +12,7 @@ public class Review {
     private Long restaurantId;
     private Integer userId;
     private Integer rating;
+    private Integer reviewCount;
     private String content;
     private LocalDateTime inserted;
     private Boolean reviewStatus;

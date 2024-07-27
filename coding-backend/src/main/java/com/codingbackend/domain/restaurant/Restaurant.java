@@ -9,7 +9,6 @@ public class Restaurant {
     private Integer id;
     private Long restaurantId;
     private Integer userId;
-    private Integer rating;
     private String restaurantName;
     private String restaurantTel; //전화번호
     private String address;

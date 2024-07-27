@@ -31,9 +31,7 @@ public interface RestaurantMapper {
 
     @Select("""
             SELECT *
-            FROM restaurant r
-                     JOIN review rv ON r.restaurant_id = rv.restaurant_id
-            WHERE r.restaurant_id ==#{restaurantId}
+            FROM restaurant WHERE restaurant_id = #{restaurantId}
             """)
     Restaurant selectByRestaurantId(Long restaurantId);
 
