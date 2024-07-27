@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Badge,
   Box,
@@ -10,7 +11,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 export function RestaurantList({ restaurants, onRestaurantClick }) {
@@ -20,17 +20,31 @@ export function RestaurantList({ restaurants, onRestaurantClick }) {
   const [reviewInfo, setReviewInfo] = useState({});
 
   useEffect(() => {
-    restaurants.map((restaurant) => {
-      axios
-        .get(`/api/menus/${restaurant.place.id}`)
-        .then((res) => {
-          setReviewInfo((prev) => ({
-            ...prev,
-            [restaurant.place.id]: res.data,
-          }));
-        })
-        .catch(() => alert("리뷰 정보를 가져오는 데 실패했습니다."));
-    });
+    async function fetchReviewInfo() {
+      const reviews = await Promise.all(
+        restaurants.map(async (restaurant) => {
+          try {
+            const response = await axios.get(
+              `/api/menus/${restaurant.place.id}`,
+            );
+            return { id: restaurant.place.id, data: response.data };
+          } catch (error) {
+            console.error(
+              `Failed to fetch reviews for restaurant ID ${restaurant.place.id}:`,
+              error,
+            );
+            return { id: restaurant.place.id, data: null };
+          }
+        }),
+      );
+      const reviewData = {};
+      reviews.forEach(({ id, data }) => {
+        reviewData[id] = data;
+      });
+      setReviewInfo(reviewData);
+    }
+
+    fetchReviewInfo();
   }, [restaurants]);
 
   return (
@@ -43,72 +57,77 @@ export function RestaurantList({ restaurants, onRestaurantClick }) {
           </Text>
         </Flex>
       ) : (
-        <>
-          {restaurants.map((restaurant, index) => {
-            const feedback = reviewInfo[restaurant.place.id];
-            const { scoresum, scorecnt } = feedback || {
-              scoresum: 0,
-              scorecnt: 0,
-            };
-            const averageScore =
-              scorecnt > 0 ? (scoresum / scorecnt).toFixed(1) : "리뷰 없음";
+        restaurants.map((restaurant, index) => {
+          const feedback = reviewInfo[restaurant.place.id]?.basicInfo
+            ?.feedback || { scoresum: 0, scorecnt: 0 };
+          const { scoresum, scorecnt } = feedback;
+          const averageScore =
+            scorecnt > 0 ? (scoresum / scorecnt).toFixed(1) : "리뷰 없음";
+          const basicInfo = reviewInfo[restaurant.place.id]?.basicInfo || {};
+          const {
+            placenamefull,
+            mainphotourl,
+            road_address_name,
+            address_name,
+          } = basicInfo;
 
-            return (
-              <Box
-                key={restaurant.place.id || index}
-                p={4}
-                bg={bgColor}
-                borderBottomWidth="1px"
-                borderColor="gray.200"
-                cursor="pointer"
-                onClick={() => {
-                  onRestaurantClick(restaurant);
-                  navigate(`/menu/${restaurant.place.id}`);
-                }}
-                _hover={{ bg: hoverColor }}
-              >
-                <Flex>
-                  <Image
-                    borderRadius="md"
-                    boxSize="80px"
-                    src={
-                      restaurant.imageUrl || "https://via.placeholder.com/80"
-                    }
-                    alt={restaurant.place.place_name}
-                    mr={4}
-                  />
-                  <Box>
-                    <Flex align="center" mb={1}>
-                      <Text fontWeight="bold" fontSize="lg">
-                        {restaurant.place.place_name}
-                      </Text>
-                      <Badge ml={2} colorScheme="green">
-                        픽업가능
-                      </Badge>
-                    </Flex>
-                    <Text fontSize="sm" color="gray.600" mb={1}>
-                      {restaurant.place.road_address_name
-                        ? `${restaurant.place.road_address_name} ${restaurant.place.address_name || ""}`
-                        : restaurant.place.address_name}
+          return (
+            <Box
+              key={restaurant.place.id || index}
+              p={4}
+              bg={bgColor}
+              borderBottomWidth="1px"
+              borderColor="gray.200"
+              cursor="pointer"
+              onClick={() => {
+                onRestaurantClick(restaurant);
+                navigate(`/menu/${restaurant.place.id}`);
+              }}
+              _hover={{ bg: hoverColor }}
+            >
+              <Flex>
+                <Image
+                  borderRadius="md"
+                  boxSize="80px"
+                  src={
+                    mainphotourl ||
+                    restaurant.imageUrl ||
+                    "https://via.placeholder.com/80"
+                  }
+                  alt={placenamefull || restaurant.place.place_name}
+                  mr={4}
+                />
+                <Box>
+                  <Flex align="center" mb={1}>
+                    <Text fontWeight="bold" fontSize="lg">
+                      {placenamefull || restaurant.place.place_name}
                     </Text>
-                    <Flex align="center">
-                      <FontAwesomeIcon
-                        icon={faStar}
-                        style={{ color: "#FFD43B" }}
-                      />
-                      <Text ml={1} fontSize="sm" fontWeight="bold">
-                        {averageScore}
-                      </Text>
-                      <Text ml={1} fontSize="sm" color="gray.500">
-                        ({scorecnt > 0 ? `${scorecnt}+` : "No reviews"})
-                      </Text>
-                    </Flex>
-                  </Box>
-                </Flex>
-              </Box>
-            );
-          })}
-        </>
+                    <Badge ml={2} colorScheme="green">
+                      픽업가능
+                    </Badge>
+                  </Flex>
+                  <Text fontSize="sm" color="gray.600" mb={1}>
+                    {road_address_name || restaurant.place.road_address_name
+                      ? `${road_address_name || restaurant.place.road_address_name} ${address_name || restaurant.place.address_name || ""}`
+                      : address_name || restaurant.place.address_name}
+                  </Text>
+                  <Flex align="center">
+                    <FontAwesomeIcon
+                      icon={faStar}
+                      style={{ color: "#FFD43B" }}
+                    />
+                    <Text ml={1} fontSize="sm" fontWeight="bold">
+                      {averageScore}
+                    </Text>
+                    <Text ml={1} fontSize="sm" color="gray.500">
+                      ({scorecnt > 0 ? `${scorecnt}+` : "No reviews"})
+                    </Text>
+                  </Flex>
+                </Box>
+              </Flex>
+            </Box>
+          );
+        })
       )}
     </VStack>
   );
