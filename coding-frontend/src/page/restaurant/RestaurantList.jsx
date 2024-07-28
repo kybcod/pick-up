@@ -20,30 +20,17 @@ export function RestaurantList({ restaurants, onRestaurantClick }) {
   const [restaurantData, setRestaurantData] = useState([]);
 
   useEffect(() => {
-    async function fetchRestaurantData() {
-      const data = await Promise.all(
+    const fetchMenus = async () => {
+      const updatedRestaurants = await Promise.all(
         restaurants.map(async (restaurant) => {
-          try {
-            const response = await axios.get(
-              `/api/menus/${restaurant.place.id}`,
-            );
-            return { ...restaurant, ...response.data };
-          } catch (error) {
-            console.error(
-              `Failed to fetch data for restaurant ID ${restaurant.place.id}:`,
-              error,
-            );
-            return {
-              ...restaurant,
-              basicInfo: { feedback: { scoresum: 0, scorecnt: 0 } },
-            }; // Default feedback in case of error
-          }
+          const { data } = await axios.get(`/api/menus/${restaurant.place.id}`);
+          return { ...restaurant, ...data };
         }),
       );
-      setRestaurantData(data);
-    }
+      setRestaurantData(updatedRestaurants);
+    };
 
-    fetchRestaurantData();
+    fetchMenus();
   }, [restaurants]);
 
   return (
@@ -95,7 +82,12 @@ export function RestaurantList({ restaurants, onRestaurantClick }) {
                 />
                 <Box>
                   <Flex align="center" mb={1}>
-                    <Text fontWeight="bold" fontSize="lg">
+                    <Text
+                      fontWeight="bold"
+                      fontSize="lg"
+                      whiteSpace={"nowrap"}
+                      textOverflow={"ellipsis"}
+                    >
                       {placenamefull || restaurant.place.place_name}
                     </Text>
                     <Badge ml={2} colorScheme="green">

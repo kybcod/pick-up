@@ -72,7 +72,7 @@ export function MainPage() {
     return () => {
       document.head.removeChild(script);
     };
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (currentPosition) {
