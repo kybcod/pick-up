@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   Badge,
   Box,
+  Flex,
+  Heading,
   HStack,
   Image,
   SimpleGrid,
@@ -49,58 +51,70 @@ function FavoriteList() {
   }
 
   return (
-    <Box p={5}>
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-        {menuInfo.map((restaurant, index) => (
-          <Box
-            key={index}
-            onClick={() => navigate(`/menu/${restaurant.basicInfo.cid}`)}
-            borderWidth="1px"
-            borderRadius="lg"
-            overflow="hidden"
-            boxShadow="md"
-            bg="white"
-            transition="all 0.3s"
-            _hover={{ transform: "translateY(-5px)", boxShadow: "xl" }}
-            cursor="pointer"
-          >
-            <Image
-              src={restaurant.basicInfo.mainphotourl}
-              alt={restaurant.basicInfo.placenamefull}
-              height="200px"
-              width="100%"
-              objectFit="cover"
-            />
-            <VStack align="start" p={4} spacing={2}>
-              <Text fontSize="xl" fontWeight="bold" color="gray.700">
-                {restaurant.basicInfo.placenamefull}
-              </Text>
-              <HStack>
-                <Badge colorScheme="green">
-                  {restaurant.basicInfo.category.catename}
-                </Badge>
-                <Badge colorScheme="blue">
-                  {restaurant.basicInfo.category.cate1name}
-                </Badge>
-              </HStack>
-              <HStack>
-                <FontAwesomeIcon icon={faStar} color="#FFD43B" />
-                <Text>
-                  {(
-                    restaurant.basicInfo.feedback.scoresum /
-                    restaurant.basicInfo.feedback.scorecnt
-                  ).toFixed(1)}
-                  {` (${restaurant.basicInfo.feedback.scorecnt})`}
+    <Box maxW="800px" margin="auto" p={5}>
+      <Heading mb={6} textAlign="center">
+        찜한 가게
+      </Heading>
+      {likeRestaurantList.length === 0 ? (
+        <Flex direction="column" align="center" justify="center" height="500px">
+          <Image src={"/img/favorite.png"} boxSize="200px" mb={4} />
+          <Text fontSize="2xl" textAlign="center" color="gray.500">
+            아직 찜한 가게가 없어요.
+          </Text>
+        </Flex>
+      ) : (
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+          {menuInfo.map((restaurant, index) => (
+            <Box
+              key={index}
+              onClick={() => navigate(`/menu/${restaurant.basicInfo.cid}`)}
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              boxShadow="md"
+              bg="white"
+              transition="all 0.3s"
+              _hover={{ transform: "translateY(-5px)", boxShadow: "xl" }}
+              cursor="pointer"
+            >
+              <Image
+                src={restaurant.basicInfo.mainphotourl}
+                alt={restaurant.basicInfo.placenamefull}
+                height="200px"
+                width="100%"
+                objectFit="cover"
+              />
+              <VStack align="start" p={4} spacing={2}>
+                <Text fontSize="xl" fontWeight="bold" color="gray.700">
+                  {restaurant.basicInfo.placenamefull}
                 </Text>
-              </HStack>
-              <HStack>
-                <FontAwesomeIcon icon={faPhoneAlt} color="green.500" />
-                <Text>{restaurant.basicInfo.phonenum}</Text>
-              </HStack>
-            </VStack>
-          </Box>
-        ))}
-      </SimpleGrid>
+                <HStack>
+                  <Badge colorScheme="green">
+                    {restaurant.basicInfo.category.catename}
+                  </Badge>
+                  <Badge colorScheme="blue">
+                    {restaurant.basicInfo.category.cate1name}
+                  </Badge>
+                </HStack>
+                <HStack>
+                  <FontAwesomeIcon icon={faStar} color="#FFD43B" />
+                  <Text>
+                    {(
+                      restaurant.basicInfo.feedback.scoresum /
+                      restaurant.basicInfo.feedback.scorecnt
+                    ).toFixed(1)}
+                    {` (${restaurant.basicInfo.feedback.scorecnt})`}
+                  </Text>
+                </HStack>
+                <HStack>
+                  <FontAwesomeIcon icon={faPhoneAlt} color="green.500" />
+                  <Text>{restaurant.basicInfo.phonenum}</Text>
+                </HStack>
+              </VStack>
+            </Box>
+          ))}
+        </SimpleGrid>
+      )}
     </Box>
   );
 }

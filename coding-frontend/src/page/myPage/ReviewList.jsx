@@ -78,7 +78,9 @@ function ReviewList() {
 
   return (
     <Box maxW="800px" margin="auto" p={5}>
-      <Heading mb={6}>리뷰내역</Heading>
+      <Heading mb={6} textAlign="center">
+        리뷰내역
+      </Heading>
       {reviewList.length > 0 ? (
         reviewList.map((review) => (
           <Box

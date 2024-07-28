@@ -163,7 +163,10 @@ export function Payment() {
           {(paymentInfo || restaurantData) && (
             <Flex mb={6} align="center">
               <Image
-                src={restaurantData.basicInfo.mainphotourl}
+                src={
+                  restaurantData.basicInfo.mainphotourl ||
+                  "/img/pickUp_black.png"
+                }
                 boxSize="80px"
                 borderRadius="md"
                 mr={4}

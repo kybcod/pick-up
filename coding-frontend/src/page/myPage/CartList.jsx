@@ -28,7 +28,6 @@ import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import { useNavigate } from "react-router-dom";
 import {
-  faBagShopping,
   faMinus,
   faPlus,
   faStore,
@@ -195,7 +194,9 @@ export function CartList() {
 
   return (
     <Box maxW="800px" margin="auto" p={5}>
-      <Heading mb={6}>장바구니</Heading>
+      <Heading mb={6} textAlign="center">
+        장바구니
+      </Heading>
       {Object.keys(cartItems).length === 0 ? (
         <Flex direction="column" align="center" justify="center" height="500px">
           <Image src={"/img/cart_clear.png"} boxSize="150px" mb={4} />
@@ -317,13 +318,14 @@ export function CartList() {
                   variant="outline"
                   size="md"
                   mr={3}
+                  width="150px" // 너비를 추가하여 크기 맞춤
                 >
                   장바구니 담기
                 </Button>
                 <Button
                   colorScheme="teal"
                   size="md"
-                  rightIcon={<FontAwesomeIcon icon={faBagShopping} />}
+                  width="150px" // 너비를 추가하여 크기 맞춤
                   onClick={() =>
                     navigate(
                       `/pay/buyer/${account.id}/restaurant/${restaurantId}`,
