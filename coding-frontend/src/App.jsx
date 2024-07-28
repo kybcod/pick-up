@@ -22,6 +22,7 @@ import SellerRestaurantList from "./page/seller/SellerRestaurantList.jsx";
 import { MyPage } from "./page/user/MyPage.jsx";
 import axios from "axios";
 import SellerMenusDetails from "./page/seller/SellerMenusDetails.jsx";
+import FavoriteList from "./page/myPage/FavoriteList.jsx";
 
 axios.interceptors.request.use(
   function (config) {
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
       //drawer
       { path: "carts", element: <CartList /> },
       { path: "orders", element: <OrderList /> },
+      { path: "favorites", element: <FavoriteList /> },
       { path: "reviews", element: <ReviewList /> },
 
       //pay

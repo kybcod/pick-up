@@ -3,7 +3,6 @@ import {
   Button,
   Divider,
   Flex,
-  HStack,
   Image,
   Spinner,
   Text,
@@ -13,16 +12,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faClock,
-  faMotorcycle,
-  faWonSign,
-} from "@fortawesome/free-solid-svg-icons";
+import { faWonSign } from "@fortawesome/free-solid-svg-icons";
 
 export function Payment() {
   const { userId, restaurantId } = useParams();
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [merchantUid, setMerchantUid] = useState("");
+  const [restaurantData, setRestaurantData] = useState(null);
   const navigate = useNavigate();
 
   const primaryColor = "#2AC1BC"; // 배달의민족 메인 색상
@@ -43,6 +39,13 @@ export function Payment() {
       generateMerchantUid();
     });
   }, [userId, restaurantId]);
+
+  useEffect(() => {
+    axios.get(`/api/menus/${restaurantId}`).then((res) => {
+      console.log("resat", res.data);
+      setRestaurantData(res.data);
+    });
+  }, []);
 
   function generateMerchantUid() {
     const date = new Date();
@@ -157,30 +160,21 @@ export function Payment() {
 
         {/* 콘텐츠 */}
         <Box p={6}>
-          {paymentInfo && (
+          {(paymentInfo || restaurantData) && (
             <Flex mb={6} align="center">
               <Image
-                src={paymentInfo.image || "/img/restaurant-default.jpg"}
+                src={
+                  restaurantData.basicInfo.mainphotourl ||
+                  "/img/pickUp_black.png"
+                }
                 boxSize="80px"
                 borderRadius="md"
                 mr={4}
               />
               <VStack align="start" spacing={1}>
                 <Text fontSize="xl" fontWeight="bold">
-                  {paymentInfo.name || "맛있는 음식점"}
+                  {restaurantData.basicInfo.placenamefull}
                 </Text>
-                <HStack color="gray.500">
-                  <FontAwesomeIcon icon={faMotorcycle} />
-                  <Text fontSize="sm">
-                    배달비 {paymentInfo.deliveryFee || "2,000"}원
-                  </Text>
-                </HStack>
-                <HStack color="gray.500">
-                  <FontAwesomeIcon icon={faClock} />
-                  <Text fontSize="sm">
-                    예상 배달 시간 {paymentInfo.estimatedTime || "40-50"}분
-                  </Text>
-                </HStack>
               </VStack>
             </Flex>
           )}
@@ -192,37 +186,46 @@ export function Payment() {
           </Text>
 
           <VStack spacing={4} align="stretch" mb={6}>
-            {paymentInfo.map((item) => (
-              <Flex
-                key={item.id}
-                bg="gray.100"
-                borderRadius="md"
-                justify="space-between"
-                align="center"
-                p={4}
-              >
-                <Flex align="center" flex={1}>
-                  <Image
-                    src={item.menuImage || "/img/restaurant-default.jpg"}
-                    boxSize="60px"
-                    objectFit="cover"
-                    borderRadius="md"
-                    mr={4}
-                  />
-                  <VStack align="start" spacing={1}>
-                    <Text fontWeight="bold" fontSize="md">
-                      {item.menuName}
-                    </Text>
-                    <Text fontSize="sm" color="gray.500">
-                      {item.menuPrice.toLocaleString()}원 x {item.menuCount}개
-                    </Text>
-                  </VStack>
+            {paymentInfo.map((item) => {
+              const menu =
+                restaurantData.menuInfo.menuList.find(
+                  (menuItem) => menuItem.menu === item.menuName,
+                ) || {};
+
+              return (
+                <Flex
+                  key={item.id}
+                  bg="gray.100"
+                  borderRadius="md"
+                  justify="space-between"
+                  align="center"
+                  p={4}
+                >
+                  <Flex align="center" flex={1}>
+                    {menu.img && (
+                      <Image
+                        src={menu.img}
+                        boxSize="60px"
+                        objectFit="cover"
+                        borderRadius="md"
+                        mr={4}
+                      />
+                    )}
+                    <VStack align="start" spacing={1}>
+                      <Text fontWeight="bold" fontSize="md">
+                        {item.menuName}
+                      </Text>
+                      <Text fontSize="sm" color="gray.500">
+                        {item.menuPrice.toLocaleString()}원 x {item.menuCount}개
+                      </Text>
+                    </VStack>
+                  </Flex>
+                  <Text fontWeight="bold" fontSize="lg">
+                    {(item.menuPrice * item.menuCount).toLocaleString()}원
+                  </Text>
                 </Flex>
-                <Text fontWeight="bold" fontSize="lg">
-                  {(item.menuPrice * item.menuCount).toLocaleString()}원
-                </Text>
-              </Flex>
-            ))}
+              );
+            })}
           </VStack>
 
           <Divider mb={6} />

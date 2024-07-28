@@ -37,7 +37,7 @@ function SellerOrderList(props) {
       console.log(res.data);
       setReceivedOrders(res.data);
     });
-  }, []);
+  }, [userId]);
 
   function handleOrderReception(userId, merchantUid) {
     axios
@@ -63,18 +63,21 @@ function SellerOrderList(props) {
         estimatedTime,
         merchantUid,
       })
-      .then(() => alert(" 시간성공"))
-      .catch(() => alert("시간 실패"));
+      .then(() => {
+        alert("시간 설정 성공");
+        onClose(); // 시간 설정 성공 후 모달 닫기
+      })
+      .catch(() => alert("시간 설정 실패"));
   }
 
   function handlePickUpClear(merchantUid) {
     axios
       .put("/api/orders/pick-up", { merchantUid })
       .then(() => {
-        alert("픽업성공");
+        alert("픽업 성공");
         console.log(merchantUid);
 
-        axios.get(`/api/seller/orders/${userId}`).then((res) => {
+        axios.get(`/api/orders/seller/${userId}`).then((res) => {
           setReceivedOrders(res.data);
         });
       })
@@ -100,6 +103,8 @@ function SellerOrderList(props) {
               borderRadius="lg"
               boxShadow="md"
               bg="white"
+              _hover={{ boxShadow: "xl" }}
+              transition="all 0.3s"
             >
               <Text fontSize="xl" fontWeight="bold" mb={3}>
                 주문 번호: {order.merchantUid}
@@ -108,7 +113,7 @@ function SellerOrderList(props) {
                 <Image src={order.logo} boxSize="50px" borderRadius="full" />
                 <VStack align="start" spacing={1}>
                   <Text fontWeight="bold">{order.restaurantName}</Text>
-                  <Flex display={"flex"} justifyContent={"center"}>
+                  <Flex justify="center">
                     {order.estimatedTime === null ? (
                       <Badge
                         colorScheme="green"
@@ -118,12 +123,12 @@ function SellerOrderList(props) {
                             order.merchantUid,
                           )
                         }
-                        cursor={"pointer"}
+                        cursor="pointer"
                       >
                         주문 접수
                       </Badge>
                     ) : (
-                      <Badge colorScheme="green" cursor={"pointer"}>
+                      <Badge colorScheme="yellow" cursor="pointer">
                         조리 중
                       </Badge>
                     )}
@@ -131,6 +136,9 @@ function SellerOrderList(props) {
                       <Button
                         isDisabled={order.pickUpStatus === true}
                         onClick={() => handlePickUpClear(order.merchantUid)}
+                        colorScheme="teal"
+                        size="sm"
+                        ml={3}
                       >
                         픽업 완료
                       </Button>
@@ -154,32 +162,52 @@ function SellerOrderList(props) {
       )}
 
       {/* 사장님 모달 */}
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size="lg">
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>주문 내역</ModalHeader>
-          <ModalBody>
+        <ModalContent borderRadius="lg" overflow="hidden" boxShadow="2xl">
+          <ModalHeader bg="teal.500" color="white" py={4}>
+            <Text fontSize="2xl" fontWeight="bold" textAlign="center">
+              주문 내역
+            </Text>
+          </ModalHeader>
+          <ModalBody p={6}>
             {customerOrder && customerOrder.length > 0 ? (
-              <VStack align="stretch" spacing={3}>
-                <Text>주문 번호: {customerOrder[0].merchantUid}</Text>
-                <Text>
-                  총 주문 금액: {customerOrder[0].totalPrice.toLocaleString()}{" "}
-                  원
-                </Text>
+              <VStack align="stretch" spacing={4}>
+                <Box bg="gray.100" p={4} borderRadius="md">
+                  <Text fontSize="lg" fontWeight="bold">
+                    주문 번호: {customerOrder[0].merchantUid}
+                  </Text>
+                  <Text fontSize="lg">
+                    총 주문 금액: {customerOrder[0].totalPrice.toLocaleString()}{" "}
+                    원
+                  </Text>
+                </Box>
                 <Divider />
-                <Text fontWeight="bold">주문 상품:</Text>
+                <Text fontWeight="bold" fontSize="lg">
+                  주문 상품:
+                </Text>
                 {customerOrder.map((item, index) => (
-                  <Box key={index}>
-                    <Text>
+                  <Box key={index} p={4} bg="gray.50">
+                    <Text fontSize="md">
                       {item.menuName} x {item.menuCount}
                     </Text>
-                    <Text>가격: {item.menuPrice.toLocaleString()} 원</Text>
+                    <Text fontSize="md">
+                      가격: {item.menuPrice.toLocaleString()} 원
+                    </Text>
                   </Box>
                 ))}
                 <Divider />
-                <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+                <Text fontWeight="bold" fontSize="lg">
+                  예상 소요 시간:
+                </Text>
+                <Grid templateColumns="repeat(3, 1fr)" gap={4}>
                   {timeArray.map((time, index) => (
-                    <Button key={index} onClick={() => setEstimatedTime(time)}>
+                    <Button
+                      key={index}
+                      onClick={() => setEstimatedTime(time)}
+                      colorScheme="teal"
+                      variant={estimatedTime === time ? "solid" : "outline"}
+                    >
                       {time}
                     </Button>
                   ))}
@@ -187,16 +215,29 @@ function SellerOrderList(props) {
                 <Input
                   onChange={(e) => setEstimatedTime(e.target.value)}
                   placeholder={"기타 예상 소요 시간"}
+                  mt={3}
+                  bg="white"
+                  borderColor="teal.500"
+                  _placeholder={{ color: "gray.400" }}
                 />
               </VStack>
             ) : (
               <Text>주문 내역이 없습니다.</Text>
             )}
           </ModalBody>
-          <ModalFooter>
-            <Flex display={"flex"} justifyContent={"flex-end"}>
-              <Button onClick={handlePickUpOk}>주문확인</Button>
-              <Button onClick={onClose}>닫기</Button>
+          <ModalFooter bg="gray.50" p={4}>
+            <Flex justifyContent="flex-end" w="100%">
+              <Button
+                onClick={handlePickUpOk}
+                colorScheme="teal"
+                mr={3}
+                size="lg"
+              >
+                주문확인
+              </Button>
+              <Button onClick={onClose} size="lg">
+                닫기
+              </Button>
             </Flex>
           </ModalFooter>
         </ModalContent>
