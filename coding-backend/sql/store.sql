@@ -13,6 +13,9 @@ SELECT *
 FROM user;
 
 SELECT *
+FROM authority;
+
+SELECT *
 FROM orders;
 
 SELECT *
