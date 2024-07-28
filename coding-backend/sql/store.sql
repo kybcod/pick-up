@@ -30,7 +30,4 @@ FROM category;
 SELECT *
 FROM favorites;
 
-SELECT *
-FROM restaurant r
-         JOIN review rv ON r.restaurant_id = rv.restaurant_id
-WHERE r.restaurant_id = 2092129811;
+#restaurant_id = 2092129811;

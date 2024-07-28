@@ -30,7 +30,7 @@ public interface ReviewMapper {
     List<String> selectFileNamesByReviewId(Integer id);
 
     @Select("""
-            SELECT *, COUNT(*) AS reviewCount
+            SELECT SUM(rating) AS reviewSum, COUNT(*) AS reviewCount
             FROM review
             WHERE restaurant_id =#{restaurantId}
             """)

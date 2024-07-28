@@ -71,7 +71,7 @@ public class MenuService {
             // 리뷰 정보 설정
             Review restaurantReview = reviewMapper.selectReviewByRestaurantId(Long.valueOf(placeId));
             FeedbackDto feedbackDto = new FeedbackDto();
-            feedbackDto.setScoresum(restaurantReview.getRating()); // 적절한 메서드로 수정
+            feedbackDto.setScoresum(restaurantReview.getReviewSum()); // 적절한 메서드로 수정
             feedbackDto.setScorecnt(restaurantReview.getReviewCount());  // 적절한 메서드로 수정
             basicInfo.setFeedback(feedbackDto);
 
