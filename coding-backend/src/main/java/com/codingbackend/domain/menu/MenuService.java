@@ -1,8 +1,12 @@
 package com.codingbackend.domain.menu;
 
+import com.codingbackend.domain.cart.CartMapper;
+import com.codingbackend.domain.favorites.FavoriteMapper;
+import com.codingbackend.domain.order.OrderMapper;
 import com.codingbackend.domain.restaurant.Restaurant;
 import com.codingbackend.domain.restaurant.RestaurantMapper;
 import com.codingbackend.domain.review.Review;
+import com.codingbackend.domain.review.ReviewFile;
 import com.codingbackend.domain.review.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -28,6 +33,9 @@ public class MenuService {
     private final S3Client s3Client;
     private final RestaurantMapper restaurantMapper;
     private final ReviewMapper reviewMapper;
+    private final CartMapper cartMapper;
+    private final OrderMapper orderMapper;
+    private final FavoriteMapper favoriteMapper;
 
     @Value("${aws.s3.bucket.name}")
     String bucketName;
@@ -35,7 +43,7 @@ public class MenuService {
     @Value("${image.src.prefix}")
     String srcPrefix;
 
-    public PlaceDto getPlaceInfo(Integer placeId) {
+    public PlaceDto getPlaceInfo(Long placeId) {
         //외부 API
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<PlaceDto> responseEntity = restTemplate.getForEntity("https://place.map.kakao.com/main/v/{placeId}", PlaceDto.class, placeId);
@@ -83,7 +91,7 @@ public class MenuService {
 
     }
 
-    private String s3Img(String img, Integer placeId) {
+    private String s3Img(String img, Long placeId) {
         if (img == null || img.trim().isEmpty()) {
             return "";
         }
@@ -150,5 +158,54 @@ public class MenuService {
 
             menuMapper.update(menu);
         }
+    }
+
+    public void delete(Long restaurantId) {
+        //메뉴 사진 삭제
+        List<Menu> menuList = menuMapper.selectMenu(restaurantId);
+        for (Menu menu : menuList) {
+            String key = STR."prj4/restaurnt/\{restaurantId}/\{menu.getImg()}";
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+            s3Client.deleteObject(deleteObjectRequest);
+        }
+        //메뉴 삭제
+        menuMapper.deleteMenu(restaurantId);
+
+        //리뷰사진삭제
+        Review review = reviewMapper.selectByRestaurantId(restaurantId); //아이디 구하기
+        List<ReviewFile> reviewFile = reviewMapper.selectReviewFile(review.getId());
+        for (ReviewFile review1 : reviewFile) {
+            String key = STR."prj4/review/\{review.getId()}/\{review1.getName()}";
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+            s3Client.deleteObject(deleteObjectRequest);
+        }
+
+        //리뷰삭제
+        reviewMapper.deleteReview(restaurantId);
+
+        //장바구니 삭제
+        cartMapper.deleteCart(restaurantId);
+        //주문 내역 삭제
+        orderMapper.deleteOrder(restaurantId);
+        //찜삭제
+        favoriteMapper.deleteFavorite(restaurantId);
+
+        //가게 사진 삭제
+        Restaurant restaurant = restaurantMapper.selectByRestaurantId(restaurantId);
+        String key = STR."prj4/restaurnt/\{restaurantId}/\{restaurant.getLogo()}";
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+        s3Client.deleteObject(deleteObjectRequest);
+
+        //가게 삭제
+        restaurantMapper.deleteRestaurant(restaurantId);
     }
 }

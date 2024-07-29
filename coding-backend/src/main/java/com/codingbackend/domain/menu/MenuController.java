@@ -18,13 +18,18 @@ public class MenuController {
     private final RestaurantService restaurantService;
 
     @GetMapping("{placeId}")
-    public PlaceDto getMenus(@PathVariable Integer placeId) throws IOException {
+    public PlaceDto getMenus(@PathVariable Long placeId) throws IOException {
         return menuService.getPlaceInfo(placeId);
     }
 
     @PostMapping
     public void insertMenu(MenuRequest menuRequest) throws IOException {
         menuService.insertMenu(menuRequest.getRestaurantId(), menuRequest.getMenuItems());
+    }
+
+    @DeleteMapping("{restaurantId}")
+    public void deleteMenu(@PathVariable Long restaurantId) throws IOException {
+        menuService.delete(restaurantId);
     }
 
     @PutMapping("/seller/{restaurantId}")

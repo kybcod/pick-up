@@ -84,4 +84,7 @@ public interface OrderMapper {
               AND r.user_id =#{userId}
             """)
     OrderCount selectOrderCount(Integer userId);
+
+    @Delete("DELETE FROM orders WHERE restaurant_id=#{restaurantId}")
+    int deleteOrder(Long restaurantId);
 }

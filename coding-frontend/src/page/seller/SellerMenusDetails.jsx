@@ -41,33 +41,19 @@ function SellerMenusDetails(props) {
     formData.append("restaurantName", menuList.basicInfo.placenamefull);
     formData.append("restaurantTel", menuList.basicInfo.phonenum);
 
-    const logoFileName = fileInputRefs.current[0].current.files[0];
-    if (logoFileName) {
-      formData.append("logo", logoFileName);
+    const logoFile = fileInputRefs.current[0].current.files[0];
+    if (logoFile) {
+      formData.append("logo", logoFile);
     }
 
-    const menuItems = menuList.menuInfo.menuList.map((item, index) => {
+    menuList.menuInfo.menuList.forEach((item, index) => {
       const menuItemFile = fileInputRefs.current[index + 1].current.files[0];
-      return {
-        name: item.menu,
-        price: item.price,
-        img: menuItemFile
-          ? {
-              dataUrl: URL.createObjectURL(menuItemFile),
-              fileName: menuItemFile.name,
-            }
-          : {
-              dataUrl: item.img,
-              fileName: null,
-            },
-      };
+      formData.append(`menuItems[${index}].name`, item.menu);
+      formData.append(`menuItems[${index}].price`, item.price);
+      if (menuItemFile) {
+        formData.append(`menuItems[${index}].img`, menuItemFile);
+      }
     });
-
-    formData.append("menuItems", JSON.stringify(menuItems));
-
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
 
     axios
       .put(`/api/menus/seller/${restaurantId}`, formData, {
@@ -175,6 +161,28 @@ function SellerMenusDetails(props) {
       }
     });
   };
+
+  function handleDelete() {
+    axios
+      .delete(`/api/menus/${restaurantId}`)
+      .then((res) => {
+        toast({
+          description: "해당 가게가 삭제되었습니다.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          description: "삭제 중 오류가 발생했습니다.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+  }
 
   if (menuList === null) {
     return (
@@ -353,9 +361,14 @@ function SellerMenusDetails(props) {
               <Button onClick={() => setIsEditing(false)}>취소</Button>
             </>
           ) : (
-            <Button colorScheme="blue" onClick={() => setIsEditing(true)}>
-              수정
-            </Button>
+            <Flex>
+              <Button colorScheme="blue" onClick={() => setIsEditing(true)}>
+                수정
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete}>
+                삭제
+              </Button>
+            </Flex>
           )}
         </Flex>
       </VStack>
