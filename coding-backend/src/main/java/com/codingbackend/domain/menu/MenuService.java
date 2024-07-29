@@ -43,7 +43,7 @@ public class MenuService {
     @Value("${image.src.prefix}")
     String srcPrefix;
 
-    public PlaceDto getPlaceInfo(Long placeId) {
+    public PlaceDto getPlaceInfo(Integer placeId) {
         //외부 API
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<PlaceDto> responseEntity = restTemplate.getForEntity("https://place.map.kakao.com/main/v/{placeId}", PlaceDto.class, placeId);
@@ -91,7 +91,7 @@ public class MenuService {
 
     }
 
-    private String s3Img(String img, Long placeId) {
+    private String s3Img(String img, Integer placeId) {
         if (img == null || img.trim().isEmpty()) {
             return "";
         }
@@ -156,7 +156,7 @@ public class MenuService {
 
     public void delete(Long restaurantId) {
         // 메뉴 사진 삭제
-        List<Menu> menuList = menuMapper.selectMenu(restaurantId);
+        List<Menu> menuList = menuMapper.selectMenuList(restaurantId);
         for (Menu menu : menuList) {
             String key = String.format("prj4/restaurant/%d/%s", restaurantId, menu.getImg());
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
