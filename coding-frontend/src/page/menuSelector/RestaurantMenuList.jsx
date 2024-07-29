@@ -20,8 +20,10 @@ import { SelectedMenuList } from "./SelectedMenuList.jsx";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faCaretUp,
   faExclamationTriangle,
-  faMotorcycle,
+  faHeart,
+  faHeartCircleCheck,
   faPhone,
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
@@ -29,16 +31,24 @@ import {
 export function RestaurantMenuList() {
   const { placeId } = useParams();
   const [placeInfo, setPlaceInfo] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [likeRestaurantIdList, setLikeRestaurantIdList] = useState(null);
   const [cart, setCart] = useState({});
   const account = useContext(LoginContext);
   const userId = account.id;
-
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const cardBgColor = useColorModeValue("white", "gray.800");
 
   useEffect(() => {
     axios.get(`/api/menus/${placeId}`).then((res) => {
       setPlaceInfo(res.data);
+    });
+
+    axios.get(`/api/favorites/${userId}`).then((res) => {
+      setLikeRestaurantIdList(res.data);
+      setIsFavorite(
+        res.data.some((favorite) => favorite.restaurantId == placeId),
+      );
     });
 
     axios.get(`/api/carts/${userId}/${placeId}`).then((res) => {
@@ -94,6 +104,19 @@ export function RestaurantMenuList() {
     return <Spinner />;
   }
 
+  function handleTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  const handleFavorite = (restaurantId) => {
+    setIsFavorite(!isFavorite);
+    //찜 업데이트
+    axios.put(`/api/favorites`, {
+      restaurantId,
+      userId,
+    });
+  };
+
   return (
     <Box bg={bgColor} minHeight="100vh">
       <Box bg="#2AC1BC" py={6}>
@@ -134,6 +157,28 @@ export function RestaurantMenuList() {
                   <FontAwesomeIcon icon={faExclamationTriangle} size="3x" />
                 </Box>
               )}
+              <Box
+                position="absolute"
+                top={4}
+                right={4}
+                onClick={() => handleFavorite(placeId)}
+                cursor="pointer"
+                bg="white"
+                borderRadius="full"
+                w="40px"
+                h="40px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                boxShadow="md"
+              >
+                <FontAwesomeIcon
+                  icon={isFavorite ? faHeartCircleCheck : faHeart}
+                  color={isFavorite ? "red" : "gray"}
+                  size="lg"
+                />
+              </Box>
+
               <Box
                 position="absolute"
                 bottom={0}
@@ -235,11 +280,16 @@ export function RestaurantMenuList() {
         right={4}
         bg="#2AC1BC"
         color="white"
-        borderRadius="full"
-        p={3}
+        width="50px" // 버튼의 너비
+        height="50px" // 버튼의 높이
+        borderRadius="full" // 둥근 모서리
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
         boxShadow="lg"
+        onClick={handleTop}
       >
-        <FontAwesomeIcon icon={faMotorcycle} size="lg" />
+        <FontAwesomeIcon icon={faCaretUp} size={"lg"} />
       </Box>
     </Box>
   );

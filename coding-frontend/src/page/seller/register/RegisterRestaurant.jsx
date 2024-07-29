@@ -18,8 +18,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import PostCode from "../myPage/PostCode.jsx";
-import { LoginContext } from "../../component/LoginProvider.jsx";
+import PostCode from "../../myPage/PostCode.jsx";
+import { LoginContext } from "../../../component/LoginProvider.jsx";
 
 function RegisterRestaurant({ onSubmit }) {
   const [restaurantId, setRestaurantId] = useState(0);

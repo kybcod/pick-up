@@ -1,11 +1,15 @@
 package com.codingbackend.domain.restaurant;
 
+import com.codingbackend.domain.menu.MenuRestaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,9 +33,17 @@ public class RestaurantService {
         // 데이터베이스에 저장
         restaurantMapper.insert(restaurant);
 
-        //카테고리 연결 시키기
-
         //s3 저장
+        if (file != null) {
+            //실제 S3 파일 저장
+            String key = STR."prj4/restaurant/\{restaurant.getRestaurantId()}/\{file.getOriginalFilename()}";
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .acl(ObjectCannedACL.PUBLIC_READ)
+                    .build();
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+        }
 
     }
 
@@ -48,4 +60,28 @@ public class RestaurantService {
         }).collect(Collectors.toList());
     }
 
+    public List<Restaurant> getRestaurantsByUserId(Integer userId) {
+        List<Restaurant> restaurants = restaurantMapper.selectByUserId(userId);
+        return restaurants.stream().map(restaurant -> {
+            String logoPath = STR."\{srcPrefix}restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
+            restaurant.setLogo(logoPath);
+            return restaurant;
+        }).collect(Collectors.toList());
+    }
+
+    public void updateRestaurant(MenuRestaurant menuRestaurant) throws IOException {
+        Long restaurantId = menuRestaurant.getRestaurantId();
+        restaurantMapper.updateRestaurantInfo(restaurantId);
+        //로고 s3 저장
+        if (menuRestaurant.getLogo() != null) {
+            //실제 S3 파일 저장
+            String key = STR."prj4/restaurant/\{menuRestaurant.getRestaurantId()}/\{menuRestaurant.getLogo()}";
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .acl(ObjectCannedACL.PUBLIC_READ)
+                    .build();
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(menuRestaurant.getLogo().getInputStream(), menuRestaurant.getLogo().getSize()));
+        }
+    }
 }
