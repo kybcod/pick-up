@@ -36,10 +36,10 @@ public class MenuController {
             @RequestParam("menuItems") String menuItemsJson
     ) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<MenuItem> menuItems = objectMapper.readValue(menuItemsJson, new TypeReference<List<MenuItem>>() {
+        List<MenuItemPut> menuItems = objectMapper.readValue(menuItemsJson, new TypeReference<List<MenuItemPut>>() {
         });
 
-        MenuRestaurant menuRestaurant = new MenuRestaurant();
+        MenuRestaurantPut menuRestaurant = new MenuRestaurantPut();
         menuRestaurant.setRestaurantId(restaurantId);
         menuRestaurant.setRestaurantName(restaurantName);
         menuRestaurant.setRestaurantTel(restaurantTel);

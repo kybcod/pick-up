@@ -41,9 +41,9 @@ function SellerMenusDetails(props) {
     formData.append("restaurantName", menuList.basicInfo.placenamefull);
     formData.append("restaurantTel", menuList.basicInfo.phonenum);
 
-    const logoFile = fileInputRefs.current[0].current.files[0];
-    if (logoFile) {
-      formData.append("logo", logoFile);
+    const logoFileName = fileInputRefs.current[0].current.files[0];
+    if (logoFileName) {
+      formData.append("logo", logoFileName);
     }
 
     const menuItems = menuList.menuInfo.menuList.map((item, index) => {

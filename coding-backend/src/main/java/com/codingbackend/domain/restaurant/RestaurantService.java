@@ -1,6 +1,6 @@
 package com.codingbackend.domain.restaurant;
 
-import com.codingbackend.domain.menu.MenuRestaurant;
+import com.codingbackend.domain.menu.MenuRestaurantPut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -69,7 +69,7 @@ public class RestaurantService {
         }).collect(Collectors.toList());
     }
 
-    public void updateRestaurant(Long restaurantId, MenuRestaurant menuRestaurant) throws IOException {
+    public void updateRestaurant(Long restaurantId, MenuRestaurantPut menuRestaurant) throws IOException {
         String logoFileName = null;
 
         // 로고 S3 저장
@@ -82,7 +82,7 @@ public class RestaurantService {
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(menuRestaurant.getLogo().getInputStream(), menuRestaurant.getLogo().getSize()));
 
-            logoFileName = key;
+            logoFileName = menuRestaurant.getLogo().getOriginalFilename();
         }
 
         // Update restaurant information
