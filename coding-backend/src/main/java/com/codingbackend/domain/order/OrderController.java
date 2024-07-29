@@ -33,6 +33,14 @@ public class OrderController {
         return cartService.getOrdersByUserId(userId);
     }
 
+
+    //판매자
+    @Description("판매자 주문 확인 내역 ")
+    @GetMapping("/seller/{userId}")
+    public List<ReceivedOrder> getReceivedOrders(@PathVariable Integer userId) {
+        return orderService.get(userId);
+    }
+
     @GetMapping("buy/{userId}/{merchantUid}")
     public List<CustomerOrderResponse> getOrderList(@PathVariable Integer userId, @PathVariable String merchantUid) {
         return orderService.getCustomerOrderList(userId, merchantUid);
@@ -46,12 +54,6 @@ public class OrderController {
     @PutMapping("pick-up")
     public void updatePickUpStatus(@RequestBody Order order) {
         orderService.updatePickUpStatus(order);
-    }
-
-    @Description("판매자 주문 확인 내역 ")
-    @GetMapping("/seller/{userId}")
-    public List<ReceivedOrder> getReceivedOrders(@PathVariable Integer userId) {
-        return orderService.get(userId);
     }
 
     @Description("주문 횟수")
