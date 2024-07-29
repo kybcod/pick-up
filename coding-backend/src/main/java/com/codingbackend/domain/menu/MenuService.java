@@ -126,7 +126,7 @@ public class MenuService {
     public void updateMenu(List<MenuItem> menuItems) throws IOException {
         for (MenuItem item : menuItems) {
             Menu menu = new Menu();
-            menu.setRestaurantId(menu.getRestaurantId());
+            menu.setRestaurantId(item.getRestaurantId());
             menu.setName(item.getName());
             menu.setPrice(item.getPrice());
 
@@ -144,9 +144,12 @@ public class MenuService {
                         RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
 
                 menu.setImg(fileName);
+                if (item.getId() != null) {
+                    menuMapper.update(menu);
+                } else {
+                    menuMapper.insert(menu);
+                }
             }
-
-            menuMapper.update(menu);
         }
     }
 

@@ -49,9 +49,10 @@ function SellerMenusDetails(props) {
     }
 
     menuList.menuInfo.menuList.forEach((item, index) => {
-      const menuItemFile = fileInputRefs.current[index + 1].current.files[0];
+      formData.append(`menuItems[${index}].restaurantId`, restaurantId);
       formData.append(`menuItems[${index}].name`, item.menu);
       formData.append(`menuItems[${index}].price`, item.price);
+      const menuItemFile = fileInputRefs.current[index + 1].current.files[0];
       if (menuItemFile) {
         formData.append(`menuItems[${index}].img`, menuItemFile);
       }
