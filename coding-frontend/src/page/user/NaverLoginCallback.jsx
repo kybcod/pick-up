@@ -20,20 +20,20 @@ const NaverLoginCallback = () => {
         .then((response) => {
           const { token, emailExists, userInfo } = response.data;
 
-          if (token) {
-            // JWT를 로컬 스토리지에 저장하고 로그인 상태 업데이트
-            localStorage.setItem("token", token);
-            account.login(token);
-            if (emailExists) {
-              navigate("/"); // 로그인 성공 후 홈으로 리다이렉트
+          if (emailExists) {
+            // 이메일이 존재하면 토큰을 로컬 스토리지에 저장하고 로그인 상태 업데이트 후 홈으로 리다이렉트
+            if (token) {
+              localStorage.setItem("token", token);
+              account.login(token);
+              navigate("/");
             } else {
-              // 이메일이 존재하지 않는 경우 회원가입 페이지로 리다이렉트
-              localStorage.setItem("userInfo", JSON.stringify(userInfo));
-              navigate("/signup");
+              // 토큰이 없는 경우 실패 처리
+              navigate("/login");
             }
           } else {
-            // 토큰이 없는 경우 실패 처리
-            navigate("/login");
+            // 이메일이 존재하지 않으면 회원가입 페이지로 리다이렉트
+            localStorage.setItem("userInfo", JSON.stringify(userInfo));
+            navigate("/signup");
           }
         })
         .catch(() => {

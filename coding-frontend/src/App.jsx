@@ -46,7 +46,7 @@ const router = createBrowserRouter([
       { index: true, element: <MainPage /> },
       { path: "signup", element: <Signup /> },
       { path: "login", element: <Login /> },
-      { path: "oauth/login/success", element: <NaverLoginCallback /> },
+      { path: "oauth/login/callback", element: <NaverLoginCallback /> },
       { path: "mypage/:userId", element: <MyPage /> },
 
       // map
