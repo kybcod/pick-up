@@ -30,8 +30,6 @@ public class RestaurantService {
     String srcPrefix;
 
     public void insertRestaurantInfo(RestaurantRequestDto restaurant, MultipartFile file) throws IOException {
-        // 데이터베이스에 저장
-        restaurantMapper.insert(restaurant);
 
         //s3 저장
         if (file != null) {
@@ -43,7 +41,11 @@ public class RestaurantService {
                     .acl(ObjectCannedACL.PUBLIC_READ)
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            restaurant.setLogo(file.getOriginalFilename());
         }
+
+        // 데이터베이스에 저장
+        restaurantMapper.insert(restaurant);
 
     }
 
