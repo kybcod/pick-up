@@ -35,7 +35,7 @@ public interface UserMapper {
     User selectByNickName(String nickName);
 
     @Select("""
-            SELECT *
+            SELECT name
             FROM authority
             WHERE user_id = #{userId}
             """)
