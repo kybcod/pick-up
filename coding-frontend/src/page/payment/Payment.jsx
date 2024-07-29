@@ -134,7 +134,7 @@ export function Payment() {
       });
   }
 
-  if (paymentInfo === null) {
+  if (paymentInfo === null || restaurantData === null) {
     return (
       <Flex justify="center" align="center" height="100vh">
         <Spinner size="xl" />
@@ -160,11 +160,11 @@ export function Payment() {
 
         {/* 콘텐츠 */}
         <Box p={6}>
-          {(paymentInfo || restaurantData) && (
+          {paymentInfo && restaurantData && (
             <Flex mb={6} align="center">
               <Image
                 src={
-                  restaurantData.basicInfo.mainphotourl ||
+                  restaurantData?.basicInfo?.mainphotourl ||
                   "/img/pickUp_black.png"
                 }
                 boxSize="80px"
@@ -173,7 +173,7 @@ export function Payment() {
               />
               <VStack align="start" spacing={1}>
                 <Text fontSize="xl" fontWeight="bold">
-                  {restaurantData.basicInfo.placenamefull}
+                  {restaurantData?.basicInfo?.placenamefull}
                 </Text>
               </VStack>
             </Flex>
@@ -188,7 +188,7 @@ export function Payment() {
           <VStack spacing={4} align="stretch" mb={6}>
             {paymentInfo.map((item) => {
               const menu =
-                restaurantData.menuInfo.menuList.find(
+                restaurantData?.menuInfo?.menuList.find(
                   (menuItem) => menuItem.menu === item.menuName,
                 ) || {};
 
@@ -227,7 +227,6 @@ export function Payment() {
               );
             })}
           </VStack>
-
           <Divider mb={6} />
 
           <Box bg={primaryColor} color="white" p={4} borderRadius="md" mb={6}>

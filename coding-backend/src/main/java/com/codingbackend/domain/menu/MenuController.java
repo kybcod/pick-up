@@ -14,8 +14,8 @@ public class MenuController {
     private final RestaurantService restaurantService;
 
     @GetMapping("{placeId}")
-    public PlaceDto getMenus(@PathVariable Long placeId) throws IOException {
-        return menuService.getPlaceInfo(placeId);
+    public PlaceDto getMenus(@PathVariable Integer placeId) throws IOException {
+        return menuService.getPlaceInfo(Long.valueOf(placeId));
     }
 
     @PostMapping
