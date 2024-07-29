@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -93,4 +94,42 @@ public class RestaurantService {
         restaurantMapper.updateRestaurantInfo(menuRestaurant);
     }
 
+    public Restaurant getByRestaurantId(Long restaurantId) {
+        Restaurant restaurant = restaurantMapper.selectByRestaurantId(restaurantId);
+        String logoPath = STR."\{srcPrefix}restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
+        restaurant.setLogo(logoPath);
+        return restaurant;
+
+    }
+
+    public void updateRestaurant(Restaurant restaurant, MultipartFile file) throws IOException {
+        if (file != null && !file.getOriginalFilename().equals(restaurant.getLogo())) {
+
+            //삭제
+            String key = STR."prj4/restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+
+            s3Client.deleteObject(objectRequest);
+
+            // 추가
+            String newKey = STR."prj4/restaurant/\{restaurant.getRestaurantId()}/\{file.getOriginalFilename()}";
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(newKey)
+                    .acl(ObjectCannedACL.PUBLIC_READ)
+                    .build();
+
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            restaurant.setLogo(file.getOriginalFilename());
+            restaurantMapper.updateLogo(restaurant);
+        } else {
+            restaurant.setLogo(null);
+            restaurantMapper.updateLogo(restaurant);
+        }
+
+        restaurantMapper.updateRestaurant(restaurant);
+    }
 }

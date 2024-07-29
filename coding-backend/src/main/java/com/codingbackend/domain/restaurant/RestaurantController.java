@@ -23,13 +23,23 @@ public class RestaurantController {
         return restaurantService.getAll();
     }
 
+    @GetMapping("{restaurantId}")
+    public Restaurant getRestaurant(@PathVariable Long restaurantId) {
+        return restaurantService.getByRestaurantId(restaurantId);
+    }
+
     @GetMapping("seller/{userId}")
     public List<Restaurant> getRestaurantInfo(@PathVariable Integer userId) {
         return restaurantService.getRestaurantsByUserId(userId);
     }
 
-    @GetMapping("{category}")
+    @GetMapping("category/{category}")
     public Category test(@PathVariable Integer category) {
         return restaurantService.getcategory(category);
+    }
+
+    @PutMapping
+    public void updateRestaurant(Restaurant restaurant, @RequestParam(required = false) MultipartFile file) throws IOException {
+        restaurantService.updateRestaurant(restaurant, file);
     }
 }

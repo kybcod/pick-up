@@ -97,7 +97,7 @@ export default function RestaurantMapView() {
     if (!window.kakao || !window.kakao.maps) return;
 
     const ps = new window.kakao.maps.services.Places();
-    axios.get(`/api/restaurants/${categoryId}`).then((res) => {
+    axios.get(`/api/restaurants/category/${categoryId}`).then((res) => {
       setCategory(res.data);
       let groupCode = res.data.groupCode;
       let categoryName = res.data.name;

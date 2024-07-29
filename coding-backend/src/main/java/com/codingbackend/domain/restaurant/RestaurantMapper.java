@@ -22,14 +22,15 @@ public interface RestaurantMapper {
             SET logo=#{logo}
             WHERE restaurant_id=#{restaurantId}
             """)
-    void updateLogo(RestaurantRequestDto restaurant);
+    void updateLogo(Restaurant restaurant);
 
     @Select("SELECT * FROM restaurant")
     List<RestaurantRequestDto> selectAll();
 
     @Select("""
             SELECT *
-            FROM restaurant WHERE restaurant_id = #{restaurantId}
+            FROM restaurant 
+            WHERE restaurant_id = #{restaurantId}
             """)
     Restaurant selectByRestaurantId(Long restaurantId);
 
@@ -50,4 +51,19 @@ public interface RestaurantMapper {
             WHERE restaurant_id = #{restaurantId}
             """)
     void updateRestaurantInfo(MenuRestaurant menuRestaurant);
+
+    @Update("""
+            UPDATE restaurant
+            SET restaurant_name = #{restaurantName}, 
+                restaurant_tel = #{restaurantTel}, 
+                logo = #{logo},
+                user_id=#{userId},
+                restaurant_id = #{restaurantId},
+                category_id = #{categoryId},
+                address = #{address},
+                latitude = #{latitude},
+                longitude = #{longitude}
+            WHERE restaurant_id = #{restaurantId}
+            """)
+    void updateRestaurant(Restaurant restaurant);
 }

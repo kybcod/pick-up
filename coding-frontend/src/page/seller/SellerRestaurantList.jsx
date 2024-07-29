@@ -34,7 +34,7 @@ function SellerRestaurantList(props) {
   }
 
   function handleMenuDetails(restaurantId) {
-    navigate(`/seller/${restaurantId}/menus`);
+    navigate(`/seller/${restaurantId}`);
   }
 
   return (
