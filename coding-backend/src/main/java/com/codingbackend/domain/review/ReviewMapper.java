@@ -38,10 +38,10 @@ public interface ReviewMapper {
             FROM review
             WHERE restaurant_id = #{restaurantId}
             """)
-    Review selectByRestaurantId(Long restaurantId);
+    List<Review> selectByRestaurantId(Long restaurantId);
 
     @Delete("DELETE FROM review WHERE restaurant_id=#{restaurantId}")
-    int deleteReview(Long restaurantId);
+    int deleteReview(Integer restaurantId);
 
     @Select("SELECT * FROM review_file WHERE review_id=#{reviewId}")
     List<ReviewFile> selectReviewFile(Integer reviewId);

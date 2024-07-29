@@ -155,51 +155,52 @@ public class MenuService {
 
 
     public void delete(Long restaurantId) {
-        //메뉴 사진 삭제
+        // 메뉴 사진 삭제
         List<Menu> menuList = menuMapper.selectMenu(restaurantId);
         for (Menu menu : menuList) {
-            String key = STR."prj4/restaurnt/\{restaurantId}/\{menu.getImg()}";
+            String key = String.format("prj4/restaurant/%d/%s", restaurantId, menu.getImg());
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
                     .build();
             s3Client.deleteObject(deleteObjectRequest);
         }
-        //메뉴 삭제
+        // 메뉴 삭제
         menuMapper.deleteMenu(restaurantId);
 
-        //리뷰사진삭제
-        Review review = reviewMapper.selectByRestaurantId(restaurantId); //아이디 구하기
-        List<ReviewFile> reviewFile = reviewMapper.selectReviewFile(review.getId());
-        for (ReviewFile review1 : reviewFile) {
-            String key = STR."prj4/review/\{review.getId()}/\{review1.getName()}";
-            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .build();
-            s3Client.deleteObject(deleteObjectRequest);
+        // 리뷰와 리뷰 사진 삭제
+        List<Review> reviews = reviewMapper.selectByRestaurantId(restaurantId); // 리뷰가 여러 개일 수 있으므로 List로 수정
+        for (Review review : reviews) {
+            List<ReviewFile> reviewFiles = reviewMapper.selectReviewFile(review.getId());
+            for (ReviewFile reviewFile : reviewFiles) {
+                String key = String.format("prj4/review/%d/%s", review.getId(), reviewFile.getName());
+                DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
+                s3Client.deleteObject(deleteObjectRequest);
+            }
+            // 리뷰 삭제
+            reviewMapper.deleteReview(review.getId());
         }
 
-        //리뷰삭제
-        reviewMapper.deleteReview(restaurantId);
-
-        //장바구니 삭제
+        // 장바구니 삭제
         cartMapper.deleteCart(restaurantId);
-        //주문 내역 삭제
+        // 주문 내역 삭제
         orderMapper.deleteOrder(restaurantId);
-        //찜삭제
+        // 찜 삭제
         favoriteMapper.deleteFavorite(restaurantId);
 
-        //가게 사진 삭제
+        // 가게 사진 삭제
         Restaurant restaurant = restaurantMapper.selectByRestaurantId(restaurantId);
-        String key = STR."prj4/restaurnt/\{restaurantId}/\{restaurant.getLogo()}";
+        String key = String.format("prj4/restaurant/%d/%s", restaurantId, restaurant.getLogo());
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .build();
         s3Client.deleteObject(deleteObjectRequest);
 
-        //가게 삭제
+        // 가게 삭제
         restaurantMapper.deleteRestaurant(restaurantId);
     }
 }
