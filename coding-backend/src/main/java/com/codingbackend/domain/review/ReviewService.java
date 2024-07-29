@@ -39,7 +39,7 @@ public class ReviewService {
                 //review_status True로 변경
                 orderMapper.updateReviewStatus(review.getUserId(), review.getRestaurantId());
 
-                //실제 S2 파일 저장
+                //실제 S3 파일 저장
                 String key = STR."prj4/review/\{review.getId()}/\{file.getOriginalFilename()}";
                 PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                         .bucket(bucketName)

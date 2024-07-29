@@ -25,10 +25,10 @@ export function OrderList() {
   const navigate = useNavigate();
   const { onClose, onOpen, isOpen } = useDisclosure();
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true); // 데이터 로딩 시작
+    setIsLoading(true);
     axios
       .get(`/api/orders/${userId}`)
       .then((res) => {
@@ -55,16 +55,16 @@ export function OrderList() {
               info[id] = data.basicInfo;
             });
             setRestaurantInfo(info);
-            setIsLoading(false); // 데이터 로딩 완료
+            setIsLoading(false);
           })
           .catch((err) => {
             console.error("가게 데이터 조회 실패:", err);
-            setIsLoading(false); // 데이터 로딩 완료
+            setIsLoading(false);
           });
       })
       .catch((err) => {
         console.error("주문 데이터 조회 실패:", err);
-        setIsLoading(false); // 데이터 로딩 완료
+        setIsLoading(false);
       });
   }, [userId]);
 
@@ -93,7 +93,6 @@ export function OrderList() {
   }
 
   if (isLoading) {
-    // 데이터 로딩 중일 때 스피너 표시
     return (
       <Flex justify="center" align="center" height="100vh">
         <Spinner size="xl" />
@@ -103,92 +102,124 @@ export function OrderList() {
 
   const isOrderListEmpty = Object.keys(orderList).length === 0;
 
+  function handleReviewDetail() {
+    navigate("/reviews");
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
+
   return (
     <Box maxW="800px" margin="auto" p={5}>
-      <Heading mb={6}>주문 내역</Heading>
-      {isOrderListEmpty ? (
+      <Heading mb={6} textAlign="center">
+        주문 내역
+      </Heading>
+      {isLoading ? (
+        <Flex justify="center" align="center" height="50vh">
+          <Spinner size="xl" color="teal.500" />
+        </Flex>
+      ) : isOrderListEmpty ? (
         <Flex direction="column" align="center" justify="center" height="500px">
           <Image src={"/img/cart_clear.png"} boxSize="150px" mb={4} />
-          <Text fontSize="2xl" textAlign="center" color="gray.500">
+          <Text fontSize="xl" textAlign="center" color="gray.500">
             주문 내역이 텅 비었어요.
           </Text>
         </Flex>
       ) : (
-        <VStack spacing={6} align="stretch">
+        <VStack spacing={4} align="stretch">
           {Object.values(orderList).map((group, index) => (
-            <Box
+            <Flex
               key={index}
-              borderWidth={1}
-              borderRadius="lg"
+              direction="column"
+              bg="gray.50"
               p={4}
-              boxShadow="md"
+              borderRadius="md"
+              boxShadow="sm"
+              _hover={{ boxShadow: "md" }}
+              transition="all 0.3s"
             >
-              <Box>
-                {group.pickUpStatus ? (
-                  <>
-                    <Badge>픽업완료</Badge>
-                    {group.reviewStatus ? (
-                      <Button onClick={() => navigate("/reviews")}>
-                        리뷰 보러 가기
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleOpenModal(group.restaurantId)}
-                      >
-                        리뷰쓰기
-                      </Button>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    {group.estimatedTime === null ? (
-                      <Badge>접수 완료</Badge>
-                    ) : (
-                      <Badge>픽업대기 : {group.estimatedTime}</Badge>
-                    )}
-                  </>
-                )}
-              </Box>
-              <Flex justify="space-between" align="center" mb={3}>
-                <Text
-                  cursor="pointer"
-                  fontSize="2xl"
-                  fontWeight="bold"
-                  onClick={() => navigate(`/menu/${group.restaurantId}`)}
-                  color="teal.500"
-                >
-                  가게 이름 :{" "}
-                  {restaurantInfo[group.restaurantId]?.placenamefull ||
-                    "정보 없음"}
-                </Text>
-                <Badge colorScheme="green">
+              <Flex justify="space-between" align="center" mb={2}>
+                <Flex align="center">
+                  <Image
+                    src={
+                      restaurantInfo[group.restaurantId]?.mainphotourl ||
+                      "https://via.placeholder.com/50"
+                    }
+                    boxSize="40px"
+                    borderRadius="full"
+                    mr={3}
+                  />
+                  <Text
+                    cursor="pointer"
+                    fontSize="lg"
+                    fontWeight="bold"
+                    onClick={() => navigate(`/menu/${group.restaurantId}`)}
+                    color="teal.600"
+                  >
+                    {restaurantInfo[group.restaurantId]?.placenamefull ||
+                      "정보 없음"}
+                  </Text>
+                </Flex>
+                <Text fontSize="sm" color="gray.500">
                   {new Date(group.inserted).toLocaleString()}
-                </Badge>
+                </Text>
               </Flex>
               <Divider mb={3} />
-              {group.items.map((item, itemIndex) => (
-                <Box key={itemIndex} mb={2}>
-                  <Flex justify="space-between">
-                    <Text fontWeight="bold">{item.menuName}</Text>
-                    <Text>{item.menuCount}개</Text>
+              <VStack spacing={2} align="stretch">
+                {group.items.map((item, itemIndex) => (
+                  <Flex key={itemIndex} justify="space-between">
+                    <Text>{item.menuName}</Text>
+                    <Flex>
+                      <Text mr={4}>{item.menuCount}개</Text>
+                      {item.menuPrice && (
+                        <Text fontWeight="medium">
+                          {item.menuPrice?.toLocaleString()}원
+                        </Text>
+                      )}
+                    </Flex>
                   </Flex>
-                  {item.menuPrice === null || (
-                    <Text color="gray.600">가격: {item.menuPrice}원</Text>
-                  )}
-                </Box>
-              ))}
-              <Divider mt={3} mb={3} />
-              <Flex justify="flex-end">
-                <Text fontWeight="bold">
-                  총 금액:{" "}
+                ))}
+              </VStack>
+              <Divider my={3} />
+              <Flex justify="space-between" align="center" mb={2}>
+                <Badge
+                  colorScheme={group.pickUpStatus ? "green" : "yellow"}
+                  fontSize="sm"
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                >
+                  {group.pickUpStatus
+                    ? "픽업완료"
+                    : group.estimatedTime === null
+                      ? "접수 완료"
+                      : `픽업대기: ${group.estimatedTime}`}
+                </Badge>
+                <Text fontWeight="bold" fontSize="md" color="teal.600">
+                  총{" "}
                   {group.items
-                    .reduce((sum, item) => {
-                      return sum + item.menuCount * item.menuPrice;
-                    }, 0)
+                    .reduce(
+                      (sum, item) => sum + item.menuCount * item.menuPrice,
+                      0,
+                    )
                     .toLocaleString()}
                   원
                 </Text>
               </Flex>
+              {group.pickUpStatus && (
+                <Button
+                  size="sm"
+                  colorScheme="teal"
+                  variant="outline"
+                  mt={2}
+                  _hover={{ bg: "teal.50" }}
+                  onClick={() =>
+                    group.reviewStatus
+                      ? handleReviewDetail()
+                      : handleOpenModal(group.restaurantId)
+                  }
+                >
+                  {group.reviewStatus ? "리뷰 보기" : "리뷰 작성"}
+                </Button>
+              )}
               <ReviewModal
                 restaurantName={
                   restaurantInfo[group.restaurantId]?.placenamefull ||
@@ -199,7 +230,7 @@ export function OrderList() {
                 selectedRestaurant={selectedRestaurant}
                 userId={userId}
               />
-            </Box>
+            </Flex>
           ))}
         </VStack>
       )}

@@ -20,6 +20,7 @@ class BasicInfo {
     private String placenamefull;
     private String mainphotourl;
     private String phonenum;
+    private Integer cid;
 }
 
 @Data

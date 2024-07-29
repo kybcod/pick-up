@@ -2,6 +2,7 @@
 import {
   Box,
   Button,
+  Center,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -24,7 +25,6 @@ import {
   faRightFromBracket,
   faShoppingCart,
   faStar,
-  faStore,
 } from "@fortawesome/free-solid-svg-icons";
 
 export function DrawerExample() {
@@ -48,7 +48,6 @@ export function DrawerExample() {
     { icon: faClipboardList, text: "주문 내역", path: "/orders" },
     { icon: faHeart, text: "찜한 가게", path: "/favorites" },
     { icon: faStar, text: "리뷰 내역", path: "/reviews" },
-    { icon: faStore, text: "입점하기", path: "/register" },
   ];
 
   return (
@@ -80,7 +79,14 @@ export function DrawerExample() {
                 {account.nickName}님 안녕하세요!
               </Box>
             ) : (
-              <Box onClick={() => handleNavigateTo("/login")}>로그인</Box>
+              <Center>
+                <Center onClick={() => handleNavigateTo("login")}>
+                  로그인
+                </Center>
+                <Center ml={1} onClick={() => handleNavigateTo("signup")}>
+                  / 회원가입
+                </Center>
+              </Center>
             )}
           </DrawerHeader>
 

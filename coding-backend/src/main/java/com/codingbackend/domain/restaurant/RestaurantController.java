@@ -23,6 +23,11 @@ public class RestaurantController {
         return restaurantService.getAll();
     }
 
+    @GetMapping("seller/{userId}")
+    public List<Restaurant> getRestaurantInfo(@PathVariable Integer userId) {
+        return restaurantService.getRestaurantsByUserId(userId);
+    }
+
     @GetMapping("{category}")
     public Category test(@PathVariable Integer category) {
         return restaurantService.getcategory(category);
