@@ -24,7 +24,7 @@ public class MenuController {
 
     @PostMapping
     public void insertMenu(MenuRequest menuRequest) throws IOException {
-//        menuService.insertMenu(menuRequest.getRestaurantId(), menuRequest.getMenuItems());
+        menuService.insertMenu(menuRequest.getRestaurantId(), menuRequest.getMenuItems());
     }
 
     @PutMapping("/seller/{restaurantId}")

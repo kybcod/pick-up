@@ -60,11 +60,17 @@ public class RestaurantService {
         }).collect(Collectors.toList());
     }
 
+    ///pickUp_black.png
     public List<Restaurant> getRestaurantsByUserId(Integer userId) {
         List<Restaurant> restaurants = restaurantMapper.selectByUserId(userId);
         return restaurants.stream().map(restaurant -> {
-            String logoPath = STR."\{srcPrefix}restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
-            restaurant.setLogo(logoPath);
+            if (restaurant.getLogo() != null) {
+                String logoPath = STR."\{srcPrefix}restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
+                restaurant.setLogo(logoPath);
+            } else {
+                String logoPath = STR."\{srcPrefix}restaurant/pickUp_black.png";
+                restaurant.setLogo(logoPath);
+            }
             return restaurant;
         }).collect(Collectors.toList());
     }
@@ -82,7 +88,7 @@ public class RestaurantService {
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(menuRestaurant.getLogo().getInputStream(), menuRestaurant.getLogo().getSize()));
 
-            logoFileName = menuRestaurant.getLogo().getOriginalFilename();
+            logoFileName = key;
         }
 
         // Update restaurant information

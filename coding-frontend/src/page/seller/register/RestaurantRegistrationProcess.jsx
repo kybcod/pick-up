@@ -78,7 +78,7 @@ function RestaurantRegistrationProcess() {
         <Box textAlign="center" p={8}>
           <Heading size="xl">등록에 성공했습니다!</Heading>
           <Box mt={4}>가게 정보와 메뉴가 성공적으로 등록되었습니다.</Box>
-          <Button onClick={() => naviaget("/seller")}>
+          <Button onClick={() => navigate("/seller")}>
             메인 페이지로 이동
           </Button>
         </Box>
