@@ -131,25 +131,21 @@ export function MyPage() {
           <Input defaultValue={user.email} readOnly />
         </FormControl>
       </Box>
-      {!isEditing && (
-        <Box>
-          <FormControl>
-            <FormLabel>패스워드</FormLabel>
-            <Input type={"password"} value={user.password} readOnly />
-          </FormControl>
-        </Box>
-      )}
       {isEditing && (
         <Box>
           <FormControl>
             <FormLabel>패스워드</FormLabel>
             <Input
+              type={"password"}
               onChange={(e) => setUser({ ...user, password: e.target.value })}
             />
           </FormControl>
           <FormControl>
             <FormLabel>패스워드 확인</FormLabel>
-            <Input onChange={(e) => setPasswordCheck(e.target.value)} />
+            <Input
+              type={"password"}
+              onChange={(e) => setPasswordCheck(e.target.value)}
+            />
             {isEditing &&
               passwordCheck.trim().length > 0 &&
               (user.password === passwordCheck ? null : (
