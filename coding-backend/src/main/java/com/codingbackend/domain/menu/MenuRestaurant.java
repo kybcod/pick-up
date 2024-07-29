@@ -15,6 +15,7 @@ public class MenuRestaurant {
     private String restaurantTel; //전화번호
     private String address;
     private MultipartFile logo;
+    private String logoFileName;
 
     //메뉴
     private List<MenuItem> menuItems;

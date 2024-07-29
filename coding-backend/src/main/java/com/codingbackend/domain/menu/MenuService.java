@@ -123,42 +123,33 @@ public class MenuService {
         }
     }
 
-    public void updateMenu(Long restaurantId, MenuRestaurantPut menuRestaurant) throws IOException {
-        for (MenuItemPut item : menuRestaurant.getMenuItems()) {
+    public void updateMenu(List<MenuItem> menuItems) throws IOException {
+        for (MenuItem item : menuItems) {
             Menu menu = new Menu();
-            menu.setRestaurantId(restaurantId);
+            menu.setRestaurantId(menu.getRestaurantId());
             menu.setName(item.getName());
             menu.setPrice(item.getPrice());
 
-//            if (item.getImg() != null && item.getImg().getDataUrl() != null) {
-//                if (item.getImg().getDataUrl().startsWith("data:image")) {
-//                    // Base64 인코딩된 이미지 데이터에서 실제 이미지 데이터 추출
-//                    String base64Image = item.getImg().getDataUrl().split(",")[1];
-//                    byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-//
-//                    String fileName = item.getImg().getFileName() != null ? item.getImg().getFileName() : "menu_" + UUID.randomUUID().toString() + ".jpg";
-//                    String key = "prj4/restaurant/" + restaurantId + "/menu/" + fileName;
-//
-//                    PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-//                            .bucket(bucketName)
-//                            .key(key)
-//                            .acl(ObjectCannedACL.PUBLIC_READ)
-//                            .build();
-//
-//                    s3Client.putObject(putObjectRequest,
-//                            RequestBody.fromBytes(imageBytes));
-//
-//                    // S3에 업로드된 이미지의 URL을 저장
-//                    menu.setImg("https://" + bucketName + ".s3.amazonaws.com/" + key);
-//                } else {
-//                    // 기존 이미지 URL을 그대로 사용
-//                    menu.setImg(item.getImg().getDataUrl());
-//                }
-//            }
+            if (item.getImg() != null && !item.getImg().isEmpty()) {
+                String fileName = item.getImg().getOriginalFilename();
+                String key = STR."prj4/restaurant/\{menu.getRestaurantId()}/\{fileName}";
+
+                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .acl(ObjectCannedACL.PUBLIC_READ)
+                        .build();
+
+                s3Client.putObject(putObjectRequest,
+                        RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
+
+                menu.setImg(fileName);
+            }
 
             menuMapper.update(menu);
         }
     }
+
 
     public void delete(Long restaurantId) {
         //메뉴 사진 삭제

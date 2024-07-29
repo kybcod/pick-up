@@ -7,5 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 class MenuItem {
     private String name;
     private String price;
-    private MultipartFile img;  // String 대신 ImageData 사용
+    private MultipartFile img;
 }

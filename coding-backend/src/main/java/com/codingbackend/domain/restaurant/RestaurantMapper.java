@@ -1,7 +1,7 @@
 package com.codingbackend.domain.restaurant;
 
+import com.codingbackend.domain.menu.MenuRestaurant;
 import org.apache.ibatis.annotations.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -38,6 +38,10 @@ public interface RestaurantMapper {
             """)
     List<Restaurant> selectByUserId(Integer userId);
 
+
+    @Delete("DELETE FROM restaurant WHERE restaurant_id=#{restaurantId}")
+    int deleteRestaurant(Long restaurantId);
+
     @Update("""
             UPDATE restaurant
             SET restaurant_name = #{restaurantName}, 
@@ -45,9 +49,5 @@ public interface RestaurantMapper {
                 logo = #{logoFileName}
             WHERE restaurant_id = #{restaurantId}
             """)
-    void updateRestaurantInfo(Long restaurantId, String restaurantName, String restaurantTel,
-                              @Param("logoFileName") MultipartFile logoFileName);
-
-    @Delete("DELETE FROM restaurant WHERE restaurant_id=#{restaurantId}")
-    int deleteRestaurant(Long restaurantId);
+    void updateRestaurantInfo(MenuRestaurant menuRestaurant);
 }

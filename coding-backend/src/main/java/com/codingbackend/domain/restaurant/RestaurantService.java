@@ -1,6 +1,6 @@
 package com.codingbackend.domain.restaurant;
 
-import com.codingbackend.domain.menu.MenuRestaurantPut;
+import com.codingbackend.domain.menu.MenuRestaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -74,26 +74,21 @@ public class RestaurantService {
         }).collect(Collectors.toList());
     }
 
-    public void updateRestaurant(Long restaurantId, MenuRestaurantPut menuRestaurant) throws IOException {
+    public void updateRestaurant(MenuRestaurant menuRestaurant) throws IOException {
 
         // 로고 S3 저장
         if (menuRestaurant.getLogo() != null && !menuRestaurant.getLogo().isEmpty()) {
-            String key = "prj4/restaurant/" + restaurantId + "/" + menuRestaurant.getLogo();
+            String key = "prj4/restaurant/" + menuRestaurant.getRestaurantId() + "/" + menuRestaurant.getLogo().getOriginalFilename();
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
                     .acl(ObjectCannedACL.PUBLIC_READ)
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(menuRestaurant.getLogo().getInputStream(), menuRestaurant.getLogo().getSize()));
+            menuRestaurant.setLogoFileName(menuRestaurant.getLogo().getOriginalFilename());
 
         }
-
-        restaurantMapper.updateRestaurantInfo(
-                restaurantId,
-                menuRestaurant.getRestaurantName(),
-                menuRestaurant.getRestaurantTel(),
-                menuRestaurant.getLogo()
-        );
+        restaurantMapper.updateRestaurantInfo(menuRestaurant);
     }
 
 }
