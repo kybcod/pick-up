@@ -5,7 +5,7 @@ import { Home } from "./Home.jsx";
 import RestaurantMapView from "./page/restaurant/RestaurantMapView.jsx";
 import "./component/styles/fonts.css";
 import { theme } from "./component/styles/theme.jsx";
-import { MainPage } from "./page/mainPage/MainPage.jsx";
+import { MainPage } from "./page/main/MainPage.jsx";
 import { RestaurantMenuList } from "./page/menuSelector/RestaurantMenuList.jsx";
 import Login from "./page/user/Login.jsx";
 import { Signup } from "./page/user/Signup.jsx";

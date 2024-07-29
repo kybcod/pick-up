@@ -36,19 +36,44 @@ function SellerMenusDetails(props) {
   }, []);
 
   const handleSave = () => {
-    const updatedMenuItems = menuList.menuInfo.menuList.map((item, index) => ({
-      name: item.menu,
-      price: item.price,
-      img: fileInputRefs.current[index + 1].current.files[0],
-    }));
+    const formData = new FormData();
+    formData.append("restaurantId", restaurantId);
+    formData.append("restaurantName", menuList.basicInfo.placenamefull);
+    formData.append("restaurantTel", menuList.basicInfo.phonenum);
+
+    const logoFile = fileInputRefs.current[0].current.files[0];
+    if (logoFile) {
+      formData.append("logo", logoFile);
+    }
+
+    const menuItems = menuList.menuInfo.menuList.map((item, index) => {
+      const menuItemFile = fileInputRefs.current[index + 1].current.files[0];
+      return {
+        name: item.menu,
+        price: item.price,
+        img: menuItemFile
+          ? {
+              dataUrl: URL.createObjectURL(menuItemFile),
+              fileName: menuItemFile.name,
+            }
+          : {
+              dataUrl: item.img,
+              fileName: null,
+            },
+      };
+    });
+
+    formData.append("menuItems", JSON.stringify(menuItems));
+
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
 
     axios
-      .putForm(`/api/menus/seller/${restaurantId}`, {
-        restaurantId: restaurantId,
-        restaurantName: menuList.basicInfo.placenamefull,
-        restaurantTel: menuList.basicInfo.phonenum,
-        logo: fileInputRefs.current[0].current.files[0],
-        menuItems: updatedMenuItems,
+      .put(`/api/menus/seller/${restaurantId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       })
       .then((res) => {
         console.log("put", res.data);
@@ -61,6 +86,7 @@ function SellerMenusDetails(props) {
         setIsEditing(false);
       })
       .catch((error) => {
+        console.error(error);
         toast({
           description: "메뉴 정보 업데이트 중 오류가 발생했습니다.",
           status: "error",
@@ -69,6 +95,7 @@ function SellerMenusDetails(props) {
         });
       });
   };
+
   // 메뉴 추가
   const handelMenuAdd = () => {
     setMenuList((prevState) => ({

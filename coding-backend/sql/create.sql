@@ -33,6 +33,7 @@ CREATE TABLE restaurant
     category_id     INT          NOT NULL
 );
 
+
 CREATE TABLE menu
 (
     id            INT PRIMARY KEY AUTO_INCREMENT,

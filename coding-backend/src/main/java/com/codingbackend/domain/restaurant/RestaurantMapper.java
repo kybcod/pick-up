@@ -1,9 +1,6 @@
 package com.codingbackend.domain.restaurant;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -41,10 +38,15 @@ public interface RestaurantMapper {
     List<Restaurant> selectByUserId(Integer userId);
 
     @Update("""
-            UPDATE restaurant 
-            SET restaurant_name=#{restaurantName} 
-                        AND restaurant_tel=#{restaurantTel} AND logo=#{logo}
-            WHERE restaurant_id=#{restaurantId}
+            UPDATE restaurant
+            SET restaurant_name = #{restaurantName}, 
+                restaurant_tel = #{restaurantTel}, 
+                logo = #{logoFileName}
+            WHERE restaurant_id = #{restaurantId}
             """)
-    void updateRestaurantInfo(Long restaurantId);
+    void updateRestaurantInfo(
+            @Param("restaurantId") Long restaurantId,
+            @Param("restaurantName") String restaurantName,
+            @Param("restaurantTel") String restaurantTel,
+            @Param("logoFileName") String logoFileName);
 }

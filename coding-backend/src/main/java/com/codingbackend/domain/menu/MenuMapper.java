@@ -21,7 +21,7 @@ public interface MenuMapper {
             WHERE restaurant_id = #{placeId}
             """)
     List<Menu> selectMenu(Integer placeId);
-
+    
     @Update("UPDATE menu SET name = #{name}, price = #{price}, img = #{img} WHERE id = #{id}")
     void update(Menu menu);
 }

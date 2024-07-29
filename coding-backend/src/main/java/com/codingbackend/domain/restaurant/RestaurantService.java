@@ -69,19 +69,29 @@ public class RestaurantService {
         }).collect(Collectors.toList());
     }
 
-    public void updateRestaurant(MenuRestaurant menuRestaurant) throws IOException {
-        Long restaurantId = menuRestaurant.getRestaurantId();
-        restaurantMapper.updateRestaurantInfo(restaurantId);
-        //로고 s3 저장
-        if (menuRestaurant.getLogo() != null) {
-            //실제 S3 파일 저장
-            String key = STR."prj4/restaurant/\{menuRestaurant.getRestaurantId()}/\{menuRestaurant.getLogo()}";
+    public void updateRestaurant(Long restaurantId, MenuRestaurant menuRestaurant) throws IOException {
+        String logoFileName = null;
+
+        // 로고 S3 저장
+        if (menuRestaurant.getLogo() != null && !menuRestaurant.getLogo().isEmpty()) {
+            String key = "prj4/restaurant/" + restaurantId + "/" + menuRestaurant.getLogo().getOriginalFilename();
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
                     .acl(ObjectCannedACL.PUBLIC_READ)
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(menuRestaurant.getLogo().getInputStream(), menuRestaurant.getLogo().getSize()));
+
+            logoFileName = key;
         }
+
+        // Update restaurant information
+        restaurantMapper.updateRestaurantInfo(
+                restaurantId,
+                menuRestaurant.getRestaurantName(),
+                menuRestaurant.getRestaurantTel(),
+                logoFileName
+        );
     }
+
 }

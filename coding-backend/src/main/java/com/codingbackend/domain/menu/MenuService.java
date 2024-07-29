@@ -16,7 +16,9 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,52 +92,62 @@ public class MenuService {
         return STR."\{srcPrefix}restaurant/\{placeId}/\{img}";
     }
 
-    public void insertMenu(Long restaurantId, List<MenuItem> menuItems) throws IOException {
-        for (MenuItem item : menuItems) {
-            Menu menu = new Menu();
-            menu.setRestaurantId(restaurantId);
-            menu.setName(item.getName());
-            menu.setPrice(item.getPrice());
+//    public void insertMenu(Long restaurantId, List<MenuItem> menuItems) throws IOException {
+//        for (MenuItem item : menuItems) {
+//            Menu menu = new Menu();
+//            menu.setRestaurantId(restaurantId);
+//            menu.setName(item.getName());
+//            menu.setPrice(item.getPrice());
+//
+//            if (item.getImg() != null && !item.getImg().isEmpty()) {
+//                String key = STR."prj4/restaurant/\{restaurantId}/\{item.getImg().getOriginalFilename()}";
+//                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+//                        .bucket(bucketName)
+//                        .key(key)
+//                        .acl(ObjectCannedACL.PUBLIC_READ)
+//                        .build();
+//
+//                s3Client.putObject(putObjectRequest,
+//                        RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
+//
+//                menu.setImg(item.getImg().getOriginalFilename());
+//            }
+//
+//            menuMapper.insert(menu);
+//        }
+//    }
 
-            if (item.getImg() != null && !item.getImg().isEmpty()) {
-                String key = STR."prj4/restaurant/\{restaurantId}/\{item.getImg().getOriginalFilename()}";
-                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(key)
-                        .acl(ObjectCannedACL.PUBLIC_READ)
-                        .build();
-
-                s3Client.putObject(putObjectRequest,
-                        RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
-
-                menu.setImg(item.getImg().getOriginalFilename());
-            }
-
-            menuMapper.insert(menu);
-        }
-    }
-
-    public void updateMenu(MenuRestaurant menuRestaurant) throws IOException {
-        Long restaurantId = menuRestaurant.getRestaurantId();
-
+    public void updateMenu(Long restaurantId, MenuRestaurant menuRestaurant) throws IOException {
         for (MenuItem item : menuRestaurant.getMenuItems()) {
             Menu menu = new Menu();
             menu.setRestaurantId(restaurantId);
             menu.setName(item.getName());
             menu.setPrice(item.getPrice());
 
-            if (item.getImg() != null && !item.getImg().isEmpty()) {
-                String key = STR."prj4/restaurant/\{restaurantId}/\{item.getImg().getOriginalFilename()}";
-                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(key)
-                        .acl(ObjectCannedACL.PUBLIC_READ)
-                        .build();
+            if (item.getImg() != null && item.getImg().getDataUrl() != null) {
+                if (item.getImg().getDataUrl().startsWith("data:image")) {
+                    // Base64 인코딩된 이미지 데이터에서 실제 이미지 데이터 추출
+                    String base64Image = item.getImg().getDataUrl().split(",")[1];
+                    byte[] imageBytes = Base64.getDecoder().decode(base64Image);
 
-                s3Client.putObject(putObjectRequest,
-                        RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
+                    String fileName = item.getImg().getFileName() != null ? item.getImg().getFileName() : "menu_" + UUID.randomUUID().toString() + ".jpg";
+                    String key = "prj4/restaurant/" + restaurantId + "/menu/" + fileName;
 
-                menu.setImg(item.getImg().getOriginalFilename());
+                    PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(key)
+                            .acl(ObjectCannedACL.PUBLIC_READ)
+                            .build();
+
+                    s3Client.putObject(putObjectRequest,
+                            RequestBody.fromBytes(imageBytes));
+
+                    // S3에 업로드된 이미지의 URL을 저장
+                    menu.setImg("https://" + bucketName + ".s3.amazonaws.com/" + key);
+                } else {
+                    // 기존 이미지 URL을 그대로 사용
+                    menu.setImg(item.getImg().getDataUrl());
+                }
             }
 
             menuMapper.update(menu);
