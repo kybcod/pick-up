@@ -3,6 +3,7 @@ package com.codingbackend.domain.menu;
 import com.codingbackend.domain.cart.CartMapper;
 import com.codingbackend.domain.favorites.FavoriteMapper;
 import com.codingbackend.domain.order.OrderMapper;
+import com.codingbackend.domain.restaurant.Category;
 import com.codingbackend.domain.restaurant.Restaurant;
 import com.codingbackend.domain.restaurant.RestaurantMapper;
 import com.codingbackend.domain.review.Review;
@@ -76,14 +77,24 @@ public class MenuService {
             basicInfo.setMainphotourl(STR."\{srcPrefix}restaurant/\{placeId}/\{restaurant.getLogo()}");
             basicInfo.setPhonenum(restaurant.getRestaurantTel());
 
+            Category category = restaurantMapper.selectCategory(restaurant.getCategoryId());
+            CategoryDto categoryDto = new CategoryDto();
+            categoryDto.setCatename(category.getName());
+            categoryDto.setCate1name(category.getGroupCode());
+            if ("FD6".equals(category.getGroupCode())) {
+                categoryDto.setCate1name("음식점");
+            } else {
+                categoryDto.setCate1name("카페");
+            }
+            basicInfo.setCategory(categoryDto);
+
             // 리뷰 정보 설정
             Review restaurantReview = reviewMapper.selectReviewByRestaurantId(Long.valueOf(placeId));
             FeedbackDto feedbackDto = new FeedbackDto();
             feedbackDto.setScoresum(restaurantReview.getReviewSum()); // 적절한 메서드로 수정
             feedbackDto.setScorecnt(restaurantReview.getReviewCount());  // 적절한 메서드로 수정
             basicInfo.setFeedback(feedbackDto);
-
-
+            
             placeDto.setBasicInfo(basicInfo);
 
             return placeDto;

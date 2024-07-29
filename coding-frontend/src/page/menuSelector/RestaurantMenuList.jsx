@@ -220,12 +220,15 @@ export function RestaurantMenuList() {
                   <FontAwesomeIcon icon={faStar} color="#FFD43B" />
                   <Text fontWeight="bold">
                     {placeInfo.basicInfo.feedback
-                      ? (
-                          placeInfo.basicInfo.feedback.scoresum /
-                          placeInfo.basicInfo.feedback.scorecnt
-                        ).toFixed(1)
+                      ? placeInfo.basicInfo.feedback.scorecnt > 0
+                        ? (
+                            placeInfo.basicInfo.feedback.scoresum /
+                            placeInfo.basicInfo.feedback.scorecnt
+                          ).toFixed(1)
+                        : "0"
                       : "평점 없음"}
                   </Text>
+
                   <Text color="gray.500">
                     {placeInfo.basicInfo.feedback
                       ? `(${placeInfo.basicInfo.feedback.scorecnt} 리뷰)`
