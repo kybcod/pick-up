@@ -125,9 +125,6 @@ public class RestaurantService {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             restaurant.setLogo(file.getOriginalFilename());
             restaurantMapper.updateLogo(restaurant);
-        } else {
-            restaurant.setLogo(null);
-            restaurantMapper.updateLogo(restaurant);
         }
 
         restaurantMapper.updateRestaurant(restaurant);
