@@ -54,4 +54,10 @@ public class OrderController {
         return orderService.get(userId);
     }
 
+    @Description("주문 횟수")
+    @GetMapping("/seller/{userId}/count")
+    public OrderCount getCount(@PathVariable Integer userId) {
+        return orderService.getCount(userId);
+    }
+
 }

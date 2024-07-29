@@ -75,4 +75,13 @@ public interface OrderMapper {
             WHERE u.id = #{userId}
             """)
     List<ReceivedOrder> selectReceivedOrder(Integer userId);
+
+    @Select("""
+            SELECT COUNT(o.pick_up_status) AS orderCount
+            FROM orders o
+                     JOIN restaurant r ON o.restaurant_id = r.restaurant_id
+            WHERE o.pick_up_status = FALSE
+              AND r.user_id =#{userId}
+            """)
+    OrderCount selectOrderCount(Integer userId);
 }
