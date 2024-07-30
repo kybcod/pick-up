@@ -73,15 +73,19 @@ export function MainPage() {
   }, [userId]);
 
   useEffect(() => {
-    if (currentPosition) {
-      fetchAddressFromCoords(
-        currentPosition.latitude,
-        currentPosition.longitude,
-      );
-      localStorage.setItem(
-        `currentPosition_${userId}`,
-        JSON.stringify(currentPosition),
-      );
+    if (account.isLoggedIn()) {
+      if (currentPosition) {
+        fetchAddressFromCoords(
+          currentPosition.latitude,
+          currentPosition.longitude,
+        );
+        localStorage.setItem(
+          `currentPosition_${userId}`,
+          JSON.stringify(currentPosition),
+        );
+      }
+    } else {
+      localStorage.removeItem(`currentPosition_${userId}`);
     }
   }, [currentPosition, userId]);
 
@@ -107,17 +111,22 @@ export function MainPage() {
   };
 
   const handleGetCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-          setCurrentPosition({ latitude, longitude });
-        },
-        (error) => console.error("Error getting current location:", error),
-      );
+    if (!account.isLoggedIn()) {
+      alert("로그인 해주세요.");
+      navigate("/login");
     } else {
-      console.error("Geolocation is not supported by this browser.");
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            setCurrentPosition({ latitude, longitude });
+          },
+          (error) => console.error("Error getting current location:", error),
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
     }
   };
 
