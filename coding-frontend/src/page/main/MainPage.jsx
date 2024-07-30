@@ -1,15 +1,11 @@
 import {
   Box,
-  Center,
   Container,
   Flex,
   Grid,
   GridItem,
   Heading,
   Image,
-  Input,
-  InputGroup,
-  InputRightAddon,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -47,7 +43,6 @@ export function MainPage() {
   const [currentAddress, setCurrentAddress] = useState("");
   const [currentPosition, setCurrentPosition] = useState(null);
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
   const account = useContext(LoginContext);
   const userId = account.id;
 
@@ -145,61 +140,79 @@ export function MainPage() {
   };
 
   return (
-    <Box bg="gray.100" minH="100vh">
+    <Box bg="gray.50" minH="100vh">
       <Container maxW="container.xl" py={8}>
         <VStack spacing={8} align="stretch">
-          <Heading as="h1" size="xl" color="#2AC1BC" textAlign="center" mb={4}>
-            픽업 주문
-          </Heading>
+          <Box
+            bg="teal.500"
+            color="white"
+            p={6}
+            borderRadius="xl"
+            boxShadow="md"
+          >
+            <Heading as="h1" size="xl" textAlign="center" mb={4}>
+              픽업 주문
+            </Heading>
+            <Text fontSize="lg" textAlign="center">
+              맛있는 음식을 픽업으로 즐겨보세요!
+            </Text>
+          </Box>
 
           <Box bg="white" p={6} borderRadius="lg" boxShadow="md">
             <VStack spacing={4} align="stretch">
               <Flex align="center">
-                <Box display={"inline-block"} whiteSpace={"nowrap"}>
-                  <Text fontSize="lg" fontWeight="bold" mr={4}>
-                    현 위치
-                  </Text>
+                <Text fontSize="md" fontWeight="bold" mr={2}>
+                  현재 위치:
+                </Text>
+                <Text fontSize="md" flex={1}>
+                  {currentAddress || "위치를 설정해주세요"}
+                </Text>
+                <Box
+                  as="button"
+                  onClick={handleGetCurrentLocation}
+                  bg="#2AC1BC"
+                  color="white"
+                  px={3}
+                  py={2}
+                  borderRadius="full"
+                  fontSize="sm"
+                >
+                  <FontAwesomeIcon icon={faLocationCrosshairs} /> 현재 위치
                 </Box>
-                <InputGroup size="lg">
-                  <Input
-                    readOnly
-                    value={currentAddress}
-                    placeholder="현재 위치를 설정해주세요"
-                    bg="gray.100"
-                  />
-                  <InputRightAddon
-                    children={<FontAwesomeIcon icon={faLocationCrosshairs} />}
-                    cursor="pointer"
-                    onClick={handleGetCurrentLocation}
-                    bg="#2AC1BC"
-                    color="white"
-                  />
-                </InputGroup>
               </Flex>
             </VStack>
           </Box>
-
-          <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+          <Grid templateColumns={["repeat(2, 1fr)", "repeat(5, 1fr)"]} gap={12}>
             {images.map((imageUrl, index) => (
               <GridItem key={index} onClick={() => handleCategoryClick(index)}>
                 <Box
                   bg="white"
-                  borderRadius="lg"
+                  borderRadius="xl"
                   overflow="hidden"
-                  boxShadow="md"
+                  boxShadow="lg"
                   transition="all 0.3s"
-                  _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
                 >
-                  <Center p={4}>
+                  <Box position="relative" pb="60%" overflow="hidden">
                     <Image
-                      borderRadius="full"
-                      boxSize="120px"
                       src={imageUrl}
-                      objectFit="cover"
+                      alt={categories[index]}
+                      position="absolute"
+                      top="50%"
+                      left="50%"
+                      transform="translate(-50%, -50%)"
+                      w="80%"
+                      h="80%"
+                      _hover={{ transform: "translate(-50%, -50%) scale(1.1)" }}
                     />
-                  </Center>
-                  <Box p={4} textAlign="center">
-                    <Text fontSize="lg" fontWeight="bold" color="#333">
+                  </Box>
+                  <Box
+                    p={2}
+                    textAlign="center"
+                    bg="rgba(255,255,255,0.9)"
+                    borderTop="2px solid"
+                    borderTopColor="teal.500"
+                  >
+                    <Text fontSize="lg" fontWeight="bold" color="gray.800">
                       {categories[index]}
                     </Text>
                   </Box>

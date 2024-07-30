@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   Badge,
   Box,
-  Button,
   Container,
+  Flex,
   Grid,
-  Heading,
+  Image,
+  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +24,9 @@ function SellerMainPage(props) {
   const navigate = useNavigate();
   const account = useContext(LoginContext);
   const bgColor = useColorModeValue("gray.50", "gray.800");
-  const buttonColor = useColorModeValue("blue.500", "blue.200");
+  const cardBgColor = useColorModeValue("white", "gray.700");
+  const iconColor = useColorModeValue("#2AC1BC", "#2AC1BC");
+  const textColor = useColorModeValue("gray.600", "gray.200");
   const userId = account.id;
   const [order, setOrder] = useState(0);
 
@@ -41,48 +44,68 @@ function SellerMainPage(props) {
   ];
 
   return (
-    <Box bg={bgColor} minHeight="100vh" py={10}>
-      <Container maxW="container.md">
-        <Heading as="h1" size="xl" textAlign="center" mb={10}>
-          사장님 메인 페이지
-        </Heading>
-        <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-          {menuItems.map((item, index) => (
-            <Button
-              key={index}
-              onClick={() => navigate(item.path)}
-              size="lg"
-              height="150"
-              bg={buttonColor}
-              color="white"
-              _hover={{ bg: "blue.600" }}
-              fontSize="xl"
-              flexDirection="column"
-              justifyContent="center"
-              position="relative" // Required for positioning Badge
-            >
-              <Box position="relative" display="flex" justifyContent="center">
-                <FontAwesomeIcon icon={item.icon} size="2x" />
-                {item.path === "/seller/orders" && (
-                  <Badge
-                    position="absolute"
-                    top="-10px"
-                    right="-10px"
-                    colorScheme="red"
+    <Box w={"100%"}>
+      <Box textAlign="center" w="100%">
+        <Image
+          src={"/img/pick.png"}
+          width="100%"
+          height="auto"
+          maxHeight="600px"
+          borderBottomRadius="md"
+        />
+      </Box>
+      <Box bg={bgColor} minHeight="100vh" py={10}>
+        <Container maxW="container.lg">
+          <Grid templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)"]} gap={6}>
+            {menuItems.map((item, index) => (
+              <Box
+                key={index}
+                onClick={() => navigate(item.path)}
+                bg={cardBgColor}
+                borderRadius="lg"
+                boxShadow="md"
+                p={6}
+                cursor="pointer"
+                transition="all 0.3s"
+                _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
+                position="relative"
+              >
+                <Flex alignItems="center">
+                  <Flex
+                    bg={iconColor}
                     borderRadius="full"
-                    px={2}
-                    py={1}
-                    fontSize="sm"
+                    color="white"
+                    mr={4}
+                    width="50px"
+                    height="50px"
+                    alignItems="center"
+                    justifyContent="center"
                   >
-                    {order}
-                  </Badge>
-                )}
+                    <FontAwesomeIcon icon={item.icon} size="lg" />
+                  </Flex>
+                  <Text fontSize="xl" fontWeight="bold" color={textColor}>
+                    {item.text}
+                  </Text>
+                  {item.path === "/seller/orders" && (
+                    <Badge
+                      position="absolute"
+                      top={2}
+                      right={2}
+                      colorScheme="red"
+                      borderRadius="full"
+                      px={2}
+                      py={1}
+                      fontSize="sm"
+                    >
+                      {order}
+                    </Badge>
+                  )}
+                </Flex>
               </Box>
-              <Box mt={2}>{item.text}</Box>
-            </Button>
-          ))}
-        </Grid>
-      </Container>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
     </Box>
   );
 }
