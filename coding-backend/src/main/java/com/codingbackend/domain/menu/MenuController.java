@@ -3,7 +3,6 @@ package com.codingbackend.domain.menu;
 import com.codingbackend.domain.restaurant.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -30,7 +29,7 @@ public class MenuController {
     }
 
     @PutMapping("/seller")
-    public void updateMenu(MenuRequest menu, @RequestParam(required = false) MultipartFile[] files) throws IOException {
+    public void updateMenu(MenuRequest menu) throws IOException {
         menuService.updateMenu(menu.getRestaurantId(), menu.getMenuItems());
     }
 

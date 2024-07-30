@@ -4,7 +4,7 @@ import axios from "axios";
 
 function EditRestaurantMenu({ onSubmit, restaurantId }) {
   const [menuItems, setMenuItems] = useState([
-    { img: null, name: "", price: "" },
+    { img: "", name: "", price: "" },
   ]);
   const [filePreviews, setFilePreviews] = useState([""]);
   const fileInputRefs = useRef([]);
@@ -13,7 +13,7 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
   useEffect(() => {
     axios.get(`/api/menus/${placeId}`).then((response) => {
       const data = response.data;
-      console.log("get 요청 데이터 :", data);
+      console.log("get 요청 메뉴 :", data);
 
       if (data.menuInfo && Array.isArray(data.menuInfo.menuList)) {
         const menuList = data.menuInfo.menuList;
@@ -47,7 +47,7 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
   };
 
   const handleAdd = () => {
-    setMenuItems([...menuItems, { img: null, name: "", price: "" }]);
+    setMenuItems([...menuItems, { img: "", name: "", price: "" }]);
     setFilePreviews([...filePreviews, ""]);
   };
 
@@ -72,8 +72,10 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
     menuItems.forEach((item, index) => {
       formData.append(`menuItems[${index}].name`, item.name);
       formData.append(`menuItems[${index}].price`, item.price);
-      if (item.img && typeof item.img !== "string") {
+      if (item.img instanceof File) {
         formData.append(`menuItems[${index}].img`, item.img);
+      } else if (typeof item.img === "string") {
+        formData.append(`menuItems[${index}].imgUrl`, item.img);
       }
     });
 
@@ -108,7 +110,7 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
               borderRadius="md"
               bg="gray.50"
             >
-              <Image height="180px" src={filePreviews[index]} />
+              <Image height="180px" src={filePreviews[index] || item.img} />
               <Input
                 type="file"
                 accept={"image/*"}
