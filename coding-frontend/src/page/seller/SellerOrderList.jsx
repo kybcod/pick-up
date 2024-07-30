@@ -128,11 +128,6 @@ function SellerOrderList(props) {
                         주문 접수
                       </Badge>
                     ) : (
-                      <Badge colorScheme="yellow" cursor="pointer">
-                        조리 중
-                      </Badge>
-                    )}
-                    {order.estimatedTime !== null && (
                       <Button
                         isDisabled={order.pickUpStatus === true}
                         onClick={() => handlePickUpClear(order.merchantUid)}
