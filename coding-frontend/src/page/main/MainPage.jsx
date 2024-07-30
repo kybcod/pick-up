@@ -2,6 +2,7 @@ import {
   Box,
   Center,
   Container,
+  Flex,
   Grid,
   GridItem,
   Heading,
@@ -13,10 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faLocationCrosshairs,
-  faSearch,
-} from "@fortawesome/free-solid-svg-icons";
+import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginContext } from "../../component/LoginProvider.jsx";
@@ -137,10 +135,6 @@ export function MainPage() {
     }
   };
 
-  const handleSearchClick = () => {
-    // 검색 버튼 클릭 시 수행할 동작 추가
-  };
-
   return (
     <Box bg="gray.100" minH="100vh">
       <Container maxW="container.xl" py={8}>
@@ -150,37 +144,29 @@ export function MainPage() {
           </Heading>
 
           <Box bg="white" p={6} borderRadius="lg" boxShadow="md">
-            <VStack spacing={4}>
-              <InputGroup size="lg">
-                <Input
-                  readOnly
-                  value={currentAddress}
-                  placeholder="현재 위치를 설정해주세요"
-                  bg="gray.100"
-                />
-                <InputRightAddon
-                  children={<FontAwesomeIcon icon={faLocationCrosshairs} />}
-                  cursor="pointer"
-                  onClick={handleGetCurrentLocation}
-                  bg="#2AC1BC"
-                  color="white"
-                />
-              </InputGroup>
-
-              <InputGroup size="lg">
-                <Input
-                  placeholder="상점명을 검색해보세요"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <InputRightAddon
-                  children={<FontAwesomeIcon icon={faSearch} />}
-                  cursor="pointer"
-                  onClick={handleSearchClick}
-                  bg="#2AC1BC"
-                  color="white"
-                />
-              </InputGroup>
+            <VStack spacing={4} align="stretch">
+              <Flex align="center">
+                <Box display={"inline-block"} whiteSpace={"nowrap"}>
+                  <Text fontSize="lg" fontWeight="bold" mr={4}>
+                    현 위치
+                  </Text>
+                </Box>
+                <InputGroup size="lg">
+                  <Input
+                    readOnly
+                    value={currentAddress}
+                    placeholder="현재 위치를 설정해주세요"
+                    bg="gray.100"
+                  />
+                  <InputRightAddon
+                    children={<FontAwesomeIcon icon={faLocationCrosshairs} />}
+                    cursor="pointer"
+                    onClick={handleGetCurrentLocation}
+                    bg="#2AC1BC"
+                    color="white"
+                  />
+                </InputGroup>
+              </Flex>
             </VStack>
           </Box>
 
