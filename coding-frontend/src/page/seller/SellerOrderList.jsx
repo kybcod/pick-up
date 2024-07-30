@@ -76,7 +76,7 @@ function SellerOrderList(props) {
     axios
       .put("/api/orders/pick-up", { merchantUid })
       .then(() => {
-        alert("픽업 성공");
+        alert("픽업 완료");
         axios.get(`/api/orders/seller/${userId}`).then((res) => {
           setReceivedOrders(res.data);
         });
@@ -134,7 +134,6 @@ function SellerOrderList(props) {
                         onClick={() => handlePickUpClear(order.merchantUid)}
                         colorScheme="teal"
                         size="sm"
-                        ml={3}
                       >
                         픽업 완료
                       </Button>
