@@ -58,6 +58,7 @@ export function MainPage() {
         if (savedPosition) {
           const { latitude, longitude } = JSON.parse(savedPosition);
           setCurrentPosition({ latitude, longitude });
+          fetchAddressFromCoords(latitude, longitude); // Ensure fetchAddressFromCoords is called here
         }
       });
     };
@@ -82,9 +83,14 @@ export function MainPage() {
     } else {
       localStorage.removeItem(`currentPosition_${userId}`);
     }
-  }, [currentPosition, userId]);
+  }, [currentPosition, userId, account]);
 
   const fetchAddressFromCoords = (latitude, longitude) => {
+    if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+      console.error("Kakao Maps API is not available.");
+      return;
+    }
+
     const geocoder = new window.kakao.maps.services.Geocoder();
     const coord = new window.kakao.maps.LatLng(latitude, longitude);
 
@@ -96,7 +102,7 @@ export function MainPage() {
           if (roadAddress === undefined || roadAddress === null) {
             setCurrentAddress(jibunAddress);
           } else {
-            setCurrentAddress(roadAddress + jibunAddress);
+            setCurrentAddress(roadAddress + " " + jibunAddress);
           }
         }
       } else {
