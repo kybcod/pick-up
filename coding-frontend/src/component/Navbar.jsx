@@ -22,26 +22,21 @@ export function Navbar() {
       <Box cursor="pointer" w="150px" onClick={() => navigate("/")}>
         <Image src="/img/pickUp_black.png" alt="Logo" />
       </Box>
-      <Box cursor="pointer" w="150px" onClick={() => navigate("/seller")}>
-        seller
-      </Box>
 
       <Spacer />
-      {account.isBuyer() ? (
-        <DrawerExample />
-      ) : (
+      {account.isSeller() ? (
         <Box>
-          {account.isSeller() && (
-            <Button
-              onClick={() => {
-                account.logout();
-                navigate("/login");
-              }}
-            >
-              <FontAwesomeIcon icon={faRightFromBracket} />
-            </Button>
-          )}
+          <Button
+            onClick={() => {
+              account.logout();
+              navigate("/login");
+            }}
+          >
+            <FontAwesomeIcon icon={faRightFromBracket} />
+          </Button>
         </Box>
+      ) : (
+        <DrawerExample />
       )}
     </Flex>
   );
