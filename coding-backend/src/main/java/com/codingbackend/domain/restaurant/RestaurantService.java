@@ -1,6 +1,5 @@
 package com.codingbackend.domain.restaurant;
 
-import com.codingbackend.domain.menu.MenuRestaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -77,23 +76,6 @@ public class RestaurantService {
         }).collect(Collectors.toList());
     }
 
-    public void updateRestaurant(MenuRestaurant menuRestaurant) throws IOException {
-
-        // 로고 S3 저장
-        if (menuRestaurant.getLogo() != null && !menuRestaurant.getLogo().isEmpty()) {
-            String key = "prj4/restaurant/" + menuRestaurant.getRestaurantId() + "/" + menuRestaurant.getLogo().getOriginalFilename();
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .acl(ObjectCannedACL.PUBLIC_READ)
-                    .build();
-            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(menuRestaurant.getLogo().getInputStream(), menuRestaurant.getLogo().getSize()));
-            menuRestaurant.setLogoFileName(menuRestaurant.getLogo().getOriginalFilename());
-
-        }
-        restaurantMapper.updateRestaurantInfo(menuRestaurant);
-    }
-
     public Restaurant getByRestaurantId(Long restaurantId) {
         Restaurant restaurant = restaurantMapper.selectByRestaurantId(restaurantId);
         String logoPath = STR."\{srcPrefix}restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
@@ -126,6 +108,7 @@ public class RestaurantService {
             restaurant.setLogo(file.getOriginalFilename());
             restaurantMapper.updateLogo(restaurant);
         } else {
+            //기존에 있는 사진 setLogo
             Restaurant oldRestaurant = restaurantMapper.selectByRestaurantId(restaurant.getRestaurantId());
             restaurant.setLogo(oldRestaurant.getLogo());
         }

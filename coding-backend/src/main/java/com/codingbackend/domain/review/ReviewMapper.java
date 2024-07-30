@@ -45,4 +45,21 @@ public interface ReviewMapper {
 
     @Select("SELECT * FROM review_file WHERE review_id=#{reviewId}")
     List<ReviewFile> selectReviewFile(Integer reviewId);
+
+    @Select("""
+            SELECT rv.id,
+                   rv.restaurant_id,
+                   rv.user_id,
+                   rv.rating,
+                   rv.content,
+                   rv.inserted,
+                   r.restaurant_name,
+                   r.restaurant_tel,
+                   r.address,
+                   r.logo
+            FROM review rv
+                     JOIN restaurant r on rv.restaurant_id = r.restaurant_id
+            WHERE r.user_id =#{userId} AND r.restaurant_id=#{restaurantId}
+            """)
+    List<ReviewRequest> selectSellerAllReviews(Integer userId, Long restaurantId);
 }

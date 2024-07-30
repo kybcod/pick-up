@@ -26,9 +26,19 @@ public interface MenuMapper {
             """)
     List<Menu> selectMenuList(Long restaurantId);
 
-    @Update("UPDATE menu SET name = #{name}, price = #{price}, img = #{img} WHERE restaurant_id = #{restaurantId} AND name = #{name}")
+    @Update("UPDATE menu SET name = #{name}, price = #{price}, img = #{img} WHERE restaurant_id = #{restaurantId}")
     void update(Menu menu);
 
     @Delete("DELETE FROM menu WHERE restaurant_id=#{restaurantId}")
     int deleteMenu(Long restaurantId);
+
+    @Update("""
+            UPDATE menu
+            SET img = #{img} 
+            WHERE restaurant_id = #{restaurantId}
+            """)
+    void updateImg(Menu menu);
+
+    @Select("SELECT * FROM menu WHERE restaurant_id=#{restaurantId}")
+    Menu selectMenuByRestaurantId(Long restaurantId);
 }

@@ -6,7 +6,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Heading,
   Image,
   Input,
   InputGroup,
@@ -125,10 +124,6 @@ function RegisterRestaurant({ onSubmit }) {
   return (
     <Container maxW="container.md" py={10}>
       <VStack spacing={8} align="stretch">
-        <Heading as="h1" size="xl" textAlign="center" mb={6} color="#2AC1BC">
-          가게 등록
-        </Heading>
-
         <Box bg="white" p={8} borderRadius="xl" boxShadow="lg">
           <VStack spacing={8}>
             <SimpleGrid columns={2} spacing={6} width="100%">

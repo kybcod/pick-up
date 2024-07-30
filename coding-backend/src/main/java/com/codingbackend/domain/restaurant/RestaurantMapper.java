@@ -1,6 +1,5 @@
 package com.codingbackend.domain.restaurant;
 
-import com.codingbackend.domain.menu.MenuRestaurant;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -42,15 +41,6 @@ public interface RestaurantMapper {
 
     @Delete("DELETE FROM restaurant WHERE restaurant_id=#{restaurantId}")
     int deleteRestaurant(Long restaurantId);
-
-    @Update("""
-            UPDATE restaurant
-            SET restaurant_name = #{restaurantName}, 
-                restaurant_tel = #{restaurantTel}, 
-                logo = #{logoFileName}
-            WHERE restaurant_id = #{restaurantId}
-            """)
-    void updateRestaurantInfo(MenuRestaurant menuRestaurant);
 
     @Update("""
             UPDATE restaurant

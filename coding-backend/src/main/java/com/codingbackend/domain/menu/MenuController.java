@@ -29,9 +29,8 @@ public class MenuController {
     }
 
     @PutMapping("/seller")
-    public void updateMenu(MenuRestaurant menuRestaurantPut) throws IOException {
-        restaurantService.updateRestaurant(menuRestaurantPut);
-        menuService.updateMenu(menuRestaurantPut.getMenuItems());
+    public void updateMenu(MenuRequest menu) throws IOException {
+        menuService.updateMenu(menu.getRestaurantId(), menu.getMenuItems());
     }
 
 

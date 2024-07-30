@@ -40,7 +40,6 @@ public class RestaurantController {
 
     @PutMapping
     public void updateRestaurant(Restaurant restaurant, @RequestParam(required = false) MultipartFile file) throws IOException {
-        System.out.println("restaurant = " + restaurant);
         restaurantService.updateRestaurant(restaurant, file);
     }
 }

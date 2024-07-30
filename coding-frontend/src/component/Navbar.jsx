@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useContext } from "react";
 import { DrawerExample } from "./DrawerExample.jsx";
 import { LoginContext } from "./LoginProvider.jsx";
+import { SellerDrawerExample } from "./SellerDrawerExample.jsx";
 
 export function Navbar() {
   const navigate = useNavigate();
@@ -15,16 +16,20 @@ export function Navbar() {
       alignItems="center"
       px={4}
       boxShadow="0 2px 4px rgba(0,0,0,0.1)"
-      mb={10}
+      mb={account.isSeller() ? 0 : 10}
     >
-      <Box cursor="pointer" w="150px" onClick={() => navigate("/")}>
-        <Image src="/img/pickUp_black.png" alt="Logo" />
-      </Box>
-      <Box cursor="pointer" w="150px" onClick={() => navigate("/seller")}>
-        seller
-      </Box>
+      {account.isSeller() ? (
+        <Box cursor="pointer" w="200px" onClick={() => navigate("/seller")}>
+          <Image src="/img/seller_logo.png" alt="Logo" />
+        </Box>
+      ) : (
+        <Box cursor="pointer" w="150px" onClick={() => navigate("/")}>
+          <Image src="/img/pickUp_black.png" alt="Logo" />
+        </Box>
+      )}
+
       <Spacer />
-      <DrawerExample />
+      {account.isSeller() ? <SellerDrawerExample /> : <DrawerExample />}
     </Flex>
   );
 }

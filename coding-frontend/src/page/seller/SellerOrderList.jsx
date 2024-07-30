@@ -6,6 +6,7 @@ import {
   Divider,
   Flex,
   Grid,
+  Heading,
   HStack,
   Image,
   Input,
@@ -31,13 +32,14 @@ function SellerOrderList(props) {
   const [estimatedTime, setEstimatedTime] = useState("");
   const timeArray = ["10분", "20분", "30분", "40분", "50분", "60분 이상"];
   const [merchantUid, setMerchantUid] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     axios.get(`/api/orders/seller/${userId}`).then((res) => {
       console.log(res.data);
       setReceivedOrders(res.data);
     });
-  }, [userId]);
+  }, [userId, isProcessing]);
 
   function handleOrderReception(userId, merchantUid) {
     axios
@@ -53,6 +55,7 @@ function SellerOrderList(props) {
   }
 
   function handlePickUpOk() {
+    setIsProcessing(true);
     if (!estimatedTime) {
       alert("예상 소요 시간을 선택해주세요.");
       return;
@@ -63,29 +66,31 @@ function SellerOrderList(props) {
         estimatedTime,
         merchantUid,
       })
-      .then(() => {
-        alert("시간 설정 성공");
-        onClose(); // 시간 설정 성공 후 모달 닫기
-      })
-      .catch(() => alert("시간 설정 실패"));
+      .finally(() => {
+        setIsProcessing(false);
+        onClose();
+      });
   }
 
   function handlePickUpClear(merchantUid) {
+    setIsProcessing(true);
     axios
       .put("/api/orders/pick-up", { merchantUid })
       .then(() => {
-        alert("픽업 성공");
-        console.log(merchantUid);
-
+        alert("픽업 완료");
         axios.get(`/api/orders/seller/${userId}`).then((res) => {
           setReceivedOrders(res.data);
         });
       })
-      .catch(() => alert("픽업 실패"));
+      .catch(() => alert("픽업 실패"))
+      .finally(() => setIsProcessing(false));
   }
 
   return (
     <Box maxWidth="800px" margin="auto" p={4}>
+      <Heading mb={8} textAlign="center">
+        주문 확인
+      </Heading>
       {receivedOrders.length === 0 ? (
         <Flex direction="column" align="center" justify="center" height="500px">
           <Image src={"/img/cart_clear.png"} boxSize="150px" mb={4} />
@@ -128,17 +133,11 @@ function SellerOrderList(props) {
                         주문 접수
                       </Badge>
                     ) : (
-                      <Badge colorScheme="yellow" cursor="pointer">
-                        조리 중
-                      </Badge>
-                    )}
-                    {order.estimatedTime !== null && (
                       <Button
                         isDisabled={order.pickUpStatus === true}
                         onClick={() => handlePickUpClear(order.merchantUid)}
                         colorScheme="teal"
                         size="sm"
-                        ml={3}
                       >
                         픽업 완료
                       </Button>
