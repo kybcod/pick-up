@@ -35,11 +35,7 @@ function Login(props) {
           description: "로그인 되었습니다",
           position: "top",
         });
-        if (account.isSeller()) {
-          navigate("/seller");
-        } else {
-          navigate("/");
-        }
+        account.isSeller() ? navigate("/seller") : navigate("/");
       })
       .catch(() => {
         account.logout();
