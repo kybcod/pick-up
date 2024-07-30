@@ -108,6 +108,7 @@ public class RestaurantService {
             restaurant.setLogo(file.getOriginalFilename());
             restaurantMapper.updateLogo(restaurant);
         } else {
+            //기존에 있는 사진 setLogo
             Restaurant oldRestaurant = restaurantMapper.selectByRestaurantId(restaurant.getRestaurantId());
             restaurant.setLogo(oldRestaurant.getLogo());
         }
