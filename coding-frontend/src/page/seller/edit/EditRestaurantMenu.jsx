@@ -4,25 +4,29 @@ import axios from "axios";
 
 function EditRestaurantMenu({ onSubmit, restaurantId }) {
   const [menuItems, setMenuItems] = useState([
-    { img: null, name: "", price: 0 },
+    { img: null, name: "", price: "" },
   ]);
   const [filePreviews, setFilePreviews] = useState([""]);
   const fileInputRefs = useRef([]);
+  const placeId = restaurantId;
 
   useEffect(() => {
-    // Fetch the menu items
-    axios
-      .get(`/api/menus?restaurantId=${restaurantId}`)
-      .then((response) => {
-        const data = response.data;
-        setMenuItems(data);
-        setFilePreviews(
-          data.map((item) => (item.img ? `/path/to/menu/${item.img}` : "")),
-        );
-      })
-      .catch((error) => {
-        console.error("Error fetching menu items:", error);
-      });
+    axios.get(`/api/menus/${placeId}`).then((response) => {
+      const data = response.data;
+      console.log("get 요청 데이터 :", data);
+
+      if (data.menuInfo && Array.isArray(data.menuInfo.menuList)) {
+        const menuList = data.menuInfo.menuList;
+        const formattedMenuItems = menuList.map((item) => ({
+          img: item.img,
+          name: item.menu,
+          price: item.price,
+        }));
+
+        setMenuItems(formattedMenuItems);
+        setFilePreviews(formattedMenuItems.map((item) => item.img || ""));
+      }
+    });
   }, [restaurantId]);
 
   const handleChange = (e, index, key) => {
@@ -43,7 +47,7 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
   };
 
   const handleAdd = () => {
-    setMenuItems([...menuItems, { img: null, name: "", price: 0 }]);
+    setMenuItems([...menuItems, { img: null, name: "", price: "" }]);
     setFilePreviews([...filePreviews, ""]);
   };
 
@@ -68,13 +72,18 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
     menuItems.forEach((item, index) => {
       formData.append(`menuItems[${index}].name`, item.name);
       formData.append(`menuItems[${index}].price`, item.price);
-      if (item.img) {
+      if (item.img && typeof item.img !== "string") {
         formData.append(`menuItems[${index}].img`, item.img);
       }
     });
 
+    // FormData의 키와 값을 로그로 찍기
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
     axios
-      .put(`/api/menus?restaurantId=${restaurantId}`, formData)
+      .putForm(`/api/menus/seller`, formData)
       .then(() => {
         alert("메뉴 수정 성공!");
         onSubmit();
@@ -87,48 +96,52 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
   return (
     <Box>
       <VStack spacing={4}>
-        {menuItems.map((item, index) => (
-          <Box
-            key={index}
-            display="flex"
-            alignItems="center"
-            mb={4}
-            p={4}
-            border="1px solid #ddd"
-            borderRadius="md"
-            bg="gray.50"
-          >
-            <Image height="180px" src={filePreviews[index]} />
-            <Input
-              type="file"
-              accept={"image/*"}
-              mr={2}
-              onChange={(e) => handleImageChange(e, index)}
-              ref={(el) => (fileInputRefs.current[index] = el)}
-            />
-            <Input
-              placeholder="제품명"
-              value={item.name}
-              onChange={(e) => handleChange(e, index, "name")}
-              mr={2}
-            />
-            <Input
-              type="number"
-              placeholder="가격"
-              value={item.price}
-              onChange={(e) => handleChange(e, index, "price")}
-              mr={2}
-            />
-            <Button colorScheme="purple" onClick={() => handleRemove(index)}>
-              -
-            </Button>
-            {index === menuItems.length - 1 && (
-              <Button colorScheme="purple" onClick={handleAdd}>
-                +
+        {Array.isArray(menuItems) ? (
+          menuItems.map((item, index) => (
+            <Box
+              key={index}
+              display="flex"
+              alignItems="center"
+              mb={4}
+              p={4}
+              border="1px solid #ddd"
+              borderRadius="md"
+              bg="gray.50"
+            >
+              <Image height="180px" src={filePreviews[index]} />
+              <Input
+                type="file"
+                accept={"image/*"}
+                mr={2}
+                onChange={(e) => handleImageChange(e, index)}
+                ref={(el) => (fileInputRefs.current[index] = el)}
+              />
+              <Input
+                placeholder="제품명"
+                value={item.name}
+                onChange={(e) => handleChange(e, index, "name")}
+                mr={2}
+              />
+              <Input
+                type="number"
+                placeholder="가격"
+                value={item.price}
+                onChange={(e) => handleChange(e, index, "price")}
+                mr={2}
+              />
+              <Button colorScheme="purple" onClick={() => handleRemove(index)}>
+                -
               </Button>
-            )}
-          </Box>
-        ))}
+              {index === menuItems.length - 1 && (
+                <Button colorScheme="purple" onClick={handleAdd}>
+                  +
+                </Button>
+              )}
+            </Box>
+          ))
+        ) : (
+          <Box>메뉴가 없습니다.</Box>
+        )}
         <Button colorScheme="blue" onClick={handleFormSubmit}>
           수정
         </Button>
