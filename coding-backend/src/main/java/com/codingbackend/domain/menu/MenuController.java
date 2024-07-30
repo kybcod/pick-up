@@ -23,9 +23,16 @@ public class MenuController {
         menuService.insertMenu(menuRequest.getRestaurantId(), menuRequest.getMenuItems());
     }
 
-    @PutMapping
-    public void updateMenu(@RequestBody MenuRestaurant menuRestaurant) throws IOException {
-        restaurantService.updateRestaurant(menuRestaurant);
-        menuService.updateMenu(menuRestaurant);
+    @DeleteMapping("{restaurantId}")
+    public void deleteMenu(@PathVariable Long restaurantId) throws IOException {
+        menuService.delete(restaurantId);
     }
+
+    @PutMapping("/seller")
+    public void updateMenu(MenuRestaurant menuRestaurantPut) throws IOException {
+        restaurantService.updateRestaurant(menuRestaurantPut);
+        menuService.updateMenu(menuRestaurantPut.getMenuItems());
+    }
+
+
 }

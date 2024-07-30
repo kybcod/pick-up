@@ -1,9 +1,6 @@
 package com.codingbackend.domain.menu;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -22,6 +19,16 @@ public interface MenuMapper {
             """)
     List<Menu> selectMenu(Integer placeId);
 
-    @Update("UPDATE menu SET name = #{name}, price = #{price}, img = #{img} WHERE id = #{id}")
+    @Select("""
+            SELECT *
+            FROM menu
+            WHERE restaurant_id = #{restaurantId}
+            """)
+    List<Menu> selectMenuList(Long restaurantId);
+
+    @Update("UPDATE menu SET name = #{name}, price = #{price}, img = #{img} WHERE restaurant_id = #{restaurantId} AND name = #{name}")
     void update(Menu menu);
+
+    @Delete("DELETE FROM menu WHERE restaurant_id=#{restaurantId}")
+    int deleteMenu(Long restaurantId);
 }

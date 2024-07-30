@@ -4,11 +4,14 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-class MenuItem {
-    private Integer id;
-    private Long restaurantId;
+class MenuItemPut {
     private String name;
     private String price;
-    private MultipartFile img;
-    private String existingImageUrl;
+    private MultipartFile img;  // String 대신 ImageData 사용
+}
+
+@Data
+class ImageData {
+    private String src;
+    private String fileName;
 }

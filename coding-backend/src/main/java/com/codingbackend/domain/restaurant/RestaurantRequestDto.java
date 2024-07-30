@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class RestaurantRequestDto {
-    private int restaurantId;
-    private int userId;
+    private Long restaurantId;
+    private Integer userId;
     private String restaurantName;
     private String restaurantTel;
     private String address;

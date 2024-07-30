@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -30,8 +31,6 @@ public class RestaurantService {
     String srcPrefix;
 
     public void insertRestaurantInfo(RestaurantRequestDto restaurant, MultipartFile file) throws IOException {
-        // 데이터베이스에 저장
-        restaurantMapper.insert(restaurant);
 
         //s3 저장
         if (file != null) {
@@ -43,7 +42,11 @@ public class RestaurantService {
                     .acl(ObjectCannedACL.PUBLIC_READ)
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            restaurant.setLogo(file.getOriginalFilename());
         }
+
+        // 데이터베이스에 저장
+        restaurantMapper.insert(restaurant);
 
     }
 
@@ -63,25 +66,70 @@ public class RestaurantService {
     public List<Restaurant> getRestaurantsByUserId(Integer userId) {
         List<Restaurant> restaurants = restaurantMapper.selectByUserId(userId);
         return restaurants.stream().map(restaurant -> {
-            String logoPath = STR."\{srcPrefix}restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
-            restaurant.setLogo(logoPath);
+            if (restaurant.getLogo() != null) {
+                String logoPath = STR."\{srcPrefix}restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
+                restaurant.setLogo(logoPath);
+            } else {
+                String logoPath = STR."\{srcPrefix}restaurant/pickUp_black.png";
+                restaurant.setLogo(logoPath);
+            }
             return restaurant;
         }).collect(Collectors.toList());
     }
 
     public void updateRestaurant(MenuRestaurant menuRestaurant) throws IOException {
-        Long restaurantId = menuRestaurant.getRestaurantId();
-        restaurantMapper.updateRestaurantInfo(restaurantId);
-        //로고 s3 저장
-        if (menuRestaurant.getLogo() != null) {
-            //실제 S3 파일 저장
-            String key = STR."prj4/restaurant/\{menuRestaurant.getRestaurantId()}/\{menuRestaurant.getLogo()}";
+
+        // 로고 S3 저장
+        if (menuRestaurant.getLogo() != null && !menuRestaurant.getLogo().isEmpty()) {
+            String key = "prj4/restaurant/" + menuRestaurant.getRestaurantId() + "/" + menuRestaurant.getLogo().getOriginalFilename();
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
                     .acl(ObjectCannedACL.PUBLIC_READ)
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(menuRestaurant.getLogo().getInputStream(), menuRestaurant.getLogo().getSize()));
+            menuRestaurant.setLogoFileName(menuRestaurant.getLogo().getOriginalFilename());
+
         }
+        restaurantMapper.updateRestaurantInfo(menuRestaurant);
+    }
+
+    public Restaurant getByRestaurantId(Long restaurantId) {
+        Restaurant restaurant = restaurantMapper.selectByRestaurantId(restaurantId);
+        String logoPath = STR."\{srcPrefix}restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
+        restaurant.setLogo(logoPath);
+        return restaurant;
+
+    }
+
+    public void updateRestaurant(Restaurant restaurant, MultipartFile file) throws IOException {
+        if (file != null && !file.isEmpty() && !file.getOriginalFilename().equals(restaurant.getLogo())) {
+
+            //삭제
+            String key = STR."prj4/restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+
+            s3Client.deleteObject(objectRequest);
+
+            // 추가
+            String newKey = STR."prj4/restaurant/\{restaurant.getRestaurantId()}/\{file.getOriginalFilename()}";
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(newKey)
+                    .acl(ObjectCannedACL.PUBLIC_READ)
+                    .build();
+
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            restaurant.setLogo(file.getOriginalFilename());
+            restaurantMapper.updateLogo(restaurant);
+        } else {
+            Restaurant oldRestaurant = restaurantMapper.selectByRestaurantId(restaurant.getRestaurantId());
+            restaurant.setLogo(oldRestaurant.getLogo());
+        }
+
+        restaurantMapper.updateRestaurant(restaurant);
     }
 }

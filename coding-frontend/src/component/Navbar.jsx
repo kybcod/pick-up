@@ -20,6 +20,9 @@ export function Navbar() {
       <Box cursor="pointer" w="150px" onClick={() => navigate("/")}>
         <Image src="/img/pickUp_black.png" alt="Logo" />
       </Box>
+      <Box cursor="pointer" w="150px" onClick={() => navigate("/seller")}>
+        seller
+      </Box>
       <Spacer />
       <DrawerExample />
     </Flex>

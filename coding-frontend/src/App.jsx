@@ -5,7 +5,7 @@ import { Home } from "./Home.jsx";
 import RestaurantMapView from "./page/restaurant/RestaurantMapView.jsx";
 import "./component/styles/fonts.css";
 import { theme } from "./component/styles/theme.jsx";
-import { MainPage } from "./page/mainPage/MainPage.jsx";
+import { MainPage } from "./page/main/MainPage.jsx";
 import { RestaurantMenuList } from "./page/menuSelector/RestaurantMenuList.jsx";
 import Login from "./page/user/Login.jsx";
 import { Signup } from "./page/user/Signup.jsx";
@@ -23,6 +23,7 @@ import axios from "axios";
 import NaverLoginCallback from "./page/user/NaverLoginCallback.jsx";
 import SellerMenusDetails from "./page/seller/SellerMenusDetails.jsx";
 import FavoriteList from "./page/myPage/FavoriteList.jsx";
+import RestaurantEditProcess from "./page/seller/edit/RestaurantEditProcess.jsx";
 
 axios.interceptors.request.use(
   function (config) {
@@ -71,7 +72,8 @@ const router = createBrowserRouter([
       { path: "seller/register", element: <RestaurantRegistrationProcess /> },
       { path: "seller/orders", element: <SellerOrderList /> },
       { path: "seller/restaurants", element: <SellerRestaurantList /> },
-      { path: "seller/:restaurantId/menus", element: <SellerMenusDetails /> },
+      // { path: "seller/:restaurantId/menus", element: <SellerMenusDetails /> },
+      { path: "seller/:restaurantId", element: <RestaurantEditProcess /> },
     ],
   },
 ]);

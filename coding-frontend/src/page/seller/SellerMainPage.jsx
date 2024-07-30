@@ -1,5 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
+  Badge,
   Box,
   Button,
   Container,
@@ -16,12 +17,21 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 
 function SellerMainPage(props) {
   const navigate = useNavigate();
   const account = useContext(LoginContext);
   const bgColor = useColorModeValue("gray.50", "gray.800");
   const buttonColor = useColorModeValue("blue.500", "blue.200");
+  const userId = account.id;
+  const [order, setOrder] = useState(0);
+
+  useEffect(() => {
+    axios.get(`/api/orders/seller/${userId}/count`).then((res) => {
+      setOrder(res.data.orderCount);
+    });
+  }, [userId]);
 
   const menuItems = [
     { text: "가게 등록", icon: faStore, path: "/seller/register" },
@@ -49,8 +59,25 @@ function SellerMainPage(props) {
               fontSize="xl"
               flexDirection="column"
               justifyContent="center"
+              position="relative" // Required for positioning Badge
             >
-              <FontAwesomeIcon icon={item.icon} size="2x" />
+              <Box position="relative" display="flex" justifyContent="center">
+                <FontAwesomeIcon icon={item.icon} size="2x" />
+                {item.path === "/seller/orders" && (
+                  <Badge
+                    position="absolute"
+                    top="-10px"
+                    right="-10px"
+                    colorScheme="red"
+                    borderRadius="full"
+                    px={2}
+                    py={1}
+                    fontSize="sm"
+                  >
+                    {order}
+                  </Badge>
+                )}
+              </Box>
               <Box mt={2}>{item.text}</Box>
             </Button>
           ))}

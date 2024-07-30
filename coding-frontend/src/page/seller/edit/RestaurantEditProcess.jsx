@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Button,
@@ -15,37 +15,35 @@ import {
   StepTitle,
   useSteps,
 } from "@chakra-ui/react";
-import RegisterRestaurant from "./RegisterRestaurant.jsx";
-import AddRestaurantMenu from "./AddRestaurantMenu.jsx";
-import { useNavigate } from "react-router-dom";
+import EditRestaurant from "./EditRestaurant.jsx";
+import EditRestaurantMenu from "./EditRestaurantMenu.jsx";
+import { useNavigate, useParams } from "react-router-dom";
 
 const steps = [
-  { title: "가게 정보", description: "기본 정보 입력" },
-  { title: "메뉴 등록", description: "메뉴 정보 입력" },
-  { title: "완료", description: "등록 완료" },
+  { title: "가게 정보", description: "기본 정보 수정" },
+  { title: "메뉴 수정", description: "메뉴 정보 수정" },
+  { title: "완료", description: "수정 완료" },
 ];
 
-function RestaurantRegistrationProcess() {
+function RestaurantEditProcess() {
+  const { restaurantId } = useParams();
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
   });
-  const [restaurantData, setRestaurantData] = useState({});
   const navigate = useNavigate();
 
-  const handleRestaurantInfoSubmit = (data) => {
-    console.log("data:", data);
-    setRestaurantData(data);
+  const handleRestaurantInfoSubmit = () => {
     setActiveStep(1);
   };
 
-  const handleMenuSubmit = (menuData) => {
+  const handleMenuSubmit = () => {
     setActiveStep(2);
   };
 
   return (
     <Container maxW="container.xl" py={10}>
-      <Heading mb={8}>가게 등록</Heading>
+      <Heading mb={8}>가게 수정</Heading>
       <Stepper size="lg" colorScheme="yellow" index={activeStep} mb={8}>
         {steps.map((step, index) => (
           <Step key={index}>
@@ -66,18 +64,21 @@ function RestaurantRegistrationProcess() {
       </Stepper>
 
       {activeStep === 0 && (
-        <RegisterRestaurant onSubmit={handleRestaurantInfoSubmit} />
+        <EditRestaurant
+          restaurantId={restaurantId}
+          onSubmit={handleRestaurantInfoSubmit}
+        />
       )}
       {activeStep === 1 && (
-        <AddRestaurantMenu
+        <EditRestaurantMenu
+          restaurantId={restaurantId}
           onSubmit={handleMenuSubmit}
-          restaurantData={restaurantData} // Passing restaurantData
         />
       )}
       {activeStep === 2 && (
         <Box textAlign="center" p={8}>
-          <Heading size="xl">등록에 성공했습니다!</Heading>
-          <Box mt={4}>가게 정보와 메뉴가 성공적으로 등록되었습니다.</Box>
+          <Heading size="xl">수정에 성공했습니다!</Heading>
+          <Box mt={4}>가게 정보와 메뉴가 성공적으로 수정되었습니다.</Box>
           <Button onClick={() => navigate("/seller")}>
             메인 페이지로 이동
           </Button>
@@ -87,4 +88,4 @@ function RestaurantRegistrationProcess() {
   );
 }
 
-export default RestaurantRegistrationProcess;
+export default RestaurantEditProcess;

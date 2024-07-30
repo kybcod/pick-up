@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Data
-public class MenuRestaurant {
+public class MenuRestaurantPut {
     //가게 정보
     private Integer id;
     private Long restaurantId;
@@ -15,8 +15,7 @@ public class MenuRestaurant {
     private String restaurantTel; //전화번호
     private String address;
     private MultipartFile logo;
-    private String logoFileName;
 
     //메뉴
-    private List<MenuItem> menuItems;
+    private List<MenuItemPut> menuItems;
 }

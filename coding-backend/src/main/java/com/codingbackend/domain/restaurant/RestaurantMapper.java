@@ -1,9 +1,7 @@
 package com.codingbackend.domain.restaurant;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import com.codingbackend.domain.menu.MenuRestaurant;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -24,14 +22,15 @@ public interface RestaurantMapper {
             SET logo=#{logo}
             WHERE restaurant_id=#{restaurantId}
             """)
-    void updateLogo(RestaurantRequestDto restaurant);
+    void updateLogo(Restaurant restaurant);
 
     @Select("SELECT * FROM restaurant")
     List<RestaurantRequestDto> selectAll();
 
     @Select("""
             SELECT *
-            FROM restaurant WHERE restaurant_id = #{restaurantId}
+            FROM restaurant 
+            WHERE restaurant_id = #{restaurantId}
             """)
     Restaurant selectByRestaurantId(Long restaurantId);
 
@@ -40,11 +39,31 @@ public interface RestaurantMapper {
             """)
     List<Restaurant> selectByUserId(Integer userId);
 
+
+    @Delete("DELETE FROM restaurant WHERE restaurant_id=#{restaurantId}")
+    int deleteRestaurant(Long restaurantId);
+
     @Update("""
-            UPDATE restaurant 
-            SET restaurant_name=#{restaurantName} 
-                        AND restaurant_tel=#{restaurantTel} AND logo=#{logo}
-            WHERE restaurant_id=#{restaurantId}
+            UPDATE restaurant
+            SET restaurant_name = #{restaurantName}, 
+                restaurant_tel = #{restaurantTel}, 
+                logo = #{logoFileName}
+            WHERE restaurant_id = #{restaurantId}
             """)
-    void updateRestaurantInfo(Long restaurantId);
+    void updateRestaurantInfo(MenuRestaurant menuRestaurant);
+
+    @Update("""
+            UPDATE restaurant
+            SET restaurant_name = #{restaurantName}, 
+                restaurant_tel = #{restaurantTel}, 
+                logo = #{logo},
+                user_id=#{userId},
+                restaurant_id = #{restaurantId},
+                category_id = #{categoryId},
+                address = #{address},
+                latitude = #{latitude},
+                longitude = #{longitude}
+            WHERE restaurant_id = #{restaurantId}
+            """)
+    void updateRestaurant(Restaurant restaurant);
 }

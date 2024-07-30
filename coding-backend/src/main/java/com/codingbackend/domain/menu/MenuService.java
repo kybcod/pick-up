@@ -1,8 +1,13 @@
 package com.codingbackend.domain.menu;
 
+import com.codingbackend.domain.cart.CartMapper;
+import com.codingbackend.domain.favorites.FavoriteMapper;
+import com.codingbackend.domain.order.OrderMapper;
+import com.codingbackend.domain.restaurant.Category;
 import com.codingbackend.domain.restaurant.Restaurant;
 import com.codingbackend.domain.restaurant.RestaurantMapper;
 import com.codingbackend.domain.review.Review;
+import com.codingbackend.domain.review.ReviewFile;
 import com.codingbackend.domain.review.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -28,6 +34,9 @@ public class MenuService {
     private final S3Client s3Client;
     private final RestaurantMapper restaurantMapper;
     private final ReviewMapper reviewMapper;
+    private final CartMapper cartMapper;
+    private final OrderMapper orderMapper;
+    private final FavoriteMapper favoriteMapper;
 
     @Value("${aws.s3.bucket.name}")
     String bucketName;
@@ -68,14 +77,24 @@ public class MenuService {
             basicInfo.setMainphotourl(STR."\{srcPrefix}restaurant/\{placeId}/\{restaurant.getLogo()}");
             basicInfo.setPhonenum(restaurant.getRestaurantTel());
 
+            Category category = restaurantMapper.selectCategory(restaurant.getCategoryId());
+            CategoryDto categoryDto = new CategoryDto();
+            categoryDto.setCatename(category.getName());
+            categoryDto.setCate1name(category.getGroupCode());
+            if ("FD6".equals(category.getGroupCode())) {
+                categoryDto.setCate1name("음식점");
+            } else {
+                categoryDto.setCate1name("카페");
+            }
+            basicInfo.setCategory(categoryDto);
+
             // 리뷰 정보 설정
             Review restaurantReview = reviewMapper.selectReviewByRestaurantId(Long.valueOf(placeId));
             FeedbackDto feedbackDto = new FeedbackDto();
             feedbackDto.setScoresum(restaurantReview.getReviewSum()); // 적절한 메서드로 수정
             feedbackDto.setScorecnt(restaurantReview.getReviewCount());  // 적절한 메서드로 수정
             basicInfo.setFeedback(feedbackDto);
-
-
+            
             placeDto.setBasicInfo(basicInfo);
 
             return placeDto;
@@ -115,17 +134,17 @@ public class MenuService {
         }
     }
 
-    public void updateMenu(MenuRestaurant menuRestaurant) throws IOException {
-        Long restaurantId = menuRestaurant.getRestaurantId();
-
-        for (MenuItem item : menuRestaurant.getMenuItems()) {
+    public void updateMenu(List<MenuItem> menuItems) throws IOException {
+        for (MenuItem item : menuItems) {
             Menu menu = new Menu();
-            menu.setRestaurantId(restaurantId);
+            menu.setRestaurantId(item.getRestaurantId());
             menu.setName(item.getName());
             menu.setPrice(item.getPrice());
 
             if (item.getImg() != null && !item.getImg().isEmpty()) {
-                String key = STR."prj4/restaurant/\{restaurantId}/\{item.getImg().getOriginalFilename()}";
+                String fileName = item.getImg().getOriginalFilename();
+                String key = STR."prj4/restaurant/\{menu.getRestaurantId()}/\{fileName}";
+
                 PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                         .bucket(bucketName)
                         .key(key)
@@ -135,10 +154,64 @@ public class MenuService {
                 s3Client.putObject(putObjectRequest,
                         RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
 
-                menu.setImg(item.getImg().getOriginalFilename());
+                menu.setImg(fileName);
+                if (item.getId() != null) {
+                    menuMapper.update(menu);
+                } else {
+                    menuMapper.insert(menu);
+                }
             }
-
-            menuMapper.update(menu);
         }
+    }
+
+
+    public void delete(Long restaurantId) {
+        // 메뉴 사진 삭제
+        List<Menu> menuList = menuMapper.selectMenuList(restaurantId);
+        for (Menu menu : menuList) {
+            String key = String.format("prj4/restaurant/%d/%s", restaurantId, menu.getImg());
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+            s3Client.deleteObject(deleteObjectRequest);
+        }
+        // 메뉴 삭제
+        menuMapper.deleteMenu(restaurantId);
+
+        // 리뷰와 리뷰 사진 삭제
+        List<Review> reviews = reviewMapper.selectByRestaurantId(restaurantId); // 리뷰가 여러 개일 수 있으므로 List로 수정
+        for (Review review : reviews) {
+            List<ReviewFile> reviewFiles = reviewMapper.selectReviewFile(review.getId());
+            for (ReviewFile reviewFile : reviewFiles) {
+                String key = String.format("prj4/review/%d/%s", review.getId(), reviewFile.getName());
+                DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
+                s3Client.deleteObject(deleteObjectRequest);
+            }
+            // 리뷰 삭제
+            reviewMapper.deleteReview(review.getId());
+        }
+
+        // 장바구니 삭제
+        cartMapper.deleteCart(restaurantId);
+        // 주문 내역 삭제
+        orderMapper.deleteOrder(restaurantId);
+        // 찜 삭제
+        favoriteMapper.deleteFavorite(restaurantId);
+
+        // 가게 사진 삭제
+        Restaurant restaurant = restaurantMapper.selectByRestaurantId(restaurantId);
+        String key = String.format("prj4/restaurant/%d/%s", restaurantId, restaurant.getLogo());
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+        s3Client.deleteObject(deleteObjectRequest);
+
+        // 가게 삭제
+        restaurantMapper.deleteRestaurant(restaurantId);
     }
 }

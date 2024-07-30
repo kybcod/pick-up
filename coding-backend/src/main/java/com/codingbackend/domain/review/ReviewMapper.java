@@ -1,9 +1,6 @@
 package com.codingbackend.domain.review;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -35,4 +32,17 @@ public interface ReviewMapper {
             WHERE restaurant_id =#{restaurantId}
             """)
     Review selectReviewByRestaurantId(Long restaurantId);
+
+    @Select("""
+            SELECT *
+            FROM review
+            WHERE restaurant_id = #{restaurantId}
+            """)
+    List<Review> selectByRestaurantId(Long restaurantId);
+
+    @Delete("DELETE FROM review WHERE restaurant_id=#{restaurantId}")
+    int deleteReview(Integer restaurantId);
+
+    @Select("SELECT * FROM review_file WHERE review_id=#{reviewId}")
+    List<ReviewFile> selectReviewFile(Integer reviewId);
 }

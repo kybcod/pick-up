@@ -116,7 +116,7 @@ export function DrawerExample() {
                 onClick={() => {
                   account.logout();
                   onClose();
-                  navigate("/");
+                  navigate("/login");
                 }}
                 colorScheme="teal"
               >

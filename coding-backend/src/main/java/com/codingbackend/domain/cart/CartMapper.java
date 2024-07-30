@@ -79,4 +79,6 @@ public interface CartMapper {
     void updateOrderId(Integer orderId, List<Integer> cartIds);
 
 
+    @Delete("DELETE FROM cart WHERE restaurant_id=#{restaurantId}")
+    int deleteCart(Long restaurantId);
 }

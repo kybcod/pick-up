@@ -29,4 +29,8 @@ public interface FavoriteMapper {
 
     @Select("SELECT * FROM favorites WHERE restaurant_id = #{restaurantId} AND user_id=#{userId} ")
     List<Favorite> getByRestaurantIdAndUserId(Long restaurantId, Integer userId);
+
+    @Delete("DELETE FROM favorites WHERE restaurant_id=#{restaurantId}")
+    int deleteFavorite(Long restaurantId);
+
 }

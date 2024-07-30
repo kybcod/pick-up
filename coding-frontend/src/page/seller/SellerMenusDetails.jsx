@@ -14,7 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 
@@ -24,34 +24,43 @@ function SellerMenusDetails(props) {
   const [isEditing, setIsEditing] = useState(false);
   const toast = useToast();
   const fileInputRefs = useRef([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get(`/api/menus/${restaurantId}`).then((res) => {
       console.log("res", res.data);
       setMenuList(res.data);
-      fileInputRefs.current = new Array(res.data.menuInfo.menuList.length + 1)
-        .fill(null)
-        .map(() => React.createRef());
+      fileInputRefs.current = res.data.menuInfo.menuList.map(() =>
+        React.createRef(),
+      );
+      fileInputRefs.current.unshift(React.createRef()); // For the logo input ref
     });
-  }, []);
+  }, [restaurantId]);
 
   const handleSave = () => {
-    const updatedMenuItems = menuList.menuInfo.menuList.map((item, index) => ({
-      name: item.menu,
-      price: item.price,
-      img: fileInputRefs.current[index + 1].current.files[0],
-    }));
+    const formData = new FormData();
+    formData.append("restaurantId", restaurantId);
+    formData.append("restaurantName", menuList.basicInfo.placenamefull);
+    formData.append("restaurantTel", menuList.basicInfo.phonenum);
+
+    const logoFile = fileInputRefs.current[0].current.files[0];
+    if (logoFile) {
+      formData.append("logo", logoFile);
+    }
+
+    menuList.menuInfo.menuList.forEach((item, index) => {
+      formData.append(`menuItems[${index}].restaurantId`, restaurantId);
+      formData.append(`menuItems[${index}].name`, item.menu);
+      formData.append(`menuItems[${index}].price`, item.price);
+      const menuItemFile = fileInputRefs.current[index + 1].current.files[0];
+      if (menuItemFile) {
+        formData.append(`menuItems[${index}].img`, menuItemFile);
+      }
+    });
 
     axios
-      .putForm(`/api/menus/seller/${restaurantId}`, {
-        restaurantId: restaurantId,
-        restaurantName: menuList.basicInfo.placenamefull,
-        restaurantTel: menuList.basicInfo.phonenum,
-        logo: fileInputRefs.current[0].current.files[0],
-        menuItems: updatedMenuItems,
-      })
+      .putForm(`/api/menus/seller`, formData)
       .then((res) => {
-        console.log("put", res.data);
         toast({
           description: "메뉴 정보가 성공적으로 업데이트되었습니다.",
           status: "success",
@@ -61,6 +70,7 @@ function SellerMenusDetails(props) {
         setIsEditing(false);
       })
       .catch((error) => {
+        console.error(error);
         toast({
           description: "메뉴 정보 업데이트 중 오류가 발생했습니다.",
           status: "error",
@@ -69,26 +79,30 @@ function SellerMenusDetails(props) {
         });
       });
   };
-  // 메뉴 추가
+
   const handelMenuAdd = () => {
-    setMenuList((prevState) => ({
-      ...prevState,
-      menuInfo: {
-        ...prevState.menuInfo,
-        menucount: prevState.menuInfo.menucount + 1,
-        menuList: [
-          ...prevState.menuInfo.menuList,
-          { menu: "", price: "", img: "" },
-        ],
-      },
-    }));
+    setMenuList((prevState) => {
+      const newMenuList = [
+        ...prevState.menuInfo.menuList,
+        { menu: "", price: "", img: "" },
+      ];
+      fileInputRefs.current = [...fileInputRefs.current, React.createRef()];
+      return {
+        ...prevState,
+        menuInfo: {
+          ...prevState.menuInfo,
+          menucount: prevState.menuInfo.menucount + 1,
+          menuList: newMenuList,
+        },
+      };
+    });
   };
 
-  // 메뉴 삭제
   const handleMenuDelete = (index) => {
     setMenuList((prevState) => {
       const newMenuList = [...prevState.menuInfo.menuList];
       newMenuList.splice(index, 1);
+      fileInputRefs.current.splice(index + 1, 1);
       return {
         ...prevState,
         menuInfo: {
@@ -100,7 +114,6 @@ function SellerMenusDetails(props) {
     });
   };
 
-  // 이미지 버튼 꾸미기
   const handleImageChange = (e, section, index) => {
     const file = e.target.files[0];
     if (file) {
@@ -129,7 +142,6 @@ function SellerMenusDetails(props) {
     }
   };
 
-  // change
   const handleInputChange = (e, section, index, field) => {
     const { value } = e.target;
     setMenuList((prevState) => {
@@ -149,6 +161,29 @@ function SellerMenusDetails(props) {
     });
   };
 
+  const handleDelete = () => {
+    axios
+      .delete(`/api/menus/${restaurantId}`)
+      .then((res) => {
+        toast({
+          description: "해당 가게가 삭제되었습니다.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate("/seller");
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          description: "삭제 중 오류가 발생했습니다.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+  };
+
   if (menuList === null) {
     return (
       <Flex justify="center" align="center" height="100vh">
@@ -156,6 +191,11 @@ function SellerMenusDetails(props) {
       </Flex>
     );
   }
+
+  const handelUpdate = () => {
+    setIsEditing(true);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
 
   return (
     <Box maxWidth="800px" margin="auto" p={5}>
@@ -183,6 +223,9 @@ function SellerMenusDetails(props) {
                 bg="rgba(0,0,0,0.5)"
                 p={2}
                 borderRadius="md"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
               >
                 <FontAwesomeIcon icon={faCamera} color="white" size="lg" />
               </Box>
@@ -239,7 +282,7 @@ function SellerMenusDetails(props) {
               boxShadow="md"
               borderRadius="lg"
               overflow="hidden"
-              position={"relative"}
+              position="relative"
             >
               <Box
                 position="relative"
@@ -256,18 +299,17 @@ function SellerMenusDetails(props) {
                 />
                 {isEditing && (
                   <Box
-                    position={"absolute"}
-                    bottom={"10px"}
-                    right={"10px"}
-                    bg={"darkgray"}
+                    position="absolute"
+                    bottom="10px"
+                    right="10px"
+                    bg="rgba(0,0,0,0.5)"
                     p={2}
-                    borderRadius={"md"}
+                    borderRadius="md"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
                   >
-                    <FontAwesomeIcon
-                      icon={faCamera}
-                      color={"white"}
-                      size={"lg"}
-                    />
+                    <FontAwesomeIcon icon={faCamera} color="white" size="lg" />
                   </Box>
                 )}
                 <Input
@@ -278,8 +320,7 @@ function SellerMenusDetails(props) {
                   display="none"
                 />
               </Box>
-
-              <VStack p={3} align="stretch" spacing={1}>
+              <Box p={4}>
                 <FormControl>
                   <FormLabel>메뉴 이름</FormLabel>
                   <Input
@@ -300,37 +341,33 @@ function SellerMenusDetails(props) {
                     isReadOnly={!isEditing}
                   />
                 </FormControl>
-              </VStack>
-              {isEditing && (
-                <Button
-                  position="absolute"
-                  top="5px"
-                  right="5px"
-                  size="sm"
-                  colorScheme="red"
-                  onClick={() => handleMenuDelete(index)}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </Button>
-              )}
+                {isEditing && (
+                  <Button
+                    mt={2}
+                    colorScheme="red"
+                    onClick={() => handleMenuDelete(index)}
+                    leftIcon={<FontAwesomeIcon icon={faTrash} />}
+                  >
+                    삭제
+                  </Button>
+                )}
+              </Box>
             </Box>
           ))}
         </SimpleGrid>
 
-        <Flex justify="flex-end" mt={4}>
-          {isEditing ? (
-            <>
-              <Button colorScheme="blue" mr={3} onClick={handleSave}>
-                저장
-              </Button>
-              <Button onClick={() => setIsEditing(false)}>취소</Button>
-            </>
-          ) : (
-            <Button colorScheme="blue" onClick={() => setIsEditing(true)}>
-              수정
-            </Button>
-          )}
-        </Flex>
+        {isEditing ? (
+          <Button colorScheme="blue" onClick={handleSave}>
+            저장
+          </Button>
+        ) : (
+          <Button colorScheme="teal" onClick={handelUpdate}>
+            수정
+          </Button>
+        )}
+        <Button colorScheme="red" onClick={handleDelete}>
+          삭제
+        </Button>
       </VStack>
     </Box>
   );

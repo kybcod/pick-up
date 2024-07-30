@@ -51,4 +51,8 @@ public class OrderService {
             return orders;
         }).collect(Collectors.toList());
     }
+
+    public OrderCount getCount(Integer userId) {
+        return orderMapper.selectOrderCount(userId);
+    }
 }
