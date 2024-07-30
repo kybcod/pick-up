@@ -6,6 +6,7 @@ import {
   Divider,
   Flex,
   Grid,
+  Heading,
   HStack,
   Image,
   Input,
@@ -87,6 +88,9 @@ function SellerOrderList(props) {
 
   return (
     <Box maxWidth="800px" margin="auto" p={4}>
+      <Heading mb={8} textAlign="center">
+        주문 확인
+      </Heading>
       {receivedOrders.length === 0 ? (
         <Flex direction="column" align="center" justify="center" height="500px">
           <Image src={"/img/cart_clear.png"} boxSize="150px" mb={4} />

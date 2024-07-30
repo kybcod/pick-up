@@ -1,10 +1,9 @@
-import { Box, Button, Flex, Image, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Image, Spacer } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import React, { useContext } from "react";
 import { DrawerExample } from "./DrawerExample.jsx";
 import { LoginContext } from "./LoginProvider.jsx";
-import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { SellerDrawerExample } from "./SellerDrawerExample.jsx";
 
 export function Navbar() {
   const navigate = useNavigate();
@@ -30,20 +29,7 @@ export function Navbar() {
       )}
 
       <Spacer />
-      {account.isSeller() ? (
-        <Box>
-          <Button
-            onClick={() => {
-              account.logout();
-              navigate("/login");
-            }}
-          >
-            <FontAwesomeIcon icon={faRightFromBracket} />
-          </Button>
-        </Box>
-      ) : (
-        <DrawerExample />
-      )}
+      {account.isSeller() ? <SellerDrawerExample /> : <DrawerExample />}
     </Flex>
   );
 }

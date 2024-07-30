@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Flex,
+  Heading,
   Image,
   SimpleGrid,
   Spinner,
@@ -43,7 +44,10 @@ function SellerRestaurantList(props) {
   }
 
   return (
-    <Box p={5} bg="gray.50">
+    <Box maxWidth="800px" margin="auto" p={4}>
+      <Heading mb={8} textAlign="center">
+        가게 관리
+      </Heading>
       <SimpleGrid columns={[1, 2, 3]} spacing={10}>
         {sellerRestaurants.map((restaurant, index) => (
           <Box
