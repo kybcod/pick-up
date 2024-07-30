@@ -24,7 +24,7 @@ export function Navbar() {
         seller
       </Box>
       <Spacer />
-      <DrawerExample />
+      {account.isBuyer && <DrawerExample />}
     </Flex>
   );
 }
