@@ -1,15 +1,14 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import React from "react";
+import React, { useContext } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Home } from "./Home.jsx";
 import RestaurantMapView from "./page/restaurant/RestaurantMapView.jsx";
 import "./component/styles/fonts.css";
 import { theme } from "./component/styles/theme.jsx";
-import { MainPage } from "./page/main/MainPage.jsx";
 import { RestaurantMenuList } from "./page/menuSelector/RestaurantMenuList.jsx";
 import Login from "./page/user/Login.jsx";
 import { Signup } from "./page/user/Signup.jsx";
-import { LoginProvider } from "./component/LoginProvider.jsx";
+import { LoginContext, LoginProvider } from "./component/LoginProvider.jsx";
 import { CartList } from "./page/myPage/CartList.jsx";
 import { Payment } from "./page/payment/Payment.jsx";
 import { OrderList } from "./page/myPage/OrderList.jsx";
@@ -24,6 +23,7 @@ import NaverLoginCallback from "./page/user/NaverLoginCallback.jsx";
 import FavoriteList from "./page/myPage/FavoriteList.jsx";
 import RestaurantEditProcess from "./page/seller/edit/RestaurantEditProcess.jsx";
 import SellerReviewList from "./page/seller/SellerReviewList.jsx";
+import { MainPage } from "./page/main/MainPage.jsx";
 
 axios.interceptors.request.use(
   function (config) {
@@ -39,13 +39,23 @@ axios.interceptors.request.use(
     return Promise.reject(error);
   },
 );
+
+function ConditionalRedirect() {
+  const account = useContext(LoginContext);
+
+  if (account.isLoggedIn()) {
+    return account.isSeller() ? <SellerMainPage /> : <MainPage />;
+  }
+  return <MainPage />;
+}
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
     children: [
       // user
-      { index: true, element: <MainPage /> },
+      { index: true, element: <ConditionalRedirect /> },
       { path: "signup", element: <Signup /> },
       { path: "login", element: <Login /> },
       { path: "oauth/login/callback", element: <NaverLoginCallback /> },
