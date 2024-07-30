@@ -233,7 +233,7 @@ export function Payment() {
             <Flex justify="space-between" align="center">
               <Text fontSize="lg">총 결제 금액</Text>
               <Text fontSize="2xl" fontWeight="bold">
-                {(calculateTotalAmount() + 2000).toLocaleString()}원
+                {calculateTotalAmount().toLocaleString()}원
               </Text>
             </Flex>
           </Box>
