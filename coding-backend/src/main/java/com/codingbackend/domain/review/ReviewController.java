@@ -22,4 +22,9 @@ public class ReviewController {
     public List<Review> getAllReviews(@PathVariable Integer userId) {
         return reviewService.getAllReviews(userId);
     }
+
+    @GetMapping("seller/{userId}/{restaurantId}")
+    public List<ReviewRequest> getSellerAllReviews(@PathVariable Integer userId, @PathVariable Long restaurantId) {
+        return reviewService.getSellerAllReviews(userId, restaurantId);
+    }
 }

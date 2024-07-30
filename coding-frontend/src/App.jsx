@@ -23,6 +23,7 @@ import axios from "axios";
 import NaverLoginCallback from "./page/user/NaverLoginCallback.jsx";
 import FavoriteList from "./page/myPage/FavoriteList.jsx";
 import RestaurantEditProcess from "./page/seller/edit/RestaurantEditProcess.jsx";
+import SellerReviewList from "./page/seller/SellerReviewList.jsx";
 
 axios.interceptors.request.use(
   function (config) {
@@ -72,6 +73,7 @@ const router = createBrowserRouter([
       { path: "seller/orders", element: <SellerOrderList /> },
       { path: "seller/restaurants", element: <SellerRestaurantList /> },
       { path: "seller/:restaurantId", element: <RestaurantEditProcess /> },
+      { path: "seller/:restaurantId/reviews", element: <SellerReviewList /> },
     ],
   },
 ]);

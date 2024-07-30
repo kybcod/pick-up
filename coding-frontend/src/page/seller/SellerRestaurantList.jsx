@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
-  Badge,
   Box,
+  Button,
   Flex,
   Image,
   SimpleGrid,
@@ -23,7 +23,7 @@ function SellerRestaurantList(props) {
       console.log("store", res.data);
       setSellerRestaurants(res.data);
     });
-  }, []);
+  }, [userId]);
 
   if (sellerRestaurants === null) {
     return (
@@ -37,12 +37,16 @@ function SellerRestaurantList(props) {
     navigate(`/seller/${restaurantId}`);
   }
 
+  function handleReviewView(e, restaurantId) {
+    e.stopPropagation(); // Prevent triggering parent click event
+    navigate(`/seller/${restaurantId}/reviews`);
+  }
+
   return (
     <Box p={5} bg="gray.50">
       <SimpleGrid columns={[1, 2, 3]} spacing={10}>
         {sellerRestaurants.map((restaurant, index) => (
           <Box
-            onClick={() => handleMenuDetails(restaurant.restaurantId)}
             key={index}
             bg="white"
             boxShadow="md"
@@ -50,6 +54,7 @@ function SellerRestaurantList(props) {
             overflow="hidden"
             transition="all 0.3s"
             _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
+            position="relative" // For absolute positioning of the button
           >
             <Image
               src={restaurant.logo}
@@ -62,7 +67,17 @@ function SellerRestaurantList(props) {
                 <Text fontSize="xl" fontWeight="bold">
                   {restaurant.restaurantName}
                 </Text>
-                <Badge colorScheme="green">영업중</Badge>
+                <Button
+                  colorScheme="blue"
+                  size="sm"
+                  onClick={(e) => handleReviewView(e, restaurant.restaurantId)}
+                  position="absolute"
+                  bottom="10px"
+                  right="10px"
+                  variant={"outline"}
+                >
+                  리뷰 보기
+                </Button>
               </Flex>
               <Text color="gray.600" fontSize="sm" mb={2}>
                 {restaurant.address}
