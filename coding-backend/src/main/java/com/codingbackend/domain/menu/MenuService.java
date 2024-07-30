@@ -94,7 +94,7 @@ public class MenuService {
             feedbackDto.setScoresum(restaurantReview.getReviewSum()); // 적절한 메서드로 수정
             feedbackDto.setScorecnt(restaurantReview.getReviewCount());  // 적절한 메서드로 수정
             basicInfo.setFeedback(feedbackDto);
-            
+
             placeDto.setBasicInfo(basicInfo);
 
             return placeDto;
@@ -169,7 +169,7 @@ public class MenuService {
         // 메뉴 사진 삭제
         List<Menu> menuList = menuMapper.selectMenuList(restaurantId);
         for (Menu menu : menuList) {
-            String key = String.format("prj4/restaurant/%d/%s", restaurantId, menu.getImg());
+            String key = STR."prj4/restaurant/\{restaurantId}/\{menu.getImg()}";
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -184,7 +184,7 @@ public class MenuService {
         for (Review review : reviews) {
             List<ReviewFile> reviewFiles = reviewMapper.selectReviewFile(review.getId());
             for (ReviewFile reviewFile : reviewFiles) {
-                String key = String.format("prj4/review/%d/%s", review.getId(), reviewFile.getName());
+                String key = STR."prj4/review/\{review.getId()}/\{reviewFile.getName()}";
                 DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                         .bucket(bucketName)
                         .key(key)
@@ -204,7 +204,7 @@ public class MenuService {
 
         // 가게 사진 삭제
         Restaurant restaurant = restaurantMapper.selectByRestaurantId(restaurantId);
-        String key = String.format("prj4/restaurant/%d/%s", restaurantId, restaurant.getLogo());
+        String key = STR."prj4/review/\{restaurantId}/\{restaurant.getLogo()}";
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)

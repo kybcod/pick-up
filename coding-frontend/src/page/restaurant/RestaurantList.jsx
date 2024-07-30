@@ -46,13 +46,14 @@ export function RestaurantList({ restaurants, onRestaurantClick }) {
         restaurantData.map((restaurant, index) => {
           const { scoresum, scorecnt } = restaurant.basicInfo.feedback;
           const averageScore =
-            scorecnt > 0 ? (scoresum / scorecnt).toFixed(1) : "리뷰 없음";
+            scorecnt > 0 ? (scoresum / scorecnt).toFixed(1) : 0;
           const {
             placenamefull,
             mainphotourl,
             road_address_name,
             address_name,
           } = restaurant.basicInfo;
+          const imageUrl = mainphotourl || restaurant.imageUrl;
 
           return (
             <Box
@@ -72,11 +73,7 @@ export function RestaurantList({ restaurants, onRestaurantClick }) {
                 <Image
                   borderRadius="md"
                   boxSize="80px"
-                  src={
-                    mainphotourl ||
-                    restaurant.imageUrl ||
-                    "https://via.placeholder.com/80"
-                  }
+                  src={imageUrl}
                   alt={placenamefull || restaurant.place.place_name}
                   mr={4}
                 />
@@ -108,7 +105,7 @@ export function RestaurantList({ restaurants, onRestaurantClick }) {
                       {averageScore}
                     </Text>
                     <Text ml={1} fontSize="sm" color="gray.500">
-                      ({scorecnt > 0 ? `${scorecnt}+` : "No reviews"})
+                      ({scorecnt > 0 ? `${scorecnt}+` : "0+"})
                     </Text>
                   </Flex>
                 </Box>

@@ -20,7 +20,7 @@ import { ReviewModal } from "./ReviewModal.jsx";
 export function OrderList() {
   const account = useContext(LoginContext);
   const userId = account.id;
-  const [orderList, setOrderList] = useState(null);
+  const [orderList, setOrderList] = useState({});
   const [restaurantInfo, setRestaurantInfo] = useState({});
   const navigate = useNavigate();
   const { onClose, onOpen, isOpen } = useDisclosure();
@@ -87,6 +87,10 @@ export function OrderList() {
     }, {});
   };
 
+  const sortedOrderList = Object.values(orderList).sort((a, b) => {
+    return new Date(b.inserted) - new Date(a.inserted);
+  });
+
   function handleOpenModal(restaurantId) {
     setSelectedRestaurant(restaurantId);
     onOpen();
@@ -125,7 +129,7 @@ export function OrderList() {
         </Flex>
       ) : (
         <VStack spacing={4} align="stretch">
-          {Object.values(orderList).map((group, index) => (
+          {sortedOrderList.map((group, index) => (
             <Flex
               key={index}
               direction="column"

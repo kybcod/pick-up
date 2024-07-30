@@ -54,7 +54,6 @@ export function CartList() {
         setCartItems(groupedByRestaurant);
 
         const restaurantIds = Object.keys(groupedByRestaurant);
-        console.log("레스토랑 ID들:", restaurantIds);
 
         Promise.all(
           restaurantIds.map((id) =>
@@ -65,7 +64,7 @@ export function CartList() {
           ),
         )
           .then((responses) => {
-            console.log("응답 데이터들:", responses);
+            console.log("메뉴 정보:", responses);
             const info = {};
             responses.forEach(({ id, data }) => {
               info[id] = data.basicInfo;
@@ -88,9 +87,14 @@ export function CartList() {
       if (!grouped[key]) {
         grouped[key] = {
           items: [],
+          inserted: item.inserted,
         };
       }
       grouped[key].items.push(item);
+
+      if (new Date(item.inserted) > new Date(grouped[key].inserted)) {
+        grouped[key].inserted = item.inserted;
+      }
     });
     return grouped;
   };
@@ -104,6 +108,10 @@ export function CartList() {
   if (cartItems === null || restaurantInfo === null) {
     return <Spinner />;
   }
+
+  const sortedCartItems = Object.keys(cartItems).sort((a, b) => {
+    return new Date(cartItems[b].inserted) - new Date(cartItems[a].inserted);
+  });
 
   function handleCartDelete() {
     axios
@@ -171,6 +179,7 @@ export function CartList() {
           menuCount: item.menuCount,
           menuPrice: item.menuPrice,
           totalPrice: item.menuCount * item.menuPrice,
+          inserted: item.inserted,
         })),
     );
 
@@ -206,7 +215,7 @@ export function CartList() {
         </Flex>
       ) : (
         <VStack spacing={6} align="stretch">
-          {Object.keys(cartItems).map((restaurantId) => (
+          {sortedCartItems.map((restaurantId) => (
             <Box
               key={restaurantId}
               borderWidth="1px"

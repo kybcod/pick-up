@@ -29,5 +29,3 @@ FROM category;
 
 SELECT *
 FROM favorites;
-
-#restaurant_id = 2092129811;
