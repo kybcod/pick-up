@@ -103,7 +103,7 @@ public class RestaurantService {
     }
 
     public void updateRestaurant(Restaurant restaurant, MultipartFile file) throws IOException {
-        if (file != null && !file.getOriginalFilename().equals(restaurant.getLogo())) {
+        if (file != null && !file.isEmpty() && !file.getOriginalFilename().equals(restaurant.getLogo())) {
 
             //삭제
             String key = STR."prj4/restaurant/\{restaurant.getRestaurantId()}/\{restaurant.getLogo()}";
@@ -125,6 +125,9 @@ public class RestaurantService {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             restaurant.setLogo(file.getOriginalFilename());
             restaurantMapper.updateLogo(restaurant);
+        } else {
+            Restaurant oldRestaurant = restaurantMapper.selectByRestaurantId(restaurant.getRestaurantId());
+            restaurant.setLogo(oldRestaurant.getLogo());
         }
 
         restaurantMapper.updateRestaurant(restaurant);

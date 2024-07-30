@@ -100,6 +100,7 @@ function EditRestaurant({ onSubmit, restaurantId }) {
 
   const handleChangeLogo = (e) => {
     const fileView = e.target.files[0];
+    console.log("fileView", fileView);
     setRestaurantData((prev) => ({
       ...prev,
       file: fileView,
