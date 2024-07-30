@@ -13,7 +13,7 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -30,6 +30,16 @@ export function Signup() {
   // const [address, setAddress] = useState("");
 
   let toast = useToast();
+
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    if (userInfo) {
+      setEmail(userInfo.email || "");
+      setNickName(userInfo.nickname || "");
+      setPhoneNum(userInfo.mobile || "");
+    }
+  }, []);
 
   function handleClick() {
     const authorities = [{ userId: null, name: role }];
@@ -49,6 +59,7 @@ export function Signup() {
           description: "회원가입이 완료되었습니다",
           position: "top",
         });
+        localStorage.removeItem("userInfo");
         navigate("/login");
       })
       .catch((err) => {
@@ -163,6 +174,7 @@ export function Signup() {
           <FormLabel>아이디</FormLabel>
           <InputGroup>
             <Input
+              value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
                 setIsEmailChecked(false);
@@ -198,6 +210,7 @@ export function Signup() {
         <FormControl>
           <FormLabel>전화번호</FormLabel>
           <Input
+            value={phoneNum}
             onChange={(e) =>
               setPhoneNum(phoneNumPattern(e.currentTarget.value))
             }
@@ -209,6 +222,7 @@ export function Signup() {
           <FormLabel>닉네임</FormLabel>
           <InputGroup>
             <Input
+              value={nickName}
               onChange={(e) => {
                 setNickName(e.target.value);
                 setIsNickNameChecked(false);

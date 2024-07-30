@@ -47,11 +47,10 @@ public class AppConfiguration {
     public S3Client s3Client() {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
         AwsCredentialsProvider provider = StaticCredentialsProvider.create(credentials);
-        S3Client s3Client = S3Client.builder()
+        return S3Client.builder()
                 .region(Region.AP_NORTHEAST_2)
                 .credentialsProvider(provider)
                 .build();
-        return s3Client;
     }
 
     @Bean
@@ -73,23 +72,11 @@ public class AppConfiguration {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // deprecated 된 것들 람다식으로 변경
-        /*
-        http.csrf(csrf -> csrf.disable());
-
-        http.authorizeHttpRequests(authorize -> authorize
-                .anyRequest()
-                .permitAll()
-        );
-
-        http.oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()));
-
-        */
+    public SecurityFilterChain appSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable());
         http.oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()));
-
         return http.build();
     }
 }
