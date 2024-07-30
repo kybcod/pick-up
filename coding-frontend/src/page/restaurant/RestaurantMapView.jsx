@@ -169,6 +169,21 @@ export default function RestaurantMapView() {
     });
   };
 
+  useEffect(() => {
+    if (map && markers.length > 0) {
+      const bounds = new window.kakao.maps.LatLngBounds();
+      markers.forEach((marker) => {
+        bounds.extend(
+          new window.kakao.maps.LatLng(
+            marker.position.lat,
+            marker.position.lng,
+          ),
+        );
+      });
+      map.setBounds(bounds);
+    }
+  }, [map, markers]);
+
   const handleRestaurantClick = (restaurant) => {
     setSelectedRestaurant(restaurant);
     setInfo(restaurant);
