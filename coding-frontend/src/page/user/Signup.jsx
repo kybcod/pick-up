@@ -159,6 +159,16 @@ export function Signup() {
       .replace(/(-{1,2})$/g, "");
   };
 
+  let isDisableSaveButton = false;
+
+  if (!isEmailChecked) {
+    isDisableSaveButton = true;
+  }
+
+  if (!isNickNameChecked) {
+    isDisableSaveButton = true;
+  }
+
   return (
     <Box>
       <Box>
@@ -264,7 +274,9 @@ export function Signup() {
         </FormControl>
       </Box>
       */}
-      <Button onClick={handleClick}>가입하기</Button>
+      <Button onClick={handleClick} isDisabled={isDisableSaveButton}>
+        가입하기
+      </Button>
     </Box>
   );
 }
