@@ -1,12 +1,27 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
 
 const NaverLoginCallback = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const account = useContext(LoginContext);
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [userInfo, setUserInfo] = useState(null);
+  const [emailExists, setEmailExists] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -14,39 +29,77 @@ const NaverLoginCallback = () => {
     const state = params.get("state");
 
     if (code) {
-      // 서버에 `code`를 보내서 액세스 토큰과 사용자 정보를 요청
       axios
-        .post("/api/oauth/login/callback", { code, state })
+        .post("/api/oauth/login/success", { code, state })
         .then((response) => {
           const { token, emailExists, userInfo } = response.data;
 
-          if (emailExists) {
-            // 이메일이 존재하면 토큰을 로컬 스토리지에 저장하고 로그인 상태 업데이트 후 홈으로 리다이렉트
-            if (token) {
-              localStorage.setItem("token", token);
-              account.login(token);
-              navigate("/");
-            } else {
-              // 토큰이 없는 경우 실패 처리
-              navigate("/login");
-            }
+          setUserInfo(userInfo);
+          setEmailExists(emailExists);
+
+          if (emailExists && token) {
+            localStorage.setItem("token", token);
+            account.login(token);
+            navigate("/");
+            toast({
+              status: "success",
+              description: "로그인 되었습니다",
+              position: "top",
+            });
+          } else if (!emailExists) {
+            onOpen();
           } else {
-            // 이메일이 존재하지 않으면 회원가입 페이지로 리다이렉트
-            localStorage.setItem("userInfo", JSON.stringify(userInfo));
-            navigate("/signup");
+            navigate("/login");
+            toast({
+              status: "error",
+              description: "소셜로그인에 실패하였습니다. 다시 시도해주세요.",
+              position: "top",
+            });
           }
         })
         .catch(() => {
-          // 에러 발생 시 회원가입 페이지로 리다이렉트
-          navigate("/signup");
+          navigate("/login");
+          toast({
+            status: "error",
+            description: "소셜로그인에 실패하였습니다. 다시 시도해주세요.",
+            position: "top",
+          });
         });
     } else {
-      // code가 없을 경우 에러 처리 또는 로그인 페이지로 리다이렉트
-      navigate("/signup");
+      navigate("/login");
     }
-  }, [location, navigate, account]);
+  }, [location, navigate, account, toast, onOpen]);
 
-  return null;
+  const handleSignUp = () => {
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    navigate("/signup");
+    onClose();
+  };
+
+  const handleCancel = () => {
+    onClose();
+    navigate("/");
+  };
+
+  return (
+    <>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalContent>
+          <ModalHeader>회원가입 안내</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            이메일이 등록되어 있지 않습니다. 회원가입 페이지로 이동하시겠습니까?
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleSignUp}>
+              회원가입
+            </Button>
+            <Button onClick={handleCancel}>취소</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
 };
 
 export default NaverLoginCallback;

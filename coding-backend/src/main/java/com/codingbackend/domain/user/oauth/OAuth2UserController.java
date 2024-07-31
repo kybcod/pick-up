@@ -1,5 +1,6 @@
 package com.codingbackend.domain.user.oauth;
 
+import com.codingbackend.domain.user.User;
 import com.codingbackend.domain.user.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class OAuth2UserController {
         this.userService = userService;
     }
 
-    @PostMapping("callback")
+    @PostMapping("success")
     public  ResponseEntity<Map<String, Object>> loginSuccess(@RequestBody Map<String, String> body) {
         String code = body.get("code");
         String state = body.get("state");
@@ -49,16 +50,28 @@ public class OAuth2UserController {
 
             if (userInfoMap != null) {
                 NaverUserInfo naverUserInfo = new NaverUserInfo(userInfoMap);
+                User user = userService.findOrCreateUser(naverUserInfo);
 
                 String email = naverUserInfo.getEmail();
                 boolean emailExists = userService.emailExists(email);
 
-                // 응답 생성
-                return ResponseEntity.ok(Map.of(
-                        "token", accessToken,
-                        "emailExists", emailExists,
-                        "userInfo", userInfoMap
-                ));
+                if (emailExists) {
+                    // JWT 토큰 발급
+                    Map<String, Object> tokenResponse = userService.getTokenFromOAuth2(user);
+
+                    // 응답 생성
+                    return ResponseEntity.ok(Map.of(
+                            "token", tokenResponse.get("token"),
+                            "emailExists", emailExists,
+                            "userInfo", userInfoMap
+                    ));
+                } else {
+                    // 이메일이 존재하지 않으면 회원가입을 위한 응답
+                    return ResponseEntity.ok(Map.of(
+                            "emailExists", emailExists,
+                            "userInfo", userInfoMap
+                    ));
+                }
             } else {
                 return ResponseEntity.badRequest().body(Map.of("error", "Failed to retrieve user information"));
             }
