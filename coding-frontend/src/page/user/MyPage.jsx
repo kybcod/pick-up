@@ -235,7 +235,10 @@ export function MyPage() {
           <ModalBody>
             <FormControl>
               <FormLabel>기존 암호</FormLabel>
-              <Input onChange={(e) => setPrevPassword(e.target.value)} />
+              <Input
+                type={"password"}
+                onChange={(e) => setPrevPassword(e.target.value)}
+              />
             </FormControl>
           </ModalBody>
           <ModalFooter>

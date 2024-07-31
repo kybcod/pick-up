@@ -68,6 +68,7 @@ function Login(props) {
         <FormControl>
           <FormLabel>패스워드</FormLabel>
           <Input
+            type={"password"}
             onChange={(e) => setPassword(e.target.value)}
             placeholder={"패스워드를 입력해주세요"}
           />

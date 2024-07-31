@@ -219,14 +219,20 @@ export function Signup() {
       <Box>
         <FormControl>
           <FormLabel>패스워드</FormLabel>
-          <Input onChange={(e) => setPassword(e.target.value)} />
+          <Input
+            type={"password"}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </FormControl>
       </Box>
       <Box>
         <FormControl>
           <FormLabel>패스워드 확인</FormLabel>
           <InputGroup>
-            <Input onChange={(e) => setPasswordCheck(e.target.value)} />
+            <Input
+              type={"password"}
+              onChange={(e) => setPasswordCheck(e.target.value)}
+            />
           </InputGroup>
           {!pwIsMatch && (
             <FormHelperText>패스워드가 일치하지 않습니다</FormHelperText>
