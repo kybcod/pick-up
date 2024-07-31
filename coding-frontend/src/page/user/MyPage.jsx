@@ -86,6 +86,24 @@ export function MyPage() {
         navigate(`/mypage/${userId}`);
       })
       .catch(() => {
+        if (user.password && !passwordCheck) {
+          toast({
+            status: "error",
+            description: "패스워드 확인을 입력해 주세요.",
+            position: "top",
+          });
+          setIsEditing(true);
+          return;
+        }
+        if (user.password !== passwordCheck) {
+          toast({
+            status: "error",
+            description: "패스워드가 일치하지 않습니다.",
+            position: "top",
+          });
+          setIsEditing(true);
+          return;
+        }
         toast({
           status: "warning",
           description: "회원정보 수정을 실패했습니다. 다시 시도해주세요.",
