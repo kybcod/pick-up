@@ -55,15 +55,23 @@ public class OAuth2UserController {
                 String email = naverUserInfo.getEmail();
                 boolean emailExists = userService.emailExists(email);
 
-                // JWT 토큰 발급
-                Map<String, Object> tokenResponse = userService.getTokenFromOAuth2(user);
+                if (emailExists) {
+                    // JWT 토큰 발급
+                    Map<String, Object> tokenResponse = userService.getTokenFromOAuth2(user);
 
-                // 응답 생성
-                return ResponseEntity.ok(Map.of(
-                        "token", tokenResponse.get("token"),
-                        "emailExists", emailExists,
-                        "userInfo", userInfoMap
-                ));
+                    // 응답 생성
+                    return ResponseEntity.ok(Map.of(
+                            "token", tokenResponse.get("token"),
+                            "emailExists", emailExists,
+                            "userInfo", userInfoMap
+                    ));
+                } else {
+                    // 이메일이 존재하지 않으면 회원가입을 위한 응답
+                    return ResponseEntity.ok(Map.of(
+                            "emailExists", emailExists,
+                            "userInfo", userInfoMap
+                    ));
+                }
             } else {
                 return ResponseEntity.badRequest().body(Map.of("error", "Failed to retrieve user information"));
             }

@@ -17,7 +17,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -219,8 +218,14 @@ public class UserService {
     }
 
     public User findOrCreateUser(NaverUserInfo naverUserInfo) {
-        return Optional.ofNullable(mapper.selectByEmail(naverUserInfo.getEmail()))
-                .orElseGet(() -> createUser(naverUserInfo));
+        User user = mapper.selectByEmail(naverUserInfo.getEmail());
+
+        if (user == null) {
+            // 이메일이 존재하지 않으면 사용자 정보를 반환
+            return null;
+        }
+
+        return user;
     }
 
     private User createUser(NaverUserInfo naverUserInfo) {
