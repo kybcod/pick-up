@@ -134,34 +134,25 @@ public class MenuService {
         }
     }
 
-    public void updateMenu(List<MenuItem> menuItems) throws IOException {
-        for (MenuItem item : menuItems) {
-            Menu menu = new Menu();
-            menu.setRestaurantId(item.getRestaurantId());
-            menu.setName(item.getName());
-            menu.setPrice(item.getPrice());
+    public void updateMenu(Long restaurantId, List<MenuItem> menuItems) throws IOException {
 
-            if (item.getImg() != null && !item.getImg().isEmpty()) {
-                String fileName = item.getImg().getOriginalFilename();
-                String key = STR."prj4/restaurant/\{menu.getRestaurantId()}/\{fileName}";
+        //기존 매뉴 항목 조회
+        List<Menu> existingMenus = menuMapper.selectMenu(Math.toIntExact(restaurantId));
 
-                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(key)
-                        .acl(ObjectCannedACL.PUBLIC_READ)
-                        .build();
-
-                s3Client.putObject(putObjectRequest,
-                        RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
-
-                menu.setImg(fileName);
-                if (item.getId() != null) {
-                    menuMapper.update(menu);
-                } else {
-                    menuMapper.insert(menu);
-                }
-            }
+        //기존 메뉴 삭제(s3, db)
+        for (Menu existingMenu : existingMenus) {
+            String key = STR."prj4/restaurant/\{existingMenu.getRestaurantId()}/\{existingMenu.getImg()}";
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .key(key)
+                    .bucket(bucketName)
+                    .build();
+            s3Client.deleteObject(deleteObjectRequest);
         }
+        menuMapper.deleteMenu(restaurantId);
+
+        // new 메뉴 추가
+        insertMenu(restaurantId, menuItems);
+
     }
 
 

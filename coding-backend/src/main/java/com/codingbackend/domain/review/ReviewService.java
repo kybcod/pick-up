@@ -62,4 +62,20 @@ public class ReviewService {
         }
         return reviews;
     }
+
+    public List<ReviewRequest> getSellerAllReviews(Integer userId, Long restaurantId) {
+        List<ReviewRequest> reviews = reviewMapper.selectSellerAllReviews(userId, restaurantId);
+
+        for (ReviewRequest review : reviews) {
+            String logoPath = STR."\{srcPrefix}restaurant/\{restaurantId}/\{review.getLogo()}";
+            review.setLogo(logoPath);
+
+            List<String> fileNames = reviewMapper.selectFileNamesByReviewId(review.getId());
+            List<ReviewFile> files = fileNames.stream()
+                    .map(name -> new ReviewFile(name, STR."\{srcPrefix}review/\{review.getId()}/\{name}"))
+                    .toList();
+            review.setFileList(files);
+        }
+        return reviews;
+    }
 }

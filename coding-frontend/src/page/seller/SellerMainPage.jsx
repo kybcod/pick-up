@@ -2,11 +2,13 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   Badge,
   Box,
-  Button,
   Container,
+  Flex,
   Grid,
-  Heading,
+  Image,
+  Text,
   useColorModeValue,
+  VStack,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { LoginContext } from "../../component/LoginProvider.jsx";
@@ -22,8 +24,10 @@ import axios from "axios";
 function SellerMainPage(props) {
   const navigate = useNavigate();
   const account = useContext(LoginContext);
-  const bgColor = useColorModeValue("gray.50", "gray.800");
-  const buttonColor = useColorModeValue("blue.500", "blue.200");
+  const bgColor = useColorModeValue("#F2F4F6", "#1A202C");
+  const cardBgColor = useColorModeValue("white", "#2D3748");
+  const iconColor = "#2AC1BC";
+  const textColor = useColorModeValue("#4A5568", "#E2E8F0");
   const userId = account.id;
   const [order, setOrder] = useState(0);
 
@@ -41,45 +45,59 @@ function SellerMainPage(props) {
   ];
 
   return (
-    <Box bg={bgColor} minHeight="100vh" py={10}>
-      <Container maxW="container.md">
-        <Heading as="h1" size="xl" textAlign="center" mb={10}>
-          사장님 메인 페이지
-        </Heading>
-        <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+    <Box w={"100%"} bg={bgColor} minHeight="100vh">
+      <Box textAlign="center" w="100%" position="relative">
+        <Image src={"/img/pick.png"} width="100%" maxHeight="600px" />
+      </Box>
+      <Container maxW="container.lg" py={10}>
+        <Grid templateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)"]} gap={8}>
           {menuItems.map((item, index) => (
-            <Button
+            <Box
               key={index}
-              onClick={() => navigate(item.path)}
-              size="lg"
-              height="150"
-              bg={buttonColor}
-              color="white"
-              _hover={{ bg: "blue.600" }}
-              fontSize="xl"
-              flexDirection="column"
-              justifyContent="center"
-              position="relative" // Required for positioning Badge
+              onClick={() => {
+                navigate(item.path);
+                window.scrollTo({ top: 0, behavior: "auto" });
+              }}
+              bg={cardBgColor}
+              borderRadius="xl"
+              boxShadow="xl"
+              p={8}
+              cursor="pointer"
+              transition="all 0.3s"
+              _hover={{ transform: "translateY(-5px)", boxShadow: "2xl" }}
+              position="relative"
             >
-              <Box position="relative" display="flex" justifyContent="center">
-                <FontAwesomeIcon icon={item.icon} size="2x" />
+              <VStack spacing={4} align="center">
+                <Flex
+                  bg={iconColor}
+                  borderRadius="full"
+                  color="white"
+                  width="60px"
+                  height="60px"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <FontAwesomeIcon icon={item.icon} size="2x" />
+                </Flex>
+                <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+                  {item.text}
+                </Text>
                 {item.path === "/seller/orders" && (
                   <Badge
                     position="absolute"
-                    top="-10px"
-                    right="-10px"
+                    top={4}
+                    right={4}
                     colorScheme="red"
                     borderRadius="full"
-                    px={2}
+                    px={3}
                     py={1}
-                    fontSize="sm"
+                    fontSize="md"
                   >
                     {order}
                   </Badge>
                 )}
-              </Box>
-              <Box mt={2}>{item.text}</Box>
-            </Button>
+              </VStack>
+            </Box>
           ))}
         </Grid>
       </Container>
