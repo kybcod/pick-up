@@ -21,7 +21,6 @@ import SellerRestaurantList from "./page/seller/SellerRestaurantList.jsx";
 import { MyPage } from "./page/user/MyPage.jsx";
 import axios from "axios";
 import NaverLoginCallback from "./page/user/NaverLoginCallback.jsx";
-import SellerMenusDetails from "./page/seller/SellerMenusDetails.jsx";
 import FavoriteList from "./page/myPage/FavoriteList.jsx";
 import RestaurantEditProcess from "./page/seller/edit/RestaurantEditProcess.jsx";
 
@@ -48,7 +47,7 @@ const router = createBrowserRouter([
       { index: true, element: <MainPage /> },
       { path: "signup", element: <Signup /> },
       { path: "login", element: <Login /> },
-      { path: "oauth/login/callback", element: <NaverLoginCallback /> },
+      { path: "oauth/login", element: <NaverLoginCallback /> },
       { path: "mypage/:userId", element: <MyPage /> },
 
       // map

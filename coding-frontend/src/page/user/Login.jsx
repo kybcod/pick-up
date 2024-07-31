@@ -22,7 +22,7 @@ function Login(props) {
   const navigate = useNavigate();
 
   //const CLIENTID = import.meta.env.CLIENT_ID;
-  const reUri = "http://localhost:5173/oauth/login/callback";
+  const reUri = "http://localhost:5173/oauth/login";
   const state = Math.random();
 
   function handleClickLogin() {

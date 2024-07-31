@@ -16,7 +16,7 @@ const NaverLoginCallback = () => {
     if (code) {
       // 서버에 `code`를 보내서 액세스 토큰과 사용자 정보를 요청
       axios
-        .post("/api/oauth/login/callback", { code, state })
+        .post("/api/oauth/login/success", { code, state })
         .then((response) => {
           const { token, emailExists, userInfo } = response.data;
 
