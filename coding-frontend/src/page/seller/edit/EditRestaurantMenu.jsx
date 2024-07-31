@@ -75,7 +75,9 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
       setFilePreviews(updatedPreviews);
 
       if (removedItem.img && typeof removedItem.img === "string") {
-        setRemoveFileList((prev) => [...prev, removedItem.img]);
+        // 파일명 추출
+        const fileName = removedItem.img.split("/").pop();
+        setRemoveFileList((prev) => [...prev, fileName]);
       }
 
       if (removedItem.img instanceof File) {

@@ -169,6 +169,7 @@ public class MenuService {
                     String fileName = item.getImg().getOriginalFilename();
                     if (!currentFileNames.contains(fileName)) {
                         String key = STR."prj4/restaurant/\{restaurantId}/\{fileName}";
+                        System.out.println("ISkey = " + key);
                         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                                 .bucket(bucketName)
                                 .key(key)
