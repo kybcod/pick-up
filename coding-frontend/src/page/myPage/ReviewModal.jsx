@@ -23,6 +23,7 @@ export function ReviewModal({
   selectedRestaurant,
   userId,
   restaurantName,
+  onReviewSubmitted,
 }) {
   const [files, setFiles] = useState([]);
   const [content, setContent] = useState("");
@@ -39,6 +40,7 @@ export function ReviewModal({
       })
       .then((res) => {
         console.log("리뷰 저장");
+        onReviewSubmitted();
         onClose();
       })
       .catch((error) => console.log("리뷰 저장 실패", error));

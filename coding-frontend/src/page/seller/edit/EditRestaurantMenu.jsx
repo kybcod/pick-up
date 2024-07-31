@@ -7,6 +7,8 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
     { img: "", name: "", price: "" },
   ]);
   const [filePreviews, setFilePreviews] = useState([""]);
+  const [newFileList, setNewFileList] = useState([]);
+  const [removeFileList, setRemoveFileList] = useState([]);
   const fileInputRefs = useRef([]);
   const placeId = restaurantId;
 
@@ -44,6 +46,8 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
     const updatedPreviews = [...filePreviews];
     updatedPreviews[index] = URL.createObjectURL(file);
     setFilePreviews(updatedPreviews);
+
+    setNewFileList((prev) => [...prev, file]);
   };
 
   const handleAdd = () => {
@@ -53,11 +57,22 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
 
   const handleRemove = (index) => {
     if (menuItems.length > 1) {
+      const removedItem = menuItems[index];
       const updatedItems = menuItems.filter((_, i) => i !== index);
       setMenuItems(updatedItems);
 
       const updatedPreviews = filePreviews.filter((_, i) => i !== index);
       setFilePreviews(updatedPreviews);
+
+      if (removedItem.img && typeof removedItem.img === "string") {
+        setRemoveFileList((prev) => [...prev, removedItem.img]);
+      }
+
+      if (removedItem.img instanceof File) {
+        setNewFileList((prev) =>
+          prev.filter((file) => file !== removedItem.img),
+        );
+      }
 
       if (fileInputRefs.current[index]) {
         fileInputRefs.current[index].value = "";
@@ -72,14 +87,19 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
     menuItems.forEach((item, index) => {
       formData.append(`menuItems[${index}].name`, item.name);
       formData.append(`menuItems[${index}].price`, item.price);
-      if (item.img instanceof File) {
-        formData.append(`menuItems[${index}].img`, item.img);
-      } else if (typeof item.img === "string") {
+      if (typeof item.img === "string") {
         formData.append(`menuItems[${index}].imgUrl`, item.img);
       }
     });
 
-    // FormData의 키와 값을 로그로 찍기
+    newFileList.forEach((file, index) => {
+      formData.append(`newFileList[${index}]`, file);
+    });
+
+    removeFileList.forEach((file, index) => {
+      formData.append(`removeFileList[${index}]`, file);
+    });
+
     for (let [key, value] of formData.entries()) {
       console.log(key, value);
     }
