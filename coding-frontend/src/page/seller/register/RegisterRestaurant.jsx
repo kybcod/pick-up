@@ -258,7 +258,7 @@ function RegisterRestaurant({ onSubmit }) {
           isDisabled={disableRegisterButton}
           _hover={{ bg: "#219A95" }}
         >
-          등록하기
+          가게 등록
         </Button>
       </VStack>
     </Container>

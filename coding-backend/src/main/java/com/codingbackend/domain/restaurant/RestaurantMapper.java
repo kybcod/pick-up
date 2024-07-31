@@ -34,7 +34,7 @@ public interface RestaurantMapper {
     Restaurant selectByRestaurantId(Long restaurantId);
 
     @Select("""
-            SELECT * FROM restaurant WHERE user_id=#{userId}
+            SELECT * FROM restaurant WHERE user_id=#{userId} ORDER BY inserted DESC
             """)
     List<Restaurant> selectByUserId(Integer userId);
 

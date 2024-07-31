@@ -1,10 +1,19 @@
 import React, { useRef, useState } from "react";
-import { Box, Button, Image, Input, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Image,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import axios from "axios";
 
 function AddRestaurantMenu({ onSubmit, restaurantData }) {
   const [menuItems, setMenuItems] = useState([
-    { img: null, name: "", price: 0 },
+    { img: null, name: "", price: "" },
   ]);
   const [filePreviews, setFilePreviews] = useState([""]);
   const fileInputRefs = useRef([]);
@@ -27,7 +36,7 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
   };
 
   const handleAdd = () => {
-    setMenuItems([...menuItems, { img: null, name: "", price: 0 }]);
+    setMenuItems([...menuItems, { img: null, name: "", price: "" }]);
     setFilePreviews([...filePreviews, ""]);
   };
 
@@ -47,7 +56,7 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
 
   const handleFormSubmit = () => {
     const formData = new FormData();
-    formData.append("restaurantId", restaurantData.restaurantId); // Ensure restaurantId is passed
+    formData.append("restaurantId", restaurantData.restaurantId);
 
     menuItems.forEach((item, index) => {
       formData.append(`menuItems[${index}].name`, item.name);
@@ -81,42 +90,77 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
             border="1px solid #ddd"
             borderRadius="md"
             bg="gray.50"
+            width="80%"
           >
-            <Image height="180px" src={filePreviews[index]} />
-            <Input
-              type="file"
-              accept={"image/*"}
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              width="300px"
               mr={2}
-              onChange={(e) => handleImageChange(e, index)}
-              ref={(el) => (fileInputRefs.current[index] = el)}
-            />
-            <Input
-              placeholder="제품명"
-              onChange={(e) => handleChange(e, index, "name")}
-              mr={2}
-            />
-            <Input
-              type="number"
-              placeholder="가격"
-              onChange={(e) => handleChange(e, index, "price")}
-              mr={2}
-            />
-            <Button
-              colorScheme="teal"
-              onClick={() => handleRemove(index)}
-              mr={1}
             >
-              -
-            </Button>
-            {index === menuItems.length - 1 && (
-              <Button colorScheme="teal" onClick={handleAdd}>
-                +
+              {filePreviews[index] ? (
+                <Image
+                  src={filePreviews[index]}
+                  alt="Preview"
+                  height="180px"
+                  width="100%"
+                  objectFit="cover"
+                  mb={2}
+                />
+              ) : (
+                <Box
+                  height="180px"
+                  width="100%"
+                  border="1px dashed #ddd"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  mb={2}
+                >
+                  <Text>이미지 미리보기</Text>
+                </Box>
+              )}
+              <Input
+                type="file"
+                accept={"image/*"}
+                onChange={(e) => handleImageChange(e, index)}
+                ref={(el) => (fileInputRefs.current[index] = el)}
+              />
+            </Box>
+            <Box display="flex" width="100%" alignItems="center">
+              <Input
+                placeholder="제품명"
+                value={item.name}
+                onChange={(e) => handleChange(e, index, "name")}
+                mr={2}
+              />
+              <InputGroup mr={2}>
+                <Input
+                  type="number"
+                  placeholder="가격"
+                  value={item.price}
+                  onChange={(e) => handleChange(e, index, "price")}
+                />
+                <InputRightAddon>원</InputRightAddon>
+              </InputGroup>
+              <Button
+                colorScheme="teal"
+                onClick={() => handleRemove(index)}
+                mr={1}
+              >
+                -
               </Button>
-            )}
+              {index === menuItems.length - 1 && (
+                <Button colorScheme="teal" onClick={handleAdd}>
+                  +
+                </Button>
+              )}
+            </Box>
           </Box>
         ))}
         <Button colorScheme="blue" onClick={handleFormSubmit}>
-          제출
+          메뉴 등록
         </Button>
       </VStack>
     </Box>
