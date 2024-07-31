@@ -92,10 +92,10 @@ function SellerRestaurantList(props) {
               position={"absolute"}
               top={0}
               right={0}
-              colorScheme={"red"}
+              background={"transparent"}
               onClick={(e) => handleModal(e, restaurant.restaurantId)}
             >
-              <FontAwesomeIcon icon={faTrashCan} />
+              <FontAwesomeIcon icon={faTrashCan} color="red" />
             </Button>
             <Image
               src={restaurant.logo}
