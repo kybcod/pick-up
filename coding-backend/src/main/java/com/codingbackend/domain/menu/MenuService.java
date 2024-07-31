@@ -137,59 +137,50 @@ public class MenuService {
 
 
     public void updateMenu(Long restaurantId, List<MenuItem> menuItems, List<String> removeFileList, MultipartFile[] newFileList) throws IOException {
-        // Delete files in removeFileList
+        // 삭제
         if (removeFileList != null && !removeFileList.isEmpty()) {
-            for (String fileUrl : removeFileList) {
-                String key = "prj4/restaurant/" + restaurantId + "/" + fileUrl;
+            for (String removeFileName : removeFileList) {
+                String key = STR."prj4/restaurant/\{restaurantId}/\{removeFileName}";
+                System.out.println("RMkey = " + key);
                 DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                         .bucket(bucketName)
                         .key(key)
                         .build();
                 s3Client.deleteObject(deleteObjectRequest);
-                menuMapper.deleteMenuImg(fileUrl);
+                menuMapper.deleteMenuImg(removeFileName);
             }
         }
 
-        // Get the current menu list to compare existing files
-        List<Menu> currentMenuList = menuMapper.selectMenuList(restaurantId);
-        List<String> currentFileNames = currentMenuList.stream()
-                .map(Menu::getImg)
-                .collect(Collectors.toList());
+        //추가
+        if (newFileList != null && newFileList.length > 0) {
 
-        // Process each menu item
-        for (MenuItem item : menuItems) {
-            Menu menu = new Menu();
-            menu.setRestaurantId(restaurantId);
-            menu.setName(item.getName());
-            menu.setPrice(item.getPrice());
+            List<Menu> currentMenuList = menuMapper.selectMenuList(restaurantId);
+            List<String> currentFileNames = currentMenuList.stream()
+                    .map(Menu::getImg)
+                    .collect(Collectors.toList()); //현재 저장되어 있는 파일명 가지고 오기
 
-            // Handle new image uploads
-            if (item.getImg() != null && !item.getImg().isEmpty()) {
-                String fileName = item.getImg().getOriginalFilename();
-                if (!currentFileNames.contains(fileName)) {
-                    String key = "prj4/restaurant/" + restaurantId + "/" + fileName;
-                    PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                            .bucket(bucketName)
-                            .key(key)
-                            .acl(ObjectCannedACL.PUBLIC_READ)
-                            .build();
+            for (MenuItem item : menuItems) {
+                Menu menu = new Menu();
+                menu.setRestaurantId(restaurantId);
+                menu.setName(item.getName());
+                menu.setPrice(item.getPrice());
 
-                    s3Client.putObject(putObjectRequest,
-                            RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
+                if (item.getImg() != null && !item.getImg().isEmpty()) {
+                    String fileName = item.getImg().getOriginalFilename();
+                    if (!currentFileNames.contains(fileName)) {
+                        String key = STR."prj4/restaurant/\{restaurantId}/\{fileName}";
+                        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                                .bucket(bucketName)
+                                .key(key)
+                                .acl(ObjectCannedACL.PUBLIC_READ)
+                                .build();
 
-                    menu.setImg(fileName);
-                } else {
-                    menu.setImg(fileName); // Existing file, set the img field
+                        s3Client.putObject(putObjectRequest,
+                                RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
+
+                        menu.setImg(fileName);
+                    }
                 }
-            } else {
-                menu.setImg(item.getExistingImageUrl()); // Use the existing image URL if no new image is uploaded
-            }
-
-            // Insert or update the menu item
-            if (item.getId() != null) {
-                menu.setId(item.getId());
-                menuMapper.update(menu);
-            } else {
                 menuMapper.insert(menu);
             }
         }
