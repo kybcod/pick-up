@@ -151,11 +151,15 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
                 onChange={(e) => handleChange(e, index, "price")}
                 mr={2}
               />
-              <Button colorScheme="purple" onClick={() => handleRemove(index)}>
+              <Button
+                colorScheme="teal"
+                onClick={() => handleRemove(index)}
+                mr={1}
+              >
                 -
               </Button>
               {index === menuItems.length - 1 && (
-                <Button colorScheme="purple" onClick={handleAdd}>
+                <Button colorScheme="teal" onClick={handleAdd}>
                   +
                 </Button>
               )}
