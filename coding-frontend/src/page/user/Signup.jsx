@@ -23,7 +23,7 @@ export function Signup() {
   const [passwordCheck, setPasswordCheck] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [nickName, setNickName] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState(null);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isNickNameChecked, setIsNickNameChecked] = useState(false);
   const navigate = useNavigate();
@@ -42,6 +42,23 @@ export function Signup() {
   }, []);
 
   function handleClick() {
+    if (!isEmailChecked) {
+      toast({
+        status: "warning",
+        description: "이메일 중복 확인을 해주세요.",
+        position: "top",
+      });
+      return;
+    }
+    if (!isNickNameChecked) {
+      toast({
+        status: "warning",
+        description: "닉네임 중복 확인을 해주세요.",
+        position: "top",
+      });
+      return;
+    }
+
     const authorities = [{ userId: null, name: role }];
     alert(role);
     axios
