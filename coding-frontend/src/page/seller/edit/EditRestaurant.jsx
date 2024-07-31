@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -29,6 +29,7 @@ function EditRestaurant({ onSubmit, restaurantId }) {
   const [restaurantId3, setRestaurantId3] = useState("");
   const [filePreview, setFilePreview] = useState("/img/pickUp_black.png");
   const account = useContext(LoginContext);
+  const inputFileRef = useRef(null);
 
   useEffect(() => {
     axios.get(`/api/restaurants/${restaurantId}`).then((response) => {
@@ -109,6 +110,12 @@ function EditRestaurant({ onSubmit, restaurantId }) {
       setFilePreview(URL.createObjectURL(fileView));
     } else {
       setFilePreview(restaurantData.logo);
+    }
+  };
+
+  const handleFileButtonClick = () => {
+    if (inputFileRef.current) {
+      inputFileRef.current.click();
     }
   };
 
@@ -233,7 +240,16 @@ function EditRestaurant({ onSubmit, restaurantId }) {
                   type="file"
                   accept="image/*"
                   onChange={handleChangeLogo}
+                  ref={inputFileRef}
+                  style={{ display: "none" }}
                 />
+                <Button
+                  colorScheme="teal"
+                  onClick={handleFileButtonClick}
+                  mt={2}
+                >
+                  로고 업로드
+                </Button>
               </Flex>
             </FormControl>
           </VStack>

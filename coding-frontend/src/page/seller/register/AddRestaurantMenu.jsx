@@ -26,6 +26,8 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
 
   const handleImageChange = (e, index) => {
     const file = e.target.files[0];
+    if (!file) return; // 파일이 없을 경우 처리
+
     const updatedItems = [...menuItems];
     updatedItems[index].img = file;
     setMenuItems(updatedItems);
@@ -33,6 +35,12 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
     const updatedPreviews = [...filePreviews];
     updatedPreviews[index] = URL.createObjectURL(file);
     setFilePreviews(updatedPreviews);
+  };
+
+  const handleFileButtonClick = (index) => {
+    if (fileInputRefs.current[index]) {
+      fileInputRefs.current[index].click();
+    }
   };
 
   const handleAdd = () => {
@@ -126,7 +134,15 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
                 accept={"image/*"}
                 onChange={(e) => handleImageChange(e, index)}
                 ref={(el) => (fileInputRefs.current[index] = el)}
+                style={{ display: "none" }}
               />
+              <Button
+                colorScheme="teal"
+                onClick={() => handleFileButtonClick(index)}
+                mt={2}
+              >
+                이미지 업로드
+              </Button>
             </Box>
             <Box display="flex" width="100%" alignItems="center">
               <Input
