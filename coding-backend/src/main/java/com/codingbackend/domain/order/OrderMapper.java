@@ -73,6 +73,7 @@ public interface OrderMapper {
                      JOIN orders o on r.restaurant_id = o.restaurant_id
                      JOIN user ou ON o.user_id = ou.id
             WHERE u.id = #{userId}
+            ORDER BY inserted DESC
             """)
     List<ReceivedOrder> selectReceivedOrder(Integer userId);
 

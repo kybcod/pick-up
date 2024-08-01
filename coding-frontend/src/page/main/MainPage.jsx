@@ -193,7 +193,7 @@ export function MainPage() {
               </Flex>
             </VStack>
           </Box>
-          <Grid templateColumns={["repeat(2, 1fr)", "repeat(5, 1fr)"]} gap={6}>
+          <Grid templateColumns={["repeat(2, 1fr)", "repeat(5, 1fr)"]} gap={12}>
             {images.map((imageUrl, index) => (
               <GridItem key={index} onClick={() => handleCategoryClick(index)}>
                 {index < 9 ? (
@@ -232,7 +232,13 @@ export function MainPage() {
                     </Box>
                   </Box>
                 ) : (
-                  <Box position="relative" pb="100%">
+                  <Box
+                    position="relative"
+                    pb="100%"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     <Image
                       src={imageUrl}
                       position="absolute"

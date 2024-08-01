@@ -24,7 +24,7 @@ public interface FavoriteMapper {
             """)
     int delete(Long restaurantId, Integer userId);
 
-    @Select("SELECT * FROM favorites WHERE user_id=#{userId}")
+    @Select("SELECT * FROM favorites WHERE user_id=#{userId} ORDER BY created_at DESC")
     List<Favorite> getAllByUserId(Integer userId);
 
     @Select("SELECT * FROM favorites WHERE restaurant_id = #{restaurantId} AND user_id=#{userId} ")

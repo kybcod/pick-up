@@ -20,7 +20,7 @@ public interface ReviewMapper {
             """)
     int insertFile(Integer reviewId, String fileName);
 
-    @Select("SELECT * FROM review WHERE user_id=#{userId}")
+    @Select("SELECT * FROM review WHERE user_id=#{userId} ORDER BY inserted DESC")
     List<Review> selectAllReviews(Integer userId);
 
     @Select("SELECT file_name FROM review_file WHERE review_id=#{id}")
@@ -60,6 +60,7 @@ public interface ReviewMapper {
             FROM review rv
                      JOIN restaurant r on rv.restaurant_id = r.restaurant_id
             WHERE r.user_id =#{userId} AND r.restaurant_id=#{restaurantId}
+            ORDER BY inserted DESC
             """)
     List<ReviewRequest> selectSellerAllReviews(Integer userId, Long restaurantId);
 

@@ -30,6 +30,7 @@ public interface CartMapper {
             FROM cart 
             WHERE user_id=#{userId} 
               AND order_id IS NULL
+            ORDER BY inserted DESC
             """)
     List<Cart> selectByUserId(Integer userId);
 
