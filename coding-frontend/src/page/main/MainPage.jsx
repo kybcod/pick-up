@@ -133,16 +133,20 @@ export function MainPage() {
   };
 
   const handleCategoryClick = (index) => {
-    if (currentPosition) {
-      navigate(`/restaurant/${index + 1}`, {
-        state: {
-          currentPosition,
-          currentAddress,
-          categoryImage: images[index],
-        },
-      });
+    if (!account.isLoggedIn()) {
+      navigate("/login");
     } else {
-      alert("먼저 현재 위치를 가져와주세요.");
+      if (currentPosition) {
+        navigate(`/restaurant/${index + 1}`, {
+          state: {
+            currentPosition,
+            currentAddress,
+            categoryImage: images[index],
+          },
+        });
+      } else {
+        alert("먼저 현재 위치를 가져와주세요.");
+      }
     }
   };
 
