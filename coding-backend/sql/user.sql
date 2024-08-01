@@ -13,7 +13,7 @@ INSERT INTO user (email, password, phone_number, nick_name)
 VALUES ('example@ex', 'aa', '010-1111-1111', 12);
 
 DELETE FROM user
-WHERE id = 62;
+WHERE id = 70;
 
 DELETE FROM authority
-WHERE user_id=62;
+WHERE user_id=70;

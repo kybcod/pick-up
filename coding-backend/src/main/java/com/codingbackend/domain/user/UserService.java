@@ -4,6 +4,8 @@ import com.codingbackend.domain.user.oauth.NaverUserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -15,7 +17,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,6 +111,41 @@ public class UserService {
         return result;
     }
 
+    public Map<String, Object> getTokenFromOAuth2(Authentication authentication) {
+        if (authentication instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+            OAuth2User oauth2User = oauthToken.getPrincipal();
+
+            String email = oauth2User.getAttribute("email");
+            User user = mapper.selectByEmail(email);
+
+            if (user == null) {
+                // If user does not exist, create a new user based on OAuth2 user info
+                user = new User();
+                user.setEmail(email);
+                user.setNickName(oauth2User.getAttribute("name"));
+                mapper.inserted(user);
+            }
+
+            Instant now = Instant.now();
+            List<String> authority = mapper.selectAuthorityByUserId(user.getId());
+            String authorityString = authority.stream().collect(Collectors.joining(" "));
+
+            JwtClaimsSet claims = JwtClaimsSet.builder()
+                    .issuer("pickup")
+                    .issuedAt(now)
+                    .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
+                    .subject(user.getId().toString())
+                    .claim("scope", authorityString)
+                    .claim("nickName", user.getNickName())
+                    .build();
+
+            String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+            return Map.of("token", token);
+        }
+        return Map.of("error", "Invalid OAuth2 authentication");
+    }
+
     public User getById(Integer id) {
         return mapper.selectById(id);
     }
@@ -163,9 +199,33 @@ public class UserService {
         mapper.deleteById(id);
     }
 
+    public Map<String, Object> getTokenFromOAuth2(User user) {
+        Instant now = Instant.now();
+        List<String> authority = mapper.selectAuthorityByUserId(user.getId());
+        String authorityString = authority.stream().collect(Collectors.joining(" "));
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("pickup")
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
+                .subject(user.getId().toString())
+                .claim("scope", authorityString)
+                .claim("nickName", user.getNickName())
+                .build();
+
+        String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return Map.of("token", token);
+    }
+
     public User findOrCreateUser(NaverUserInfo naverUserInfo) {
-        return Optional.ofNullable(mapper.selectByEmail(naverUserInfo.getEmail()))
-                .orElseGet(() -> createUser(naverUserInfo));
+        User user = mapper.selectByEmail(naverUserInfo.getEmail());
+
+        if (user == null) {
+            // 이메일이 존재하지 않으면 사용자 정보를 반환
+            return null;
+        }
+
+        return user;
     }
 
     private User createUser(NaverUserInfo naverUserInfo) {

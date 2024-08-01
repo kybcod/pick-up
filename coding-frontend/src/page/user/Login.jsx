@@ -22,7 +22,7 @@ function Login(props) {
   const navigate = useNavigate();
 
   //const CLIENTID = import.meta.env.CLIENT_ID;
-  const reUri = "http://localhost:5173/oauth/login/callback";
+  const reUri = "http://localhost:5173/oauth/login";
   const state = Math.random();
 
   function handleClickLogin() {
@@ -69,6 +69,7 @@ function Login(props) {
         <FormControl>
           <FormLabel>패스워드</FormLabel>
           <Input
+            type={"password"}
             onChange={(e) => setPassword(e.target.value)}
             placeholder={"패스워드를 입력해주세요"}
           />

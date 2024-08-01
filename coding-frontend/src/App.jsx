@@ -58,7 +58,7 @@ const router = createBrowserRouter([
       { index: true, element: <ConditionalRedirect /> },
       { path: "signup", element: <Signup /> },
       { path: "login", element: <Login /> },
-      { path: "oauth/login/callback", element: <NaverLoginCallback /> },
+      { path: "oauth/login", element: <NaverLoginCallback /> },
       { path: "mypage/:userId", element: <MyPage /> },
 
       // map

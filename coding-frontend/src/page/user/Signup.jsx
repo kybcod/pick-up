@@ -23,7 +23,7 @@ export function Signup() {
   const [passwordCheck, setPasswordCheck] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [nickName, setNickName] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState(null);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isNickNameChecked, setIsNickNameChecked] = useState(false);
   const navigate = useNavigate();
@@ -42,6 +42,23 @@ export function Signup() {
   }, []);
 
   function handleClick() {
+    if (!isEmailChecked) {
+      toast({
+        status: "warning",
+        description: "이메일 중복 확인을 해주세요.",
+        position: "top",
+      });
+      return;
+    }
+    if (!isNickNameChecked) {
+      toast({
+        status: "warning",
+        description: "닉네임 중복 확인을 해주세요.",
+        position: "top",
+      });
+      return;
+    }
+
     const authorities = [{ userId: null, name: role }];
     alert(role);
     axios
@@ -142,6 +159,16 @@ export function Signup() {
       .replace(/(-{1,2})$/g, "");
   };
 
+  let isDisableSaveButton = false;
+
+  if (!isEmailChecked) {
+    isDisableSaveButton = true;
+  }
+
+  if (!isNickNameChecked) {
+    isDisableSaveButton = true;
+  }
+
   return (
     <Box>
       <Box>
@@ -192,14 +219,20 @@ export function Signup() {
       <Box>
         <FormControl>
           <FormLabel>패스워드</FormLabel>
-          <Input onChange={(e) => setPassword(e.target.value)} />
+          <Input
+            type={"password"}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </FormControl>
       </Box>
       <Box>
         <FormControl>
           <FormLabel>패스워드 확인</FormLabel>
           <InputGroup>
-            <Input onChange={(e) => setPasswordCheck(e.target.value)} />
+            <Input
+              type={"password"}
+              onChange={(e) => setPasswordCheck(e.target.value)}
+            />
           </InputGroup>
           {!pwIsMatch && (
             <FormHelperText>패스워드가 일치하지 않습니다</FormHelperText>
@@ -247,7 +280,9 @@ export function Signup() {
         </FormControl>
       </Box>
       */}
-      <Button onClick={handleClick}>가입하기</Button>
+      <Button onClick={handleClick} isDisabled={isDisableSaveButton}>
+        가입하기
+      </Button>
     </Box>
   );
 }
