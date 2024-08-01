@@ -244,4 +244,10 @@ public class MenuService {
         restaurantMapper.deleteRestaurant(restaurantId);
     }
 
+    public boolean validate(MenuRequest menuRequest) {
+        if (menuRequest.getRestaurantId() == null) {
+            return false;
+        }
+        return true;
+    }
 }

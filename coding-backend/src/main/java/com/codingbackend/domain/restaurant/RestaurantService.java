@@ -2,6 +2,7 @@ package com.codingbackend.domain.restaurant;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +30,7 @@ public class RestaurantService {
     @Value("${image.src.prefix}")
     String srcPrefix;
 
-    public void insertRestaurantInfo(RestaurantRequestDto restaurant, MultipartFile file) throws IOException {
+    public void insertRestaurantInfo(Restaurant restaurant, MultipartFile file, Authentication authentication) throws IOException {
 
         //s3 저장
         if (file != null) {
@@ -114,5 +115,23 @@ public class RestaurantService {
         }
 
         restaurantMapper.updateRestaurant(restaurant);
+    }
+
+    public boolean validate(Restaurant restaurant) {
+        if (restaurant.getRestaurantId() == null ||
+                restaurant.getRestaurantName() == null ||
+                restaurant.getRestaurantTel() == null ||
+                restaurant.getAddress() == null ||
+                restaurant.getLatitude() == null ||
+                restaurant.getLongitude() == null ||
+                restaurant.getCategoryId() == null) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasAccess(Long id, Authentication authentication) {
+        Restaurant restaurant = restaurantMapper.selectByRestaurantId(id);
+        return restaurant.getUserId().equals(Integer.valueOf(authentication.getName()));
     }
 }

@@ -1,7 +1,9 @@
 package com.codingbackend.domain.menu;
 
-import com.codingbackend.domain.restaurant.RestaurantService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Description;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,23 +16,32 @@ import java.util.List;
 @RequestMapping("/api/menus")
 public class MenuController {
     private final MenuService menuService;
-    private final RestaurantService restaurantService;
 
+    @Description("외부 API에서 메뉴 가져오기")
     @GetMapping("{placeId}")
     public PlaceDto getMenus(@PathVariable Integer placeId) throws IOException {
         return menuService.getPlaceInfo(placeId);
     }
 
+    @Description("메뉴 등록")
     @PostMapping
-    public void insertMenu(MenuRequest menuRequest) throws IOException {
-        menuService.insertMenu(menuRequest.getRestaurantId(), menuRequest.getMenuItems());
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity insertMenu(MenuRequest menuRequest) throws IOException {
+        if (menuService.validate(menuRequest)) {
+            menuService.insertMenu(menuRequest.getRestaurantId(), menuRequest.getMenuItems());
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+
     }
 
+    @Description("판매자 메뉴 삭제")
     @DeleteMapping("{restaurantId}")
     public void deleteMenu(@PathVariable Long restaurantId) throws IOException {
         menuService.delete(restaurantId);
     }
 
+    @Description("판매자 메뉴 수정")
     @PutMapping("/seller")
     public void updateMenu(MenuRequest menu,
                            @RequestParam(value = "removeFileList[]", required = false) List<String> removeFileList,

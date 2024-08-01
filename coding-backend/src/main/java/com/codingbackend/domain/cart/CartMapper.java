@@ -33,9 +33,6 @@ public interface CartMapper {
             """)
     List<Cart> selectByUserId(Integer userId);
 
-    @Delete("DELETE FROM cart WHERE user_id=#{userId} AND restaurant_id=#{restaurantId} AND menu_name=#{menuName}")
-    int deleteByUserIdAndRestaurantIdAndMenuName(Integer userId, Long restaurantId, String menuName);
-
     @Select("""
             SELECT id, restaurant_id, user_id, 
                    menu_name, menu_count, menu_price, 
