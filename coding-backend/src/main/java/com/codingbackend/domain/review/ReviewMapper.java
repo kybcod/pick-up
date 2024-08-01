@@ -41,10 +41,10 @@ public interface ReviewMapper {
     List<Review> selectByRestaurantId(Long restaurantId);
 
     @Delete("DELETE FROM review WHERE restaurant_id=#{restaurantId}")
-    int deleteReview(Integer restaurantId);
+    int deleteReview(Long restaurantId);
 
     @Select("SELECT * FROM review_file WHERE review_id=#{reviewId}")
-    List<ReviewFile> selectReviewFile(Integer reviewId);
+    List<ReviewFileRequest> selectReviewFile(Integer reviewId);
 
     @Select("""
             SELECT rv.id,
@@ -62,4 +62,7 @@ public interface ReviewMapper {
             WHERE r.user_id =#{userId} AND r.restaurant_id=#{restaurantId}
             """)
     List<ReviewRequest> selectSellerAllReviews(Integer userId, Long restaurantId);
+
+    @Delete("DELETE FROM review_file WHERE review_id=#{id}")
+    int deleteFileReview(Integer id);
 }

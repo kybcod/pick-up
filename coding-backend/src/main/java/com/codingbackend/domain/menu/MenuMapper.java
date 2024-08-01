@@ -41,4 +41,7 @@ public interface MenuMapper {
 
     @Select("SELECT * FROM menu WHERE restaurant_id=#{restaurantId}")
     Menu selectMenuByRestaurantId(Long restaurantId);
+
+    @Delete("DELETE FROM menu WHERE img = #{img}")
+    void deleteMenuImg(String img);
 }

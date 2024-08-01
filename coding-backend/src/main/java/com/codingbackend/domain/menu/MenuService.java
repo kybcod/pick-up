@@ -7,7 +7,7 @@ import com.codingbackend.domain.restaurant.Category;
 import com.codingbackend.domain.restaurant.Restaurant;
 import com.codingbackend.domain.restaurant.RestaurantMapper;
 import com.codingbackend.domain.review.Review;
-import com.codingbackend.domain.review.ReviewFile;
+import com.codingbackend.domain.review.ReviewFileRequest;
 import com.codingbackend.domain.review.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -134,33 +135,85 @@ public class MenuService {
         }
     }
 
-    public void updateMenu(Long restaurantId, List<MenuItem> menuItems) throws IOException {
 
-        //기존 매뉴 항목 조회
-        List<Menu> existingMenus = menuMapper.selectMenu(Math.toIntExact(restaurantId));
-
-        //기존 메뉴 삭제(s3, db)
-        for (Menu existingMenu : existingMenus) {
-            String key = STR."prj4/restaurant/\{existingMenu.getRestaurantId()}/\{existingMenu.getImg()}";
-            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                    .key(key)
-                    .bucket(bucketName)
-                    .build();
-            s3Client.deleteObject(deleteObjectRequest);
+    public void updateMenu(Long restaurantId, List<MenuItem> menuItems, List<String> removeFileList, MultipartFile[] newFileList) throws IOException {
+        // 삭제
+        if (removeFileList != null && !removeFileList.isEmpty()) {
+            for (String removeFileName : removeFileList) {
+                String key = STR."prj4/restaurant/\{restaurantId}/\{removeFileName}";
+                System.out.println("RMkey = " + key);
+                DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
+                s3Client.deleteObject(deleteObjectRequest);
+                menuMapper.deleteMenuImg(removeFileName);
+            }
         }
-        menuMapper.deleteMenu(restaurantId);
 
-        // new 메뉴 추가
-        insertMenu(restaurantId, menuItems);
+        //추가
+        if (newFileList != null && newFileList.length > 0) {
 
+            List<Menu> currentMenuList = menuMapper.selectMenuList(restaurantId);
+            List<String> currentFileNames = currentMenuList.stream()
+                    .map(Menu::getImg)
+                    .collect(Collectors.toList()); //현재 저장되어 있는 파일명 가지고 오기
+
+            for (MenuItem item : menuItems) {
+                Menu menu = new Menu();
+                menu.setRestaurantId(restaurantId);
+                menu.setName(item.getName());
+                menu.setPrice(item.getPrice());
+
+                if (item.getImg() != null && !item.getImg().isEmpty()) {
+                    String fileName = item.getImg().getOriginalFilename();
+                    if (!currentFileNames.contains(fileName)) {
+                        String key = STR."prj4/restaurant/\{restaurantId}/\{fileName}";
+                        System.out.println("ISkey = " + key);
+                        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                                .bucket(bucketName)
+                                .key(key)
+                                .acl(ObjectCannedACL.PUBLIC_READ)
+                                .build();
+
+                        s3Client.putObject(putObjectRequest,
+                                RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
+
+                        menu.setImg(fileName);
+                    }
+                }
+                menuMapper.insert(menu);
+            }
+        }
     }
 
 
     public void delete(Long restaurantId) {
+
+        // 리뷰와 리뷰 사진 삭제
+        List<Review> reviews = reviewMapper.selectByRestaurantId(restaurantId); // 리뷰가 여러 개일 수 있으므로 List로 수정
+        for (Review review : reviews) {
+            List<ReviewFileRequest> reviewFiles = reviewMapper.selectReviewFile(review.getId());//리뷰 테이블id
+            for (ReviewFileRequest reviewFile : reviewFiles) {
+                String key = STR."prj4/review/\{review.getId()}/\{reviewFile.getFileName()}";
+                System.out.println("Rkey = " + key);
+                DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
+                s3Client.deleteObject(deleteObjectRequest);
+
+                reviewMapper.deleteFileReview(review.getId());
+            }
+        }
+        // 리뷰 삭제
+        reviewMapper.deleteReview(restaurantId);
+
         // 메뉴 사진 삭제
         List<Menu> menuList = menuMapper.selectMenuList(restaurantId);
         for (Menu menu : menuList) {
             String key = STR."prj4/restaurant/\{restaurantId}/\{menu.getImg()}";
+            System.out.println("Mkey = " + key);
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -169,22 +222,6 @@ public class MenuService {
         }
         // 메뉴 삭제
         menuMapper.deleteMenu(restaurantId);
-
-        // 리뷰와 리뷰 사진 삭제
-        List<Review> reviews = reviewMapper.selectByRestaurantId(restaurantId); // 리뷰가 여러 개일 수 있으므로 List로 수정
-        for (Review review : reviews) {
-            List<ReviewFile> reviewFiles = reviewMapper.selectReviewFile(review.getId());
-            for (ReviewFile reviewFile : reviewFiles) {
-                String key = STR."prj4/review/\{review.getId()}/\{reviewFile.getName()}";
-                DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(key)
-                        .build();
-                s3Client.deleteObject(deleteObjectRequest);
-            }
-            // 리뷰 삭제
-            reviewMapper.deleteReview(review.getId());
-        }
 
         // 장바구니 삭제
         cartMapper.deleteCart(restaurantId);
@@ -195,7 +232,8 @@ public class MenuService {
 
         // 가게 사진 삭제
         Restaurant restaurant = restaurantMapper.selectByRestaurantId(restaurantId);
-        String key = STR."prj4/review/\{restaurantId}/\{restaurant.getLogo()}";
+        String key = STR."prj4/restaurant/\{restaurantId}/\{restaurant.getLogo()}";
+        System.out.println("Skey = " + key);
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
@@ -205,4 +243,5 @@ public class MenuService {
         // 가게 삭제
         restaurantMapper.deleteRestaurant(restaurantId);
     }
+
 }
