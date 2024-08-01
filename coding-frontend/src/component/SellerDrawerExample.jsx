@@ -97,13 +97,7 @@ export function SellerDrawerExample() {
                   _hover={{ bg: "gray.100", color: "#2AC1BC" }}
                   cursor="pointer"
                   onClick={() => {
-                    if (account.isLoggedIn()) {
-                      handleNavigateTo(item.path);
-                      window.scrollTo({ top: 0, behavior: "auto" });
-                    } else {
-                      navigate("/login");
-                      onClose();
-                    }
+                    handleNavigateTo(item.path);
                   }}
                 >
                   <FontAwesomeIcon icon={item.icon} />
@@ -121,7 +115,7 @@ export function SellerDrawerExample() {
                 onClick={() => {
                   account.logout();
                   onClose();
-                  navigate("/seller");
+                  navigate("/login");
                 }}
                 colorScheme="teal"
               >
