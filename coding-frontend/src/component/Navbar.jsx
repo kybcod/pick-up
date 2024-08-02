@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Image, Spacer, Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import React, { useContext } from "react";
 import { DrawerExample } from "./DrawerExample.jsx";
@@ -26,6 +26,11 @@ export function Navbar() {
         <Box cursor="pointer" w="150px" onClick={() => navigate("/")}>
           <Image src="/img/pickUp_black.png" alt="Logo" />
         </Box>
+      )}
+      {account.isAdmin() && (
+        <Text cursor={"pointer"} onClick={() => navigate("/list")}>
+          회원목록
+        </Text>
       )}
 
       <Spacer />
