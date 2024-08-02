@@ -102,7 +102,7 @@ function SellerOrderList(props) {
       </Heading>
       {receivedOrders.length === 0 ? (
         <Flex direction="column" align="center" justify="center" height="500px">
-          <Image src={"/img/cart_clear.png"} boxSize="150px" mb={4} />
+          <Image src={"/img/gjf.png"} boxSize="150px" mb={4} />
           <Text fontSize="2xl" textAlign="center" color="gray.500">
             받으신 주문 내역이 없습니다ㅠ
           </Text>

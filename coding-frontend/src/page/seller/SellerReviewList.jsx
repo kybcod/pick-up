@@ -127,7 +127,7 @@ function SellerReviewList() {
         ))
       ) : (
         <Flex direction="column" align="center" justify="center" height="500px">
-          <Image src={"/img/cart_clear.png"} boxSize="150px" mb={4} />
+          <Image src={"/img/gjf.png"} boxSize="150px" mb={4} />
           <Text fontSize="2xl" textAlign="center" color="gray.500">
             아직 작성된 리뷰가 없습니다.
           </Text>
