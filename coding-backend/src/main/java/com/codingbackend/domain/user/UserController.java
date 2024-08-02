@@ -93,7 +93,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("/list")
+    @GetMapping("list")
+    @PreAuthorize("hasAuthority('SCOPE_admin')")
     public List<User> list() {
        return service.userList();
     }
