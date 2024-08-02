@@ -1,15 +1,32 @@
 import { Box, Button, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function UserList() {
   const [userList, setUserList] = useState([]);
+  const [pageInfo, setPageInfo] = useState({});
+  const [searchParam, setSearchParam] = useSearchParams();
+  const navigate = useNavigate();
+
+  const currentPage = parseInt(searchParam.get("page")) || 1;
 
   useEffect(() => {
-    axios.get(`/api/user/list`).then((res) => {
-      setUserList(res.data);
+    axios.get(`/api/user/list?page=${currentPage}`).then((res) => {
+      setUserList(res.data.userList);
+      setPageInfo(res.data.pageInfo);
     });
-  }, []);
+  }, [searchParam]);
+
+  const pageNumbers = [];
+  for (let i = pageInfo.leftPageNumber; i <= pageInfo.rightPageNumber; i++) {
+    pageNumbers.push(i);
+  }
+
+  function handleClickPage(pageNumber) {
+    setSearchParam({ page: pageNumber });
+  }
+
   return (
     <Box>
       <Table>
@@ -36,6 +53,13 @@ export function UserList() {
           ))}
         </Tbody>
       </Table>
+      <Box>
+        {pageNumbers.map((pageNumber) => (
+          <Button key={pageNumber} onClick={() => handleClickPage(pageNumber)}>
+            {pageNumber}
+          </Button>
+        ))}
+      </Box>
     </Box>
   );
 }
