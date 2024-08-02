@@ -241,4 +241,8 @@ public class UserService {
         User user = mapper.selectByEmail(email.trim());
         return user != null;
     }
+
+    public List<User> userList() {
+        return mapper.getUserList();
+    }
 }

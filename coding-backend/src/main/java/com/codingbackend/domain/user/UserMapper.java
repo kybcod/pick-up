@@ -67,4 +67,10 @@ public interface UserMapper {
             WHERE id = #{id}
             """)
     void deleteById(Integer id);
+
+    @Select("""
+            SELECT id, email, nick_name, inserted
+            FROM user
+            """)
+    List<User> getUserList();
 }
