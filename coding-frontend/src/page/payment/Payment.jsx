@@ -91,8 +91,9 @@ export function Payment() {
             totalPrice: calculateTotalAmount(),
           })
           .then(() => {
-            alert(`결제성공`);
+            alert(`결제가 완료되었습니다.`);
             navigate(`/orders`);
+            window.scrollTo({ top: 0, behavior: "auto" });
           })
           .catch(() => {
             alert("결제 처리 중 오류", error_msg);
