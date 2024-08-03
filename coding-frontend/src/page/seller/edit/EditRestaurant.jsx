@@ -74,21 +74,7 @@ function EditRestaurant({ onSubmit, restaurantId }) {
         file: restaurantData.file,
       })
       .then(() => {
-        toast({
-          status: "success",
-          description: "메뉴 수정되었습니다.",
-          position: "top",
-          duration: 3000,
-        });
         onSubmit();
-      })
-      .catch((error) => {
-        toast({
-          status: "success",
-          description: "메뉴 수정되었습니다.",
-          position: "top",
-          duration: 3000,
-        });
       });
   };
 
