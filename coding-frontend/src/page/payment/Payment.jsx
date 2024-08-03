@@ -124,12 +124,6 @@ export function Payment() {
         userId,
         cartIds,
       })
-      .then(() => {
-        alert(`주문성공`);
-      })
-      .catch(() => {
-        alert("주문 오류");
-      })
       .finally(() => {
         navigate(`/orders`);
       });

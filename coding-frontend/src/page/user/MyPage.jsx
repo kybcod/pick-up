@@ -57,6 +57,7 @@ export function MyPage() {
           status: "warning",
           description: "사용할 수 없는 닉네임입니다",
           position: "top",
+          duration: 3000,
         });
       })
       .catch((err) => {
@@ -65,6 +66,7 @@ export function MyPage() {
             status: "info",
             description: "사용할 수 있는 닉네임입니다",
             position: "top",
+            duration: 3000,
           });
         }
         setNickNameCheck(true);
@@ -80,6 +82,7 @@ export function MyPage() {
           status: "info",
           description: "회원정보가 수정되었습니다.",
           position: "top",
+          duration: 3000,
         });
         setIsEditing(false);
         account.login(res.data.token);
@@ -91,6 +94,7 @@ export function MyPage() {
             status: "error",
             description: "패스워드 확인을 입력해 주세요.",
             position: "top",
+            duration: 3000,
           });
           setIsEditing(true);
           return;
@@ -100,6 +104,7 @@ export function MyPage() {
             status: "error",
             description: "패스워드가 일치하지 않습니다.",
             position: "top",
+            duration: 3000,
           });
           setIsEditing(true);
           return;
@@ -108,6 +113,7 @@ export function MyPage() {
           status: "warning",
           description: "회원정보 수정을 실패했습니다. 다시 시도해주세요.",
           position: "top",
+          duration: 3000,
         });
         setIsEditing(true);
       })

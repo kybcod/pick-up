@@ -7,6 +7,7 @@ import {
   InputGroup,
   InputRightAddon,
   Text,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -17,6 +18,7 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
   ]);
   const [filePreviews, setFilePreviews] = useState([""]);
   const fileInputRefs = useRef([]);
+  const toast = useToast();
 
   const handleChange = (e, index, key) => {
     const updatedItems = [...menuItems];
@@ -77,11 +79,21 @@ function AddRestaurantMenu({ onSubmit, restaurantData }) {
     axios
       .postForm("/api/menus", formData)
       .then(() => {
-        alert("메뉴 등록 성공!");
+        toast({
+          status: "success",
+          description: "메뉴가 등록되었습니다.",
+          position: "top",
+          duration: 3000,
+        });
         onSubmit();
       })
       .catch((error) => {
-        console.error("메뉴 등록 실패:", error);
+        toast({
+          status: "success",
+          description: "메뉴 등록 실패하였습니다.",
+          position: "top",
+          duration: 3000,
+        });
       });
   };
 

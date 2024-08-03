@@ -86,7 +86,6 @@ function SellerOrderList(props) {
           setReceivedOrders(res.data);
         });
       })
-      .catch(() => alert("픽업 실패하였습니다."))
       .finally(() => setIsProcessing(false));
   }
 

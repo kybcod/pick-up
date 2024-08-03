@@ -25,7 +25,6 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
   useEffect(() => {
     axios.get(`/api/menus/list/${placeId}`).then((response) => {
       const data = response.data;
-      console.log("get 요청 메뉴 :", data);
       setMenuItems(data);
       setFilePreviews(data.map((item) => item.img || ""));
     });
@@ -115,14 +114,20 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
       .putForm(`/api/menus/seller`, formData)
       .then(() => {
         toast({
+          status: "success",
           description: "메뉴 수정되었습니다.",
+          position: "top",
           duration: 3000,
         });
-        alert("메뉴 수정 성공!");
         onSubmit();
       })
       .catch((error) => {
-        console.error("메뉴 수정 실패:", error);
+        toast({
+          status: "warning",
+          description: "메뉴 실패하였습니다.",
+          position: "top",
+          duration: 3000,
+        });
       });
   };
 
