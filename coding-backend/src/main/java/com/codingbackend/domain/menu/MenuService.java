@@ -24,6 +24,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -103,6 +105,13 @@ public class MenuService {
 
     }
 
+
+    public List<Menu> getMenuList(Long restaurantId) {
+        List<Menu> menuList = menuMapper.selectMenuByRestaurantId(restaurantId);
+        return menuList.stream()
+                .peek((menu -> menu.setImg(s3Img(menu.getImg(), restaurantId.intValue())))).collect(Collectors.toList());
+    }
+
     private String s3Img(String img, Integer placeId) {
         if (img == null || img.trim().isEmpty()) {
             return "";
@@ -151,38 +160,44 @@ public class MenuService {
             }
         }
 
-        //추가
-        if (newFileList != null && newFileList.length > 0) {
+        List<Menu> currentMenuList = menuMapper.selectMenuList(restaurantId);
+        List<String> currentFileNames = currentMenuList.stream()
+                .map(Menu::getImg)
+                .collect(Collectors.toList()); //현재 저장되어 있는 파일명 가지고 오기
 
-            List<Menu> currentMenuList = menuMapper.selectMenuList(restaurantId);
-            List<String> currentFileNames = currentMenuList.stream()
-                    .map(Menu::getImg)
-                    .collect(Collectors.toList()); //현재 저장되어 있는 파일명 가지고 오기
+        Map<Integer, Menu> menuMap = currentMenuList.stream()
+                .collect(Collectors.toMap(Menu::getId, Function.identity()));
 
-            for (MenuItem item : menuItems) {
+        System.out.println("menuMap = " + menuMap);
+        for (MenuItem item : menuItems) {
+            Menu currentMenu = menuMap.get(item.getId());
+
+            // 추가
+            if (currentMenu == null) {
                 Menu menu = new Menu();
                 menu.setRestaurantId(restaurantId);
                 menu.setName(item.getName());
                 menu.setPrice(item.getPrice());
 
                 if (item.getImg() != null && !item.getImg().isEmpty()) {
-                    String fileName = item.getImg().getOriginalFilename();
-                    if (!currentFileNames.contains(fileName)) {
-                        String key = STR."prj4/restaurant/\{restaurantId}/\{fileName}";
-                        System.out.println("ISkey = " + key);
-                        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                                .bucket(bucketName)
-                                .key(key)
-                                .acl(ObjectCannedACL.PUBLIC_READ)
-                                .build();
+                    String key = STR."prj4/restaurant/\{restaurantId}/\{item.getImg().getOriginalFilename()}";
+                    PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(key)
+                            .acl(ObjectCannedACL.PUBLIC_READ)
+                            .build();
 
-                        s3Client.putObject(putObjectRequest,
-                                RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
+                    s3Client.putObject(putObjectRequest,
+                            RequestBody.fromInputStream(item.getImg().getInputStream(), item.getImg().getSize()));
 
-                        menu.setImg(fileName);
-                    }
+                    menu.setImg(item.getImg().getOriginalFilename());
                 }
+
                 menuMapper.insert(menu);
+            } else {
+                currentMenu.setName(item.getName());
+                currentMenu.setPrice(item.getPrice());
+                menuMapper.update(currentMenu);
             }
         }
     }

@@ -8,6 +8,5 @@ import java.util.List;
 public class MenuRequest {
     private Long restaurantId;
     private List<MenuItem> menuItems;
-
 }
 
