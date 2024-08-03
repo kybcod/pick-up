@@ -22,17 +22,20 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 
 function SellerOrderList(props) {
   const account = useContext(LoginContext);
   const userId = account.id;
   const [receivedOrders, setReceivedOrders] = useState([]);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const sellerModal = useDisclosure();
   const [customerOrder, setCustomerOrder] = useState(null);
   const [estimatedTime, setEstimatedTime] = useState("");
   const timeArray = ["10분", "20분", "30분", "40분", "50분", "60분 이상"];
   const [merchantUid, setMerchantUid] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const pickUpModal = useDisclosure();
 
   useEffect(() => {
     axios.get(`/api/orders/seller/${userId}`).then((res) => {
@@ -47,11 +50,11 @@ function SellerOrderList(props) {
       .then((res) => {
         setCustomerOrder(res.data);
         setMerchantUid(merchantUid);
-        onOpen();
       })
       .catch((error) => {
         console.error("주문 데이터 가져오기 실패:", error);
-      });
+      })
+      .finally(() => sellerModal.onOpen());
   }
 
   function handlePickUpOk() {
@@ -68,7 +71,7 @@ function SellerOrderList(props) {
       })
       .finally(() => {
         setIsProcessing(false);
-        onClose();
+        sellerModal.onClose();
       });
   }
 
@@ -77,13 +80,18 @@ function SellerOrderList(props) {
     axios
       .put("/api/orders/pick-up", { merchantUid })
       .then(() => {
-        alert("픽업 완료");
+        alert("픽업 완료하였습니다.");
+        pickUpModal.onClose();
         axios.get(`/api/orders/seller/${userId}`).then((res) => {
           setReceivedOrders(res.data);
         });
       })
-      .catch(() => alert("픽업 실패"))
       .finally(() => setIsProcessing(false));
+  }
+
+  function openPickUpModal(merchantUid) {
+    setMerchantUid(merchantUid);
+    pickUpModal.onOpen();
   }
 
   return (
@@ -93,7 +101,7 @@ function SellerOrderList(props) {
       </Heading>
       {receivedOrders.length === 0 ? (
         <Flex direction="column" align="center" justify="center" height="500px">
-          <Image src={"/img/cart_clear.png"} boxSize="150px" mb={4} />
+          <Image src={"/img/gjf.png"} boxSize="150px" mb={4} />
           <Text fontSize="2xl" textAlign="center" color="gray.500">
             받으신 주문 내역이 없습니다ㅠ
           </Text>
@@ -135,11 +143,13 @@ function SellerOrderList(props) {
                     ) : (
                       <Button
                         isDisabled={order.pickUpStatus === true}
-                        onClick={() => handlePickUpClear(order.merchantUid)}
+                        onClick={() => openPickUpModal(order.merchantUid)}
                         colorScheme="teal"
                         size="sm"
                       >
-                        픽업 완료
+                        {order.pickUpStatus === true
+                          ? "픽업 완료"
+                          : "픽업 대기"}
                       </Button>
                     )}
                   </Flex>
@@ -160,8 +170,39 @@ function SellerOrderList(props) {
         </VStack>
       )}
 
+      {/*픽업 모달*/}
+      <Modal isOpen={pickUpModal.isOpen} onClose={pickUpModal.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            {" "}
+            <FontAwesomeIcon icon={faShoppingCart} /> 픽업 대기
+          </ModalHeader>
+          <ModalBody>
+            구매자님께서 픽업을 완료하셨다면 아래의 "픽업 완료" 버튼을
+            눌러주세요.
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="red"
+              mr={3}
+              onClick={() => handlePickUpClear(merchantUid)}
+            >
+              픽업 완료
+            </Button>
+            <Button variant="ghost" onClick={pickUpModal.onClose}>
+              취소
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
       {/* 사장님 모달 */}
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <Modal
+        isOpen={sellerModal.isOpen}
+        onClose={sellerModal.onClose}
+        size="lg"
+      >
         <ModalOverlay />
         <ModalContent borderRadius="lg" overflow="hidden" boxShadow="2xl">
           <ModalHeader bg="teal.500" color="white" py={4}>
@@ -234,7 +275,7 @@ function SellerOrderList(props) {
               >
                 주문확인
               </Button>
-              <Button onClick={onClose} size="lg">
+              <Button onClick={sellerModal.onClose} size="lg">
                 닫기
               </Button>
             </Flex>

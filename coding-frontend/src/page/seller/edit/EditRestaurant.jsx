@@ -16,6 +16,7 @@ import {
   SimpleGrid,
   Text,
   useColorModeValue,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -30,6 +31,7 @@ function EditRestaurant({ onSubmit, restaurantId }) {
   const [filePreview, setFilePreview] = useState("/img/pickUp_black.png");
   const account = useContext(LoginContext);
   const inputFileRef = useRef(null);
+  const toast = useToast();
 
   useEffect(() => {
     axios.get(`/api/restaurants/${restaurantId}`).then((response) => {
@@ -72,12 +74,21 @@ function EditRestaurant({ onSubmit, restaurantId }) {
         file: restaurantData.file,
       })
       .then(() => {
-        alert("수정 성공");
+        toast({
+          status: "success",
+          description: "메뉴 수정되었습니다.",
+          position: "top",
+          duration: 3000,
+        });
         onSubmit();
       })
       .catch((error) => {
-        console.error("Error updating restaurant:", error);
-        alert("수정 실패");
+        toast({
+          status: "success",
+          description: "메뉴 수정되었습니다.",
+          position: "top",
+          duration: 3000,
+        });
       });
   };
 

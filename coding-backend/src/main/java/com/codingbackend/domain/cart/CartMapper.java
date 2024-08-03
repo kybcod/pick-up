@@ -30,11 +30,9 @@ public interface CartMapper {
             FROM cart 
             WHERE user_id=#{userId} 
               AND order_id IS NULL
+            ORDER BY inserted DESC
             """)
     List<Cart> selectByUserId(Integer userId);
-
-    @Delete("DELETE FROM cart WHERE user_id=#{userId} AND restaurant_id=#{restaurantId} AND menu_name=#{menuName}")
-    int deleteByUserIdAndRestaurantIdAndMenuName(Integer userId, Long restaurantId, String menuName);
 
     @Select("""
             SELECT id, restaurant_id, user_id, 

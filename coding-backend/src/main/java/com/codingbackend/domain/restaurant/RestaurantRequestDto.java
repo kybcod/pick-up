@@ -11,8 +11,8 @@ public class RestaurantRequestDto {
     private String restaurantName;
     private String restaurantTel;
     private String address;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
     private String categoryId;
     private String logo;
     private LocalDateTime inserted;

@@ -31,10 +31,6 @@ public class CartService {
         return cartMapper.selectByUserId(userId);
     }
 
-    public void deleteByUserIdAndRestaurantIdAndMenuName(Integer userId, Long restaurantId, String menuName) {
-        cartMapper.deleteByUserIdAndRestaurantIdAndMenuName(userId, restaurantId, menuName);
-    }
-
     public void deleteByUserIdAndRestaurantId(Integer userId, Long restaurantId) {
         cartMapper.deleteByRestaurantIdAndUserId(restaurantId, userId);
 
@@ -43,6 +39,5 @@ public class CartService {
     public List<Cart> getOrdersByUserId(Integer userId) {
         return cartMapper.selectOrdersByUserId(userId);
     }
-
 
 }

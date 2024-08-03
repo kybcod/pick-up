@@ -120,8 +120,11 @@ export function MainPage() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+            // TODO:주석풀기
+            const latitude = 37.5564397859151;
+            const longitude = 126.945190775648;
+            // const latitude = position.coords.latitude;
+            // const longitude = position.coords.longitude;
             setCurrentPosition({ latitude, longitude });
           },
           (error) => console.error("Error getting current location:", error),
@@ -133,16 +136,20 @@ export function MainPage() {
   };
 
   const handleCategoryClick = (index) => {
-    if (currentPosition) {
-      navigate(`/restaurant/${index + 1}`, {
-        state: {
-          currentPosition,
-          currentAddress,
-          categoryImage: images[index],
-        },
-      });
+    if (!account.isLoggedIn()) {
+      navigate("/login");
     } else {
-      alert("먼저 현재 위치를 가져와주세요.");
+      if (currentPosition) {
+        navigate(`/restaurant/${index + 1}`, {
+          state: {
+            currentPosition,
+            currentAddress,
+            categoryImage: images[index],
+          },
+        });
+      } else {
+        alert("먼저 현재 위치를 가져와주세요.");
+      }
     }
   };
 
@@ -189,7 +196,7 @@ export function MainPage() {
               </Flex>
             </VStack>
           </Box>
-          <Grid templateColumns={["repeat(2, 1fr)", "repeat(5, 1fr)"]} gap={6}>
+          <Grid templateColumns={["repeat(2, 1fr)", "repeat(5, 1fr)"]} gap={12}>
             {images.map((imageUrl, index) => (
               <GridItem key={index} onClick={() => handleCategoryClick(index)}>
                 {index < 9 ? (
@@ -228,7 +235,13 @@ export function MainPage() {
                     </Box>
                   </Box>
                 ) : (
-                  <Box position="relative" pb="100%">
+                  <Box
+                    position="relative"
+                    pb="100%"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     <Image
                       src={imageUrl}
                       position="absolute"

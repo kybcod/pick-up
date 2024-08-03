@@ -14,6 +14,7 @@ import {
   SimpleGrid,
   Text,
   useColorModeValue,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -36,6 +37,7 @@ function RegisterRestaurant({ onSubmit }) {
   const account = useContext(LoginContext);
   const [filePreview, setFilePreview] = useState("/img/pickUp_black.png");
   const inputFileRef = useRef(null);
+  const toast = useToast();
 
   function handleRegisterRestaurant() {
     const newRestaurantId = parseInt(
@@ -58,16 +60,11 @@ function RegisterRestaurant({ onSubmit }) {
         file,
       })
       .then(() => {
-        alert("저장 성공");
         onSubmit({
           restaurantId: newRestaurantId,
           userId: account.id,
           categoryId,
         });
-      })
-      .catch((error) => {
-        console.error("Error saving restaurant:", error);
-        alert("저장 실패");
       });
   }
 

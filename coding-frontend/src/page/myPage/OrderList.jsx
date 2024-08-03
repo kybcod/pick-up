@@ -232,21 +232,20 @@ export function OrderList() {
                   {group.reviewStatus ? "리뷰 보기" : "리뷰 작성"}
                 </Button>
               )}
-              <ReviewModal
-                restaurantName={
-                  restaurantInfo[selectedRestaurant]?.placenamefull ||
-                  "정보 없음"
-                }
-                isOpen={isOpen}
-                onClose={onClose}
-                selectedRestaurant={selectedRestaurant}
-                userId={userId}
-                onReviewSubmitted={handleReviewSubmitted}
-              />
             </Flex>
           ))}
         </VStack>
       )}
+      <ReviewModal
+        restaurantName={
+          restaurantInfo[selectedRestaurant]?.placenamefull || "정보 없음"
+        }
+        isOpen={isOpen}
+        onClose={onClose}
+        selectedRestaurant={selectedRestaurant}
+        userId={userId}
+        onReviewSubmitted={handleReviewSubmitted}
+      />
     </Box>
   );
 }

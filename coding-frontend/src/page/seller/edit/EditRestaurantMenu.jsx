@@ -8,38 +8,27 @@ import {
   InputGroup,
   InputRightAddon,
   Text,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
 
 function EditRestaurantMenu({ onSubmit, restaurantId }) {
-  const [menuItems, setMenuItems] = useState([
-    { img: "", name: "", price: "" },
-  ]);
-  const [filePreviews, setFilePreviews] = useState([""]);
+  const [menuItems, setMenuItems] = useState([]);
+  const [filePreviews, setFilePreviews] = useState([]);
   const [newFileList, setNewFileList] = useState([]);
   const [removeFileList, setRemoveFileList] = useState([]);
   const fileInputRefs = useRef([]);
   const placeId = restaurantId;
+  const toast = useToast();
 
   useEffect(() => {
-    axios.get(`/api/menus/${placeId}`).then((response) => {
+    axios.get(`/api/menus/list/${placeId}`).then((response) => {
       const data = response.data;
-      console.log("get 요청 메뉴 :", data);
-
-      if (data.menuInfo && Array.isArray(data.menuInfo.menuList)) {
-        const menuList = data.menuInfo.menuList;
-        const formattedMenuItems = menuList.map((item) => ({
-          img: item.img,
-          name: item.menu,
-          price: item.price,
-        }));
-
-        setMenuItems(formattedMenuItems);
-        setFilePreviews(formattedMenuItems.map((item) => item.img || ""));
-      }
+      setMenuItems(data);
+      setFilePreviews(data.map((item) => item.img || ""));
     });
-  }, [restaurantId]);
+  }, [placeId]);
 
   const handleChange = (e, index, key) => {
     const updatedItems = [...menuItems];
@@ -97,33 +86,48 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
     formData.append("restaurantId", restaurantId);
 
     menuItems.forEach((item, index) => {
+      if (item.id !== undefined) {
+        formData.append(`menuItems[${index}].id`, item.id);
+      }
       formData.append(`menuItems[${index}].name`, item.name);
       formData.append(`menuItems[${index}].price`, item.price);
       if (typeof item.img === "string") {
-        formData.append(`menuItems[${index}].imgUrl`, item.img);
+        formData.append(`menuItems[${index}].existingImageUrl`, item.img);
+      } else if (item.img instanceof File) {
+        formData.append(`menuItems[${index}].img`, item.img);
       }
     });
 
-    newFileList.forEach((file, index) => {
-      formData.append(`newFileList[${index}]`, file);
+    newFileList.forEach((file) => {
+      formData.append("newFileList", file);
     });
 
-    removeFileList.forEach((file, index) => {
-      formData.append(`removeFileList[${index}]`, file);
+    removeFileList.forEach((fileName) => {
+      formData.append("removeFileList", fileName);
     });
 
     for (let [key, value] of formData.entries()) {
-      console.log(key, value);
+      console.log(`${key}: ${value}`);
     }
 
     axios
       .putForm(`/api/menus/seller`, formData)
       .then(() => {
-        alert("메뉴 수정 성공!");
+        toast({
+          status: "success",
+          description: "메뉴 수정되었습니다.",
+          position: "top",
+          duration: 3000,
+        });
         onSubmit();
       })
       .catch((error) => {
-        console.error("메뉴 수정 실패:", error);
+        toast({
+          status: "warning",
+          description: "메뉴 실패하였습니다.",
+          position: "top",
+          duration: 3000,
+        });
       });
   };
 
@@ -136,7 +140,7 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
   return (
     <Box>
       <VStack spacing={4}>
-        {Array.isArray(menuItems) ? (
+        {menuItems.length > 0 ? (
           menuItems.map((item, index) => (
             <Box
               key={index}
@@ -221,7 +225,7 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
           <Box>메뉴가 없습니다.</Box>
         )}
         <Button colorScheme="blue" onClick={handleFormSubmit}>
-          수정
+          메뉴 수정
         </Button>
       </VStack>
     </Box>

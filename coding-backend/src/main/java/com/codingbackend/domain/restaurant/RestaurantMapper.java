@@ -11,7 +11,7 @@ public interface RestaurantMapper {
             INSERT INTO restaurant (restaurant_id, user_id, restaurant_name, restaurant_tel, address, logo, latitude, longitude, category_id)
             VALUES (#{restaurantId},#{userId}, #{restaurantName}, #{restaurantTel}, #{address}, #{logo}, #{latitude}, #{longitude}, #{categoryId})
             """)
-    void insert(RestaurantRequestDto restaurant);
+    void insert(Restaurant restaurant);
 
     @Select("SELECT * FROM category WHERE id = #{category}")
     Category selectCategory(Integer category);
