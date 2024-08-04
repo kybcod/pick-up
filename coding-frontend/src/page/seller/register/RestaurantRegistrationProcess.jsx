@@ -77,7 +77,7 @@ function RestaurantRegistrationProcess() {
       {activeStep === 2 && (
         <Box textAlign="center" p={8}>
           <Heading size="xl">등록에 성공했습니다!</Heading>
-          <Box mt={4} mb={2}>
+          <Box mt={4} mb={3}>
             가게 정보와 메뉴가 성공적으로 등록되었습니다.
           </Box>
           <Button onClick={() => navigate("/seller")}>
