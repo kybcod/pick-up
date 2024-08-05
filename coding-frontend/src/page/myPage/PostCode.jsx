@@ -16,6 +16,9 @@ const PostCode = ({ onSelectAddress }) => {
         setKakaoLoaded(true);
       });
     };
+    script.onerror = () => {
+      console.error("Failed to load Kakao Maps SDK");
+    };
     document.body.appendChild(script);
 
     return () => {
@@ -44,15 +47,19 @@ const PostCode = ({ onSelectAddress }) => {
     }
 
     // 위도, 경도 가져오기
-    const geocoder = new kakao.maps.services.Geocoder();
-    geocoder.addressSearch(fullAddress, (result, status) => {
-      if (status === kakao.maps.services.Status.OK) {
-        const latitude = result[0].y;
-        const longitude = result[0].x;
-        console.log(fullAddress, latitude, longitude);
-        onSelectAddress(fullAddress, latitude, longitude); // 주소,위도,경도를 prop 전달
-      }
-    });
+    if (typeof kakao.maps !== "undefined" && kakao.maps.services) {
+      const geocoder = new kakao.maps.services.Geocoder();
+      geocoder.addressSearch(fullAddress, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          const latitude = result[0].y;
+          const longitude = result[0].x;
+          console.log(fullAddress, latitude, longitude);
+          onSelectAddress(fullAddress, latitude, longitude); // 주소,위도,경도를 prop 전달
+        }
+      });
+    } else {
+      console.error("Kakao Maps services are not available");
+    }
   };
 
   const handleClick = () => {

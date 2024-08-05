@@ -55,8 +55,12 @@ function SellerMainPage(props) {
             <Box
               key={index}
               onClick={() => {
-                navigate(item.path);
-                window.scrollTo({ top: 0, behavior: "auto" });
+                if (account.isLoggedIn()) {
+                  navigate(item.path);
+                  window.scrollTo({ top: 0, behavior: "auto" });
+                } else {
+                  navigate("/login");
+                }
               }}
               bg={cardBgColor}
               borderRadius="xl"

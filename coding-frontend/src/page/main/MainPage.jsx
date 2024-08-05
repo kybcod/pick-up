@@ -38,6 +38,7 @@ export function MainPage() {
     "https://velog.velcdn.com/images/kpo12345/post/c04943de-20c0-40c2-8518-dbd9b1529906/image.png",
     "https://velog.velcdn.com/images/kpo12345/post/d267ad5f-bef3-49b3-ac49-1aa8a807b3b6/image.png",
     "https://velog.velcdn.com/images/kpo12345/post/09fba573-348d-4d72-8f9b-4b019047d1e7/image.png",
+    "https://velog.velcdn.com/images/kpo12345/post/79c5415c-4c0a-4583-9f4d-835887d787c2/image.png",
   ];
 
   const [currentAddress, setCurrentAddress] = useState("");
@@ -119,8 +120,11 @@ export function MainPage() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+            // TODO:주석풀기
+            const latitude = 37.5564397859151;
+            const longitude = 126.945190775648;
+            // const latitude = position.coords.latitude;
+            // const longitude = position.coords.longitude;
             setCurrentPosition({ latitude, longitude });
           },
           (error) => console.error("Error getting current location:", error),
@@ -132,16 +136,20 @@ export function MainPage() {
   };
 
   const handleCategoryClick = (index) => {
-    if (currentPosition) {
-      navigate(`/restaurant/${index + 1}`, {
-        state: {
-          currentPosition,
-          currentAddress,
-          categoryImage: images[index],
-        },
-      });
+    if (!account.isLoggedIn()) {
+      navigate("/login");
     } else {
-      alert("먼저 현재 위치를 가져와주세요.");
+      if (currentPosition) {
+        navigate(`/restaurant/${index + 1}`, {
+          state: {
+            currentPosition,
+            currentAddress,
+            categoryImage: images[index],
+          },
+        });
+      } else {
+        alert("먼저 현재 위치를 가져와주세요.");
+      }
     }
   };
 
@@ -191,38 +199,60 @@ export function MainPage() {
           <Grid templateColumns={["repeat(2, 1fr)", "repeat(5, 1fr)"]} gap={12}>
             {images.map((imageUrl, index) => (
               <GridItem key={index} onClick={() => handleCategoryClick(index)}>
-                <Box
-                  bg="white"
-                  borderRadius="xl"
-                  overflow="hidden"
-                  boxShadow="lg"
-                  transition="all 0.3s"
-                >
-                  <Box position="relative" pb="60%" overflow="hidden">
+                {index < 9 ? (
+                  <Box
+                    bg="white"
+                    borderRadius="xl"
+                    overflow="hidden"
+                    boxShadow="lg"
+                    transition="all 0.3s"
+                  >
+                    <Box position="relative" pb="60%" overflow="hidden">
+                      <Image
+                        src={imageUrl}
+                        alt={categories[index]}
+                        position="absolute"
+                        top="50%"
+                        left="50%"
+                        transform="translate(-50%, -50%)"
+                        w="100%"
+                        h="100%"
+                        _hover={{
+                          transform: "translate(-50%, -50%) scale(1.1)",
+                        }}
+                      />
+                    </Box>
+                    <Box
+                      p={2}
+                      textAlign="center"
+                      bg="rgba(255,255,255,0.9)"
+                      borderTop="2px solid"
+                      borderTopColor="teal.500"
+                    >
+                      <Text fontSize="lg" fontWeight="bold" color="gray.800">
+                        {categories[index]}
+                      </Text>
+                    </Box>
+                  </Box>
+                ) : (
+                  <Box
+                    position="relative"
+                    pb="100%"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     <Image
                       src={imageUrl}
-                      alt={categories[index]}
                       position="absolute"
-                      top="50%"
-                      left="50%"
-                      transform="translate(-50%, -50%)"
-                      w="80%"
-                      h="80%"
-                      _hover={{ transform: "translate(-50%, -50%) scale(1.1)" }}
+                      top="0"
+                      left="0"
+                      w="100%"
+                      h="100%"
+                      objectFit="cover"
                     />
                   </Box>
-                  <Box
-                    p={2}
-                    textAlign="center"
-                    bg="rgba(255,255,255,0.9)"
-                    borderTop="2px solid"
-                    borderTopColor="teal.500"
-                  >
-                    <Text fontSize="lg" fontWeight="bold" color="gray.800">
-                      {categories[index]}
-                    </Text>
-                  </Box>
-                </Box>
+                )}
               </GridItem>
             ))}
           </Grid>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -16,6 +16,7 @@ import {
   SimpleGrid,
   Text,
   useColorModeValue,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -29,6 +30,8 @@ function EditRestaurant({ onSubmit, restaurantId }) {
   const [restaurantId3, setRestaurantId3] = useState("");
   const [filePreview, setFilePreview] = useState("/img/pickUp_black.png");
   const account = useContext(LoginContext);
+  const inputFileRef = useRef(null);
+  const toast = useToast();
 
   useEffect(() => {
     axios.get(`/api/restaurants/${restaurantId}`).then((response) => {
@@ -71,12 +74,7 @@ function EditRestaurant({ onSubmit, restaurantId }) {
         file: restaurantData.file,
       })
       .then(() => {
-        alert("수정 성공");
         onSubmit();
-      })
-      .catch((error) => {
-        console.error("Error updating restaurant:", error);
-        alert("수정 실패");
       });
   };
 
@@ -109,6 +107,12 @@ function EditRestaurant({ onSubmit, restaurantId }) {
       setFilePreview(URL.createObjectURL(fileView));
     } else {
       setFilePreview(restaurantData.logo);
+    }
+  };
+
+  const handleFileButtonClick = () => {
+    if (inputFileRef.current) {
+      inputFileRef.current.click();
     }
   };
 
@@ -233,7 +237,16 @@ function EditRestaurant({ onSubmit, restaurantId }) {
                   type="file"
                   accept="image/*"
                   onChange={handleChangeLogo}
+                  ref={inputFileRef}
+                  style={{ display: "none" }}
                 />
+                <Button
+                  colorScheme="teal"
+                  onClick={handleFileButtonClick}
+                  mt={2}
+                >
+                  로고 업로드
+                </Button>
               </Flex>
             </FormControl>
           </VStack>

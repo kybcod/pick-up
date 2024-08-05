@@ -26,6 +26,7 @@ export function OrderList() {
   const { onClose, onOpen, isOpen } = useDisclosure();
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [reviewStatus, setReviewStatus] = useState({});
 
   useEffect(() => {
     setIsLoading(true);
@@ -66,7 +67,7 @@ export function OrderList() {
         console.error("주문 데이터 조회 실패:", err);
         setIsLoading(false);
       });
-  }, [userId]);
+  }, [userId, reviewStatus]);
 
   const groupOrders = (orders) => {
     return orders.reduce((acc, order) => {
@@ -96,6 +97,18 @@ export function OrderList() {
     onOpen();
   }
 
+  function handleReviewDetail() {
+    navigate("/reviews");
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
+
+  function handleReviewSubmitted() {
+    setReviewStatus((prev) => ({
+      ...prev,
+      [selectedRestaurant]: true,
+    }));
+  }
+
   if (isLoading) {
     return (
       <Flex justify="center" align="center" height="100vh">
@@ -105,11 +118,6 @@ export function OrderList() {
   }
 
   const isOrderListEmpty = Object.keys(orderList).length === 0;
-
-  function handleReviewDetail() {
-    navigate("/reviews");
-    window.scrollTo({ top: 0, behavior: "auto" });
-  }
 
   return (
     <Box maxW="800px" margin="auto" p={5}>
@@ -224,20 +232,20 @@ export function OrderList() {
                   {group.reviewStatus ? "리뷰 보기" : "리뷰 작성"}
                 </Button>
               )}
-              <ReviewModal
-                restaurantName={
-                  restaurantInfo[group.restaurantId]?.placenamefull ||
-                  "정보 없음"
-                }
-                isOpen={isOpen}
-                onClose={onClose}
-                selectedRestaurant={selectedRestaurant}
-                userId={userId}
-              />
             </Flex>
           ))}
         </VStack>
       )}
+      <ReviewModal
+        restaurantName={
+          restaurantInfo[selectedRestaurant]?.placenamefull || "정보 없음"
+        }
+        isOpen={isOpen}
+        onClose={onClose}
+        selectedRestaurant={selectedRestaurant}
+        userId={userId}
+        onReviewSubmitted={handleReviewSubmitted}
+      />
     </Box>
   );
 }

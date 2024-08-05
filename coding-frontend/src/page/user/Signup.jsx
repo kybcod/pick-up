@@ -47,6 +47,7 @@ export function Signup() {
         status: "warning",
         description: "이메일 중복 확인을 해주세요.",
         position: "top",
+        duration: 3000,
       });
       return;
     }
@@ -55,6 +56,7 @@ export function Signup() {
         status: "warning",
         description: "닉네임 중복 확인을 해주세요.",
         position: "top",
+        duration: 3000,
       });
       return;
     }
@@ -74,6 +76,7 @@ export function Signup() {
           status: "success",
           description: "회원가입이 완료되었습니다",
           position: "top",
+          duration: 3000,
         });
         localStorage.removeItem("userInfo");
         navigate("/login");
@@ -84,6 +87,7 @@ export function Signup() {
             status: "error",
             description: "입력값을 확인해 주세요.",
             position: "top",
+            duration: 3000,
           });
         }
         if (!role) {
@@ -91,12 +95,14 @@ export function Signup() {
             status: "warning",
             description: "권한을 선택해 주세요.",
             position: "top",
+            duration: 3000,
           });
         } else {
           toast({
             status: "error",
             description: "회원 가입 중 문제가 발생하였습니다.",
             position: "top",
+            duration: 3000,
           });
         }
       })
@@ -111,6 +117,7 @@ export function Signup() {
           status: "warning",
           description: "사용할 수 없는 이메일입니다",
           position: "top",
+          duration: 3000,
         });
       })
       .catch((err) => {
@@ -119,6 +126,7 @@ export function Signup() {
             status: "info",
             description: "사용할 수 있는 이메일입니다",
             position: "top",
+            duration: 3000,
           });
         }
         setIsEmailChecked(true);
@@ -134,6 +142,7 @@ export function Signup() {
           status: "warning",
           description: "사용할 수 없는 닉네임입니다",
           position: "top",
+          duration: 3000,
         });
       })
       .catch((err) => {
@@ -142,6 +151,7 @@ export function Signup() {
             status: "info",
             description: "사용할 수 있는 닉네임입니다",
             position: "top",
+            duration: 3000,
           });
         }
         setIsNickNameChecked(true);

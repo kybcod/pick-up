@@ -91,8 +91,9 @@ export function Payment() {
             totalPrice: calculateTotalAmount(),
           })
           .then(() => {
-            alert(`결제성공`);
+            alert(`결제가 완료되었습니다.`);
             navigate(`/orders`);
+            window.scrollTo({ top: 0, behavior: "auto" });
           })
           .catch(() => {
             alert("결제 처리 중 오류", error_msg);
@@ -122,12 +123,6 @@ export function Payment() {
         restaurantId,
         userId,
         cartIds,
-      })
-      .then(() => {
-        alert(`주문성공`);
-      })
-      .catch(() => {
-        alert("주문 오류");
       })
       .finally(() => {
         navigate(`/orders`);

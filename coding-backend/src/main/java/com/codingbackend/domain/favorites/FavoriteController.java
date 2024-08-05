@@ -2,6 +2,7 @@ package com.codingbackend.domain.favorites;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Description;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
 
     @PutMapping
+    @PreAuthorize("isAuthenticated()")
     public void save(@RequestBody Favorite favorite) {
         favoriteService.update(favorite);
     }

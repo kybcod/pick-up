@@ -5,23 +5,33 @@ import {
   Flex,
   Heading,
   Image,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   SimpleGrid,
   Spinner,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan, faWarning } from "@fortawesome/free-solid-svg-icons";
 
 function SellerRestaurantList(props) {
   const account = useContext(LoginContext);
   const userId = account.id;
   const [sellerRestaurants, setSellerRestaurants] = useState(null);
   const navigate = useNavigate();
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [restaurantId, setRestaurantId] = useState(0);
 
   useEffect(() => {
     axios.get(`/api/restaurants/seller/${userId}`).then((res) => {
-      console.log("store", res.data);
       setSellerRestaurants(res.data);
     });
   }, [userId]);
@@ -39,8 +49,25 @@ function SellerRestaurantList(props) {
   }
 
   function handleReviewView(e, restaurantId) {
-    e.stopPropagation(); // Prevent triggering parent click event
+    e.stopPropagation();
     navigate(`/seller/${restaurantId}/reviews`);
+  }
+
+  function handleDeleteRestaurant(restaurantId) {
+    axios.delete(`/api/menus/${restaurantId}`).then((res) => {
+      setSellerRestaurants((prevRestaurants) =>
+        prevRestaurants.filter(
+          (restaurant) => restaurant.restaurantId !== restaurantId,
+        ),
+      );
+      onClose();
+    });
+  }
+
+  function handleModal(e, restaurantId) {
+    e.stopPropagation();
+    setRestaurantId(restaurantId);
+    onOpen();
   }
 
   return (
@@ -51,6 +78,7 @@ function SellerRestaurantList(props) {
       <SimpleGrid columns={[1, 2, 3]} spacing={10}>
         {sellerRestaurants.map((restaurant, index) => (
           <Box
+            onClick={() => handleMenuDetails(restaurant.restaurantId)}
             key={index}
             bg="white"
             boxShadow="md"
@@ -58,8 +86,17 @@ function SellerRestaurantList(props) {
             overflow="hidden"
             transition="all 0.3s"
             _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
-            position="relative" // For absolute positioning of the button
+            position="relative"
           >
+            <Button
+              position={"absolute"}
+              top={0}
+              right={0}
+              background={"transparent"}
+              onClick={(e) => handleModal(e, restaurant.restaurantId)}
+            >
+              <FontAwesomeIcon icon={faTrashCan} color="red" />
+            </Button>
             <Image
               src={restaurant.logo}
               alt={restaurant.restaurantName}
@@ -93,6 +130,31 @@ function SellerRestaurantList(props) {
           </Box>
         ))}
       </SimpleGrid>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            {" "}
+            <FontAwesomeIcon icon={faWarning} /> 가게 삭제
+          </ModalHeader>
+          <ModalBody>정말로 해당 가게를 삭제하시겠습니까?</ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="red"
+              mr={3}
+              onClick={() => {
+                handleDeleteRestaurant(restaurantId);
+              }}
+            >
+              확인
+            </Button>
+            <Button variant="ghost" onClick={onClose}>
+              취소
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

@@ -14,6 +14,7 @@ import {
   SimpleGrid,
   Text,
   useColorModeValue,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -35,6 +36,8 @@ function RegisterRestaurant({ onSubmit }) {
   const [longitude, setLongitude] = useState(0);
   const account = useContext(LoginContext);
   const [filePreview, setFilePreview] = useState("/img/pickUp_black.png");
+  const inputFileRef = useRef(null);
+  const toast = useToast();
 
   function handleRegisterRestaurant() {
     const newRestaurantId = parseInt(
@@ -57,16 +60,11 @@ function RegisterRestaurant({ onSubmit }) {
         file,
       })
       .then(() => {
-        alert("저장 성공");
         onSubmit({
           restaurantId: newRestaurantId,
           userId: account.id,
           categoryId,
         });
-      })
-      .catch((error) => {
-        console.error("Error saving restaurant:", error);
-        alert("저장 실패");
       });
   }
 
@@ -118,6 +116,12 @@ function RegisterRestaurant({ onSubmit }) {
     const value = e.target.value;
     if (value.length <= 5) {
       setRestaurantId3(value);
+    }
+  };
+
+  const handleFileButtonClick = () => {
+    if (inputFileRef.current) {
+      inputFileRef.current.click();
     }
   };
 
@@ -242,7 +246,16 @@ function RegisterRestaurant({ onSubmit }) {
                   type="file"
                   accept="image/*"
                   onChange={handleChangeLogo}
+                  ref={inputFileRef}
+                  style={{ display: "none" }}
                 />
+                <Button
+                  colorScheme="teal"
+                  onClick={handleFileButtonClick}
+                  mt={2}
+                >
+                  로고 업로드
+                </Button>
               </Flex>
             </FormControl>
           </VStack>
@@ -258,7 +271,7 @@ function RegisterRestaurant({ onSubmit }) {
           isDisabled={disableRegisterButton}
           _hover={{ bg: "#219A95" }}
         >
-          등록하기
+          가게 등록
         </Button>
       </VStack>
     </Container>

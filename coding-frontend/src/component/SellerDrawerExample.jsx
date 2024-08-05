@@ -96,7 +96,9 @@ export function SellerDrawerExample() {
                   borderRadius="md"
                   _hover={{ bg: "gray.100", color: "#2AC1BC" }}
                   cursor="pointer"
-                  onClick={() => handleNavigateTo(item.path)}
+                  onClick={() => {
+                    handleNavigateTo(item.path);
+                  }}
                 >
                   <FontAwesomeIcon icon={item.icon} />
                   <Text ml={3} display="inline" fontWeight="bold">

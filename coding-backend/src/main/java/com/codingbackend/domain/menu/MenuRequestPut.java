@@ -5,8 +5,8 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class MenuRequest {
+public class MenuRequestPut {
     private Long restaurantId;
     private List<MenuItem> menuItems;
-}
 
+}

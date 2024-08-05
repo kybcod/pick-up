@@ -71,7 +71,7 @@ export default function RestaurantMapView() {
             const newMap = new window.kakao.maps.Map(mapContainer, options);
             setMap(newMap);
           }
-        }, 100); // 100ms 지연
+        }, 500); // 100ms 지연
       });
     };
 
@@ -221,7 +221,7 @@ export default function RestaurantMapView() {
           <RestaurantList
             restaurants={combinedRestaurants.map((restaurant) => ({
               ...restaurant,
-              imageUrl: restaurant.listImage, // listImage를 사용
+              imageUrl: restaurant.listImage,
             }))}
             onRestaurantClick={handleRestaurantClick}
           />
@@ -235,7 +235,7 @@ export default function RestaurantMapView() {
           height={["400px", "400px", "100%"]}
         >
           <Box id="map" style={mapContainerStyle}>
-            {map && (
+            {map && currentPosition && (
               <Map
                 center={{
                   lat: currentPosition.latitude,

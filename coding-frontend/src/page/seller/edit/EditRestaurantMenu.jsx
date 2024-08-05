@@ -1,33 +1,34 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Button, Image, Input, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Image,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Text,
+  useToast,
+  VStack,
+} from "@chakra-ui/react";
 import axios from "axios";
 
 function EditRestaurantMenu({ onSubmit, restaurantId }) {
-  const [menuItems, setMenuItems] = useState([
-    { img: "", name: "", price: "" },
-  ]);
-  const [filePreviews, setFilePreviews] = useState([""]);
+  const [menuItems, setMenuItems] = useState([]);
+  const [filePreviews, setFilePreviews] = useState([]);
+  const [newFileList, setNewFileList] = useState([]);
+  const [removeFileList, setRemoveFileList] = useState([]);
   const fileInputRefs = useRef([]);
   const placeId = restaurantId;
+  const toast = useToast();
 
   useEffect(() => {
-    axios.get(`/api/menus/${placeId}`).then((response) => {
+    axios.get(`/api/menus/list/${placeId}`).then((response) => {
       const data = response.data;
-      console.log("get 요청 메뉴 :", data);
-
-      if (data.menuInfo && Array.isArray(data.menuInfo.menuList)) {
-        const menuList = data.menuInfo.menuList;
-        const formattedMenuItems = menuList.map((item) => ({
-          img: item.img,
-          name: item.menu,
-          price: item.price,
-        }));
-
-        setMenuItems(formattedMenuItems);
-        setFilePreviews(formattedMenuItems.map((item) => item.img || ""));
-      }
+      setMenuItems(data);
+      setFilePreviews(data.map((item) => item.img || ""));
     });
-  }, [restaurantId]);
+  }, [placeId]);
 
   const handleChange = (e, index, key) => {
     const updatedItems = [...menuItems];
@@ -44,6 +45,8 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
     const updatedPreviews = [...filePreviews];
     updatedPreviews[index] = URL.createObjectURL(file);
     setFilePreviews(updatedPreviews);
+
+    setNewFileList((prev) => [...prev, file]);
   };
 
   const handleAdd = () => {
@@ -53,11 +56,24 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
 
   const handleRemove = (index) => {
     if (menuItems.length > 1) {
+      const removedItem = menuItems[index];
       const updatedItems = menuItems.filter((_, i) => i !== index);
       setMenuItems(updatedItems);
 
       const updatedPreviews = filePreviews.filter((_, i) => i !== index);
       setFilePreviews(updatedPreviews);
+
+      if (removedItem.img && typeof removedItem.img === "string") {
+        // 파일명 추출
+        const fileName = removedItem.img.split("/").pop();
+        setRemoveFileList((prev) => [...prev, fileName]);
+      }
+
+      if (removedItem.img instanceof File) {
+        setNewFileList((prev) =>
+          prev.filter((file) => file !== removedItem.img),
+        );
+      }
 
       if (fileInputRefs.current[index]) {
         fileInputRefs.current[index].value = "";
@@ -70,35 +86,61 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
     formData.append("restaurantId", restaurantId);
 
     menuItems.forEach((item, index) => {
+      if (item.id !== undefined) {
+        formData.append(`menuItems[${index}].id`, item.id);
+      }
       formData.append(`menuItems[${index}].name`, item.name);
       formData.append(`menuItems[${index}].price`, item.price);
-      if (item.img instanceof File) {
+      if (typeof item.img === "string") {
+        formData.append(`menuItems[${index}].existingImageUrl`, item.img);
+      } else if (item.img instanceof File) {
         formData.append(`menuItems[${index}].img`, item.img);
-      } else if (typeof item.img === "string") {
-        formData.append(`menuItems[${index}].imgUrl`, item.img);
       }
     });
 
-    // FormData의 키와 값을 로그로 찍기
+    newFileList.forEach((file) => {
+      formData.append("newFileList", file);
+    });
+
+    removeFileList.forEach((fileName) => {
+      formData.append("removeFileList", fileName);
+    });
+
     for (let [key, value] of formData.entries()) {
-      console.log(key, value);
+      console.log(`${key}: ${value}`);
     }
 
     axios
       .putForm(`/api/menus/seller`, formData)
       .then(() => {
-        alert("메뉴 수정 성공!");
+        toast({
+          status: "success",
+          description: "메뉴 수정되었습니다.",
+          position: "top",
+          duration: 3000,
+        });
         onSubmit();
       })
       .catch((error) => {
-        console.error("메뉴 수정 실패:", error);
+        toast({
+          status: "warning",
+          description: "메뉴 실패하였습니다.",
+          position: "top",
+          duration: 3000,
+        });
       });
+  };
+
+  const handleFileButtonClick = (index) => {
+    if (fileInputRefs.current[index]) {
+      fileInputRefs.current[index].click();
+    }
   };
 
   return (
     <Box>
       <VStack spacing={4}>
-        {Array.isArray(menuItems) ? (
+        {menuItems.length > 0 ? (
           menuItems.map((item, index) => (
             <Box
               key={index}
@@ -109,33 +151,71 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
               border="1px solid #ddd"
               borderRadius="md"
               bg="gray.50"
+              width="80%"
             >
-              <Image height="180px" src={filePreviews[index] || item.img} />
-              <Input
-                type="file"
-                accept={"image/*"}
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                width="300px"
+              >
+                {filePreviews[index] ? (
+                  <Image height="180px" src={filePreviews[index]} />
+                ) : (
+                  <Box
+                    height="180px"
+                    width="150px"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    border="1px dashed #ddd"
+                    borderRadius="md"
+                  >
+                    <Text>이미지 없음</Text>
+                  </Box>
+                )}
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, index)}
+                  ref={(el) => (fileInputRefs.current[index] = el)}
+                  style={{ display: "none" }}
+                />
+                <Button
+                  colorScheme="teal"
+                  onClick={() => handleFileButtonClick(index)}
+                  mt={2}
+                >
+                  이미지 업로드
+                </Button>
+              </Box>
+              <Flex display="flex" justifyContent="center" ml={4} width="100%">
+                <Input
+                  placeholder="제품명"
+                  value={item.name}
+                  onChange={(e) => handleChange(e, index, "name")}
+                  mr={2}
+                  flex="1"
+                />
+                <InputGroup flex="1" mr={2}>
+                  <Input
+                    type="number"
+                    placeholder="가격"
+                    value={item.price}
+                    onChange={(e) => handleChange(e, index, "price")}
+                  />
+                  <InputRightAddon>원</InputRightAddon>
+                </InputGroup>
+              </Flex>
+              <Button
+                colorScheme="teal"
+                onClick={() => handleRemove(index)}
                 mr={2}
-                onChange={(e) => handleImageChange(e, index)}
-                ref={(el) => (fileInputRefs.current[index] = el)}
-              />
-              <Input
-                placeholder="제품명"
-                value={item.name}
-                onChange={(e) => handleChange(e, index, "name")}
-                mr={2}
-              />
-              <Input
-                type="number"
-                placeholder="가격"
-                value={item.price}
-                onChange={(e) => handleChange(e, index, "price")}
-                mr={2}
-              />
-              <Button colorScheme="purple" onClick={() => handleRemove(index)}>
+              >
                 -
               </Button>
               {index === menuItems.length - 1 && (
-                <Button colorScheme="purple" onClick={handleAdd}>
+                <Button colorScheme="teal" onClick={handleAdd}>
                   +
                 </Button>
               )}
@@ -145,7 +225,7 @@ function EditRestaurantMenu({ onSubmit, restaurantId }) {
           <Box>메뉴가 없습니다.</Box>
         )}
         <Button colorScheme="blue" onClick={handleFormSubmit}>
-          수정
+          메뉴 수정
         </Button>
       </VStack>
     </Box>

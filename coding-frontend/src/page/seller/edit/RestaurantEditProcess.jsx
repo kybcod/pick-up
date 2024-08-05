@@ -78,9 +78,11 @@ function RestaurantEditProcess() {
       {activeStep === 2 && (
         <Box textAlign="center" p={8}>
           <Heading size="xl">수정에 성공했습니다!</Heading>
-          <Box mt={4}>가게 정보와 메뉴가 성공적으로 수정되었습니다.</Box>
-          <Button onClick={() => navigate("/seller")}>
-            메인 페이지로 이동
+          <Box mb={3} mt={4}>
+            가게 정보와 메뉴가 성공적으로 수정되었습니다.
+          </Box>
+          <Button onClick={() => navigate(`/menu/${restaurantId}`)}>
+            해당 가게로 이동
           </Button>
         </Box>
       )}
