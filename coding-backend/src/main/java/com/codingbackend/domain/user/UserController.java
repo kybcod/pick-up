@@ -97,4 +97,16 @@ public class UserController {
     public Map<String, Object> list(@RequestParam(defaultValue = "1") Integer page) {
        return service.userList(page);
     }
+
+    @DeleteMapping("admin/delete")
+    @PreAuthorize("hasAuthority('SCOPE_admin')")
+    public ResponseEntity deleteUserByAdmin(@RequestBody User user, Authentication authentication) {
+        try {
+            service.deleteUser(user);
+            return new ResponseEntity<>("User successfully deleted", HttpStatus.OK);
+        } catch (Exception e) {
+            // Log the exception (e.g., using a logger)
+            return new ResponseEntity<>("Failed to delete user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

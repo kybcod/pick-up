@@ -270,4 +270,8 @@ public class UserService {
 
         return Map.of("pageInfo", pageInfo, "userList", mapper.getUserList(offset));
     }
+
+    public void deleteUser(User user) {
+        mapper.deleteById(user.getId());
+    }
 }
