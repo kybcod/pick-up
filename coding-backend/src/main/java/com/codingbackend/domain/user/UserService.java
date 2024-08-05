@@ -263,6 +263,7 @@ public class UserService {
             pageInfo.put("nextPageNumber", nextPageNumber);
         }
 
+        pageInfo.put("totalPageNumber", countAll);
         pageInfo.put("currentPageNumber", page);
         pageInfo.put("lastPageNumber", lastPageNumber);
         pageInfo.put("leftPageNumber", leftPageNumber);

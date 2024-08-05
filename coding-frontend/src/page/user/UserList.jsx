@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Center,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -96,14 +97,17 @@ export function UserList() {
           </Tr>
         </Thead>
         <Tbody>
-          {userList.map((user) => (
+          {userList.map((user, index) => (
             <Tr key={user.id}>
-              <Td>{user.id}</Td>
+              <Td>{(currentPage - 1) * 10 + index + 1}</Td>
               <Td>{user.email}</Td>
               <Td>{user.nickName}</Td>
               <Td>{user.inserted}</Td>
               <Td>
-                <Button onClick={() => handleClickAdminDelete(user)}>
+                <Button
+                  colorScheme={"red"}
+                  onClick={() => handleClickAdminDelete(user)}
+                >
                   회원삭제
                 </Button>
               </Td>
@@ -111,13 +115,17 @@ export function UserList() {
           ))}
         </Tbody>
       </Table>
-      <Box>
+      <Center>
         {pageNumbers.map((pageNumber) => (
-          <Button key={pageNumber} onClick={() => handleClickPage(pageNumber)}>
+          <Button
+            m={1}
+            key={pageNumber}
+            onClick={() => handleClickPage(pageNumber)}
+          >
             {pageNumber}
           </Button>
         ))}
-      </Box>
+      </Center>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
