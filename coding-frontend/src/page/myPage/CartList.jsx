@@ -169,7 +169,7 @@ export function CartList() {
     });
   }
 
-  function handleSaveCart() {
+  async function handleSaveCart() {
     const carts = Object.entries(cartItems).flatMap(
       ([restaurantId, restaurantData]) =>
         restaurantData.items.map((item) => ({
@@ -184,7 +184,7 @@ export function CartList() {
     );
 
     if (carts.length === 0) {
-      axios
+      await axios
         .delete(`/api/carts/${userId}`)
         .then(() => {
           console.log("장바구니 삭제 성공");
@@ -192,13 +192,18 @@ export function CartList() {
         })
         .catch((error) => console.error("장바구니 삭제 실패", error));
     } else {
-      axios
+      await axios
         .put("/api/carts", carts)
         .then(() => {
           console.log("장바구니 업데이트 성공");
         })
         .catch((error) => console.error("장바구니 업데이트 실패", error));
     }
+  }
+
+  async function handleOrder(restaurantId) {
+    await handleSaveCart(); // 장바구니 저장이 완료될 때까지 기다립니다.
+    navigate(`/pay/buyer/${account.id}/restaurant/${restaurantId}`); // 결제 페이지로 이동합니다.
   }
 
   return (
@@ -335,11 +340,7 @@ export function CartList() {
                   colorScheme="teal"
                   size="md"
                   width="150px" // 너비를 추가하여 크기 맞춤
-                  onClick={() =>
-                    navigate(
-                      `/pay/buyer/${account.id}/restaurant/${restaurantId}`,
-                    )
-                  }
+                  onClick={() => handleOrder(restaurantId)}
                 >
                   주문하기
                 </Button>
