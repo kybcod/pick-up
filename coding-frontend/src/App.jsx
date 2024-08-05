@@ -5,7 +5,7 @@ import { Home } from "./Home.jsx";
 import RestaurantMapView from "./page/restaurant/RestaurantMapView.jsx";
 import "./component/styles/fonts.css";
 import { theme } from "./component/styles/theme.jsx";
-import { RestaurantMenuList } from "./page/menuSelector/RestaurantMenuList.jsx";
+import { RestaurantMenuList } from "./page/menu/RestaurantMenuList.jsx";
 import Login from "./page/user/Login.jsx";
 import { Signup } from "./page/user/Signup.jsx";
 import { LoginContext, LoginProvider } from "./component/LoginProvider.jsx";
@@ -27,7 +27,6 @@ import { MainPage } from "./page/main/MainPage.jsx";
 
 axios.interceptors.request.use(
   function (config) {
-    // Do something before request is sent
     let token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -35,7 +34,6 @@ axios.interceptors.request.use(
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   },
 );
