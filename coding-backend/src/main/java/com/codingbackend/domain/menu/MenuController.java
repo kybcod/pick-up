@@ -49,7 +49,7 @@ public class MenuController {
     @Description("메뉴 수정")
     @PutMapping("/seller")
     public void updateMenu(
-            @ModelAttribute MenuRequest menu,
+            MenuRequest menu,
             @RequestParam(value = "removeFileList", required = false) List<String> removeFileList,
             @RequestPart(value = "newFileList", required = false) MultipartFile[] newFileList
     ) throws IOException {
