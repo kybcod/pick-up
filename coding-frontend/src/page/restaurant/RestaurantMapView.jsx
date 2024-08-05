@@ -221,7 +221,7 @@ export default function RestaurantMapView() {
           <RestaurantList
             restaurants={combinedRestaurants.map((restaurant) => ({
               ...restaurant,
-              imageUrl: restaurant.listImage, // listImage를 사용
+              imageUrl: restaurant.listImage,
             }))}
             onRestaurantClick={handleRestaurantClick}
           />

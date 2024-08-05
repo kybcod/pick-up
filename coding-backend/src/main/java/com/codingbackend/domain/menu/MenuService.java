@@ -150,7 +150,6 @@ public class MenuService {
         if (removeFileList != null && !removeFileList.isEmpty()) {
             for (String removeFileName : removeFileList) {
                 String key = STR."prj4/restaurant/\{restaurantId}/\{removeFileName}";
-                System.out.println("RMkey = " + key);
                 DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                         .bucket(bucketName)
                         .key(key)
@@ -168,7 +167,6 @@ public class MenuService {
         Map<Integer, Menu> menuMap = currentMenuList.stream()
                 .collect(Collectors.toMap(Menu::getId, Function.identity()));
 
-        System.out.println("menuMap = " + menuMap);
         for (MenuItem item : menuItems) {
             Menu currentMenu = menuMap.get(item.getId());
 
