@@ -9,6 +9,10 @@ FROM authority;
 ALTER TABLE user
     ADD CONSTRAINT unique_nick_name UNIQUE (nick_name);
 
+UPDATE authority
+SET name = 'admin'
+WHERE user_id = 76;
+
 INSERT INTO user (email, password, phone_number, nick_name)
 VALUES ('example@ex', 'aa', '010-1111-1111', 12);
 

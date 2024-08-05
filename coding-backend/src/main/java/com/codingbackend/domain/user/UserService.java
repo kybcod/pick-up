@@ -241,4 +241,38 @@ public class UserService {
         User user = mapper.selectByEmail(email.trim());
         return user != null;
     }
+
+    public Map<String, Object> userList(Integer page) {
+        Map pageInfo = new HashMap();
+        Integer countAll = mapper.countAllUser();
+
+        Integer offset = (page - 1) * 10;
+        Integer lastPageNumber = (countAll - 1) / 10 + 1;
+        Integer leftPageNumber = (page - 1) / 10 * 10 + 1;
+        Integer rightPageNumber = leftPageNumber + 9;
+        rightPageNumber = Math.min(rightPageNumber, lastPageNumber);
+        leftPageNumber = rightPageNumber - 9;
+        leftPageNumber = Math.max(leftPageNumber, 1);
+        Integer prevPageNumber = leftPageNumber - 1;
+        Integer nextPageNumber = rightPageNumber + 1;
+
+        if (prevPageNumber > 0) {
+            pageInfo.put("prevPageNumber", prevPageNumber);
+        }
+        if (nextPageNumber <= lastPageNumber) {
+            pageInfo.put("nextPageNumber", nextPageNumber);
+        }
+
+        pageInfo.put("totalPageNumber", countAll);
+        pageInfo.put("currentPageNumber", page);
+        pageInfo.put("lastPageNumber", lastPageNumber);
+        pageInfo.put("leftPageNumber", leftPageNumber);
+        pageInfo.put("rightPageNumber", rightPageNumber);
+
+        return Map.of("pageInfo", pageInfo, "userList", mapper.getUserList(offset));
+    }
+
+    public void deleteUser(User user) {
+        mapper.deleteById(user.getId());
+    }
 }

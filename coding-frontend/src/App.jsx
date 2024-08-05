@@ -24,6 +24,7 @@ import FavoriteList from "./page/myPage/FavoriteList.jsx";
 import RestaurantEditProcess from "./page/seller/edit/RestaurantEditProcess.jsx";
 import SellerReviewList from "./page/seller/SellerReviewList.jsx";
 import { MainPage } from "./page/main/MainPage.jsx";
+import { UserList } from "./page/user/UserList.jsx";
 
 axios.interceptors.request.use(
   function (config) {
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "oauth/login", element: <NaverLoginCallback /> },
       { path: "mypage/:userId", element: <MyPage /> },
+      { path: "list", element: <UserList /> },
 
       // map
       { path: "restaurant/:categoryId", element: <RestaurantMapView /> },

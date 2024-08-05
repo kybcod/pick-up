@@ -2,12 +2,14 @@ import React, { useContext, useState } from "react";
 import {
   Box,
   Button,
-  Flex,
+  Center,
+  Divider,
   FormControl,
   FormLabel,
   Heading,
   Image,
   Input,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -75,17 +77,22 @@ function Login(props) {
           />
         </FormControl>
       </Box>
-      <Button onClick={handleClickLogin}>로그인</Button>
-      <Flex mt={10}>
+      <Button onClick={handleClickLogin} width={"100%"}>
+        로그인
+      </Button>
+      <Divider borderColor={"gray.200"} mt={10} />
+      <Center mt={10}>
+        <Text ml={3} onClick={() => navigate("/signup")} cursor={"pointer"}>
+          회원가입
+        </Text>
+      </Center>
+      <Center mt={5}>
         <a
           href={`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=cOENA5ySQ3knmQd0ghMS&redirect_uri=${reUri}&state=${state}`}
         >
           <Image boxSize={"50px"} src={"/img/naver.png"} />
         </a>
-        <Button ml={3} onClick={() => navigate("/signup")}>
-          회원가입
-        </Button>
-      </Flex>
+      </Center>
     </Box>
   );
 }

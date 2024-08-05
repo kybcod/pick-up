@@ -67,4 +67,17 @@ public interface UserMapper {
             WHERE id = #{id}
             """)
     void deleteById(Integer id);
+
+    @Select("""
+            SELECT id, email, nick_name, inserted
+            FROM user
+            LIMIT #{offset}, 10
+            """)
+    List<User> getUserList(Integer offset);
+
+    @Select("""
+            SELECT COUNT(*)
+            FROM user
+            """)
+    Integer countAllUser();
 }
