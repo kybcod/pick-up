@@ -60,7 +60,6 @@ export function Signup() {
     }
 
     const authorities = [{ userId: null, name: role }];
-    alert(role);
     axios
       .post("/api/user/signup", {
         email,
@@ -180,7 +179,7 @@ export function Signup() {
             value="seller"
             onChange={(e) => {
               setRole(e.target.value);
-              alert(e.target.value);
+              alert("판매자 권한을 선택하셨습니다.");
             }}
           >
             판매자
@@ -189,7 +188,7 @@ export function Signup() {
             value="buyer"
             onChange={(e) => {
               setRole(e.target.value);
-              alert(e.target.value);
+              alert("판매자 권한을 선택하셨습니다.");
             }}
           >
             구매자
