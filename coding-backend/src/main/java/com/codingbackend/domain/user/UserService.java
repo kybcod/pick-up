@@ -273,6 +273,7 @@ public class UserService {
     }
 
     public void deleteUser(User user) {
+        mapper.deleteAuthorityById(user.getId());
         mapper.deleteById(user.getId());
     }
 }
