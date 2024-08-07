@@ -228,15 +228,6 @@ public class UserService {
         return user;
     }
 
-    private User createUser(NaverUserInfo naverUserInfo) {
-        User newUser = new User();
-        newUser.setEmail(naverUserInfo.getEmail());
-        newUser.setNickName(naverUserInfo.getNickName());
-        newUser.setPhoneNum(naverUserInfo.getPhoneNumber());
-        mapper.inserted(newUser); // Save new user
-        return newUser;
-    }
-
     public boolean emailExists(String email) {
         User user = mapper.selectByEmail(email.trim());
         return user != null;
@@ -273,6 +264,7 @@ public class UserService {
     }
 
     public void deleteUser(User user) {
+        mapper.deleteAuthorityById(user.getId());
         mapper.deleteById(user.getId());
     }
 }

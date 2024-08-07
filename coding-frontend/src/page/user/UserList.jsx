@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoginContext } from "../../component/LoginProvider.jsx";
 
 export function UserList() {
@@ -32,6 +32,7 @@ export function UserList() {
   const toast = useToast();
   let { isOpen, onOpen, onClose } = useDisclosure();
   const account = useContext(LoginContext);
+  const navigate = useNavigate();
 
   const currentPage = parseInt(searchParam.get("page")) || 1;
 
@@ -42,6 +43,14 @@ export function UserList() {
         setUserList(res.data.userList);
         setPageInfo(res.data.pageInfo);
       });
+    }
+    if (!account.isAdmin() && !account.isLoggedIn()) {
+      toast({
+        status: "warning",
+        description: "권한이 없습니다.",
+        position: "top",
+      });
+      navigate(-1);
     }
   }, [searchParam, isProcessing]);
 
@@ -86,46 +95,51 @@ export function UserList() {
 
   return (
     <Box>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>No.</Th>
-            <Th>이메일</Th>
-            <Th>닉네임</Th>
-            <Th>가입일시</Th>
-            <Th>삭제</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {userList.map((user, index) => (
-            <Tr key={user.id}>
-              <Td>{(currentPage - 1) * 10 + index + 1}</Td>
-              <Td>{user.email}</Td>
-              <Td>{user.nickName}</Td>
-              <Td>{user.inserted}</Td>
-              <Td>
-                <Button
-                  colorScheme={"red"}
-                  onClick={() => handleClickAdminDelete(user)}
-                >
-                  회원삭제
-                </Button>
-              </Td>
+      {account.isAdmin() && (
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>No.</Th>
+              <Th>이메일</Th>
+              <Th>닉네임</Th>
+              <Th>가입일시</Th>
+              <Th>삭제</Th>
             </Tr>
+          </Thead>
+          <Tbody>
+            {userList.map((user, index) => (
+              <Tr key={user.id}>
+                <Td>{(currentPage - 1) * 10 + index + 1}</Td>
+                <Td>{user.email}</Td>
+                <Td>{user.nickName}</Td>
+                <Td>{user.inserted}</Td>
+                <Td>
+                  <Button
+                    colorScheme={"red"}
+                    onClick={() => handleClickAdminDelete(user)}
+                  >
+                    회원삭제
+                  </Button>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      )}
+      {account.isAdmin() && (
+        <Center>
+          {pageNumbers.map((pageNumber) => (
+            <Button
+              m={1}
+              key={pageNumber}
+              onClick={() => handleClickPage(pageNumber)}
+            >
+              {pageNumber}
+            </Button>
           ))}
-        </Tbody>
-      </Table>
-      <Center>
-        {pageNumbers.map((pageNumber) => (
-          <Button
-            m={1}
-            key={pageNumber}
-            onClick={() => handleClickPage(pageNumber)}
-          >
-            {pageNumber}
-          </Button>
-        ))}
-      </Center>
+        </Center>
+      )}
+      {account.isAdmin() || <Box></Box>}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
