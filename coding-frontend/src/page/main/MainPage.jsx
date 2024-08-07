@@ -120,11 +120,8 @@ export function MainPage() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            // TODO:주석풀기
-            const latitude = 37.5564397859151;
-            const longitude = 126.945190775648;
-            // const latitude = position.coords.latitude;
-            // const longitude = position.coords.longitude;
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
             setCurrentPosition({ latitude, longitude });
           },
           (error) => console.error("Error getting current location:", error),
