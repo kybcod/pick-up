@@ -3,5 +3,6 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/coding-backend/sql/create.sql" dialect="MariaDB" />
     <file url="file://$PROJECT_DIR$/coding-backend/sql/store.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/coding-backend/src/main/resources/secret/backup4.sql" dialect="MariaDB" />
   </component>
 </project>
