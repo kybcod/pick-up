@@ -68,9 +68,10 @@
 
 ## ⚙ 개발 환경 및 IDE
 
-- Spring Boot 3.2.6
+- Spring Boot 3.3.1
 - Java 21.0.3
-- React 18.2.0
+- React 18.3.1
+- node 20.13.1
 
 <br>
 
@@ -81,19 +82,43 @@
 
 ## 회원가입 및 로그인
 
-<br>
-
 - **회원가입**
-    - 
+    - **일반 회원가입**
+        - 권한 선택
+        - 정보 직접 입력
+    - **네이버 회원가입**
+        - 네이버 로그인 버튼 누르면, 가입 화면으로 이동
+            ![KakaoTalk_20240808_141941729_01](https://github.com/user-attachments/assets/e0c30cce-1dd2-4e28-8883-7fcd3bb80254)
+            
+        - 권한 선택
+        - 네이버 회원 정보 불러오기
+        - 네이버 정보 불러오기⇒ 관리자 권한 : 회원 삭제
+        - 
+            ![KakaoTalk_20240808_141941729_02](https://github.com/user-attachments/assets/b1495c5e-760c-4c93-a4f5-5037fc33297c)
+          
+⇒    권한에 따라 화면 이동
 
-<br>
+  관리자(admin)는 회원목록 보기/삭제 가능
 
 - **로그인**
-    - 
+    - **일반 로그인**
+        - 직접 로그인
+            
+            ![KakaoTalk_20240807_124553242](https://github.com/user-attachments/assets/cc5d5286-c36b-4e63-ad89-885346deda0d)
+          
+            ⇒  관리자 권한 회윈 삭제
+            
+    
+    - **네이버 로그인**
+        - 네이버 소셜 로그인 가능
+        - 자동 로그인
+            
+            ![KakaoTalk_20240808_141941729](https://github.com/user-attachments/assets/fc0842b0-67cd-4c49-9bf2-9a6930c3d1b5)
 
 <br>
 
 ## 사장님 : 가게 등록 및 메뉴 등록
+
 <div align="center">
     <img src="https://github.com/user-attachments/assets/b476ff82-6b1a-4345-8f6f-2b0faeaefecd" alt="판)가게등록2 (2)" width="45%" style="margin-right: 10px;">
     <img src="https://github.com/user-attachments/assets/a49b6dda-440c-4d3f-b774-08ba737bdafb" alt="판)가게등록2 (1)" width="45%">
@@ -159,3 +184,5 @@
 <br>
 
 ## 🎞 최종산출물
+[발표 프로젝트](https://www.canva.com/design/DAGMkHZ--fU/VlJUN6_CcAJgE9evoSL1hg/edit) <br>
+[개인 포트폴리오](https://www.canva.com/design/DAGM4elg8eM/58nWWaVhWhak-EBJVJyFCQ/edit)
