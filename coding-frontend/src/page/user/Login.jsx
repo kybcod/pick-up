@@ -65,7 +65,7 @@ function Login(props) {
       bg="white"
     >
       <VStack spacing={6} align="stretch">
-        <Heading textAlign="center" color="blue.500" fontSize="2xl">
+        <Heading textAlign="center" color="#2AC1BC" fontSize="2xl">
           로그인
         </Heading>
         <FormControl>
