@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Container,
   FormControl,
   FormHelperText,
   FormLabel,
@@ -12,6 +13,7 @@ import {
   RadioGroup,
   Stack,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -179,119 +181,135 @@ export function Signup() {
   }
 
   return (
-    <Box>
-      <Box>
-        <Heading>회원가입</Heading>
-      </Box>
-      <RadioGroup name={"authorities"}>
-        <Stack spacing={5} direction="row">
-          <Radio
-            value="seller"
-            onChange={(e) => {
-              setRole(e.target.value);
-              alert("판매자 권한을 선택하셨습니다.");
-            }}
-          >
-            판매자
-          </Radio>
-          <Radio
-            value="buyer"
-            onChange={(e) => {
-              setRole(e.target.value);
-              alert("판매자 권한을 선택하셨습니다.");
-            }}
-          >
-            구매자
-          </Radio>
-        </Stack>
-      </RadioGroup>
-      <Box>
-        <FormControl>
-          <FormLabel>아이디</FormLabel>
-          <InputGroup>
-            <Input
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setIsEmailChecked(false);
-              }}
-            />
-            <InputRightElement>
-              <Button onClick={handleCheckEmail} isDisabled={isEmailChecked}>
-                중복확인
-              </Button>
-            </InputRightElement>
-          </InputGroup>
-          <FormHelperText>올바른 이메일 형식으로 입력해주세요</FormHelperText>
-        </FormControl>
-      </Box>
-      <Box>
-        <FormControl>
-          <FormLabel>패스워드</FormLabel>
-          <Input
-            type={"password"}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </FormControl>
-      </Box>
-      <Box>
-        <FormControl>
-          <FormLabel>패스워드 확인</FormLabel>
-          <InputGroup>
-            <Input
-              type={"password"}
-              onChange={(e) => setPasswordCheck(e.target.value)}
-            />
-          </InputGroup>
-          {!pwIsMatch && (
-            <FormHelperText>패스워드가 일치하지 않습니다</FormHelperText>
-          )}
-        </FormControl>
-      </Box>
-      <Box>
-        <FormControl>
-          <FormLabel>전화번호</FormLabel>
-          <Input
-            value={phoneNum}
-            onChange={(e) =>
-              setPhoneNum(phoneNumPattern(e.currentTarget.value))
-            }
-          />
-        </FormControl>
-      </Box>
-      <Box>
-        <FormControl>
-          <FormLabel>닉네임</FormLabel>
-          <InputGroup>
-            <Input
-              value={nickName}
-              onChange={(e) => {
-                setNickName(e.target.value);
-                setIsNickNameChecked(false);
-              }}
-            />
-            <InputRightElement>
-              <Button
-                onClick={handleCheckNickName}
-                isDisabled={isNickNameChecked}
-              >
-                중복확인
-              </Button>
-            </InputRightElement>
-          </InputGroup>
-        </FormControl>
-      </Box>
-      {/*
-      <Box>
-        <FormControl>
-          <FormLabel>주소</FormLabel>
-          <Input onChange={(e) => setAddress(e.target.value)} />
-        </FormControl>
-      </Box>
-      */}
-      <Button onClick={handleClick} isDisabled={isDisableSaveButton}>
-        가입하기
-      </Button>
-    </Box>
+    <Container maxW="container.sm" py={10}>
+      <VStack spacing={8} align="stretch">
+        <Box textAlign="center">
+          <Heading mt={4} color="#2AC1BC" fontSize="3xl">
+            회원가입
+          </Heading>
+        </Box>
+
+        <Box bg="white" p={8} borderRadius="xl" boxShadow="xl">
+          <VStack spacing={6}>
+            <RadioGroup name="authorities">
+              <Stack spacing={5} direction="row">
+                <Radio
+                  colorScheme="green"
+                  value="seller"
+                  onChange={(e) => setRole(e.target.value)}
+                >
+                  판매자
+                </Radio>
+                <Radio
+                  colorScheme="green"
+                  value="buyer"
+                  onChange={(e) => setRole(e.target.value)}
+                >
+                  구매자
+                </Radio>
+              </Stack>
+            </RadioGroup>
+
+            <FormControl>
+              <FormLabel>아이디</FormLabel>
+              <InputGroup>
+                <Input
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setIsEmailChecked(false);
+                  }}
+                  borderRadius="full"
+                />
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={handleCheckEmail}
+                    isDisabled={isEmailChecked}
+                    bgColor="#2AC1BC"
+                  >
+                    중복확인
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              <FormHelperText>
+                올바른 이메일 형식으로 입력해주세요
+              </FormHelperText>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>패스워드</FormLabel>
+              <Input
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                borderRadius="full"
+              />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>패스워드 확인</FormLabel>
+              <Input
+                type="password"
+                onChange={(e) => setPasswordCheck(e.target.value)}
+                borderRadius="full"
+              />
+              {!pwIsMatch && (
+                <FormHelperText color="red.500">
+                  패스워드가 일치하지 않습니다
+                </FormHelperText>
+              )}
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>전화번호</FormLabel>
+              <Input
+                value={phoneNum}
+                onChange={(e) =>
+                  setPhoneNum(phoneNumPattern(e.currentTarget.value))
+                }
+                borderRadius="full"
+              />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>닉네임</FormLabel>
+              <InputGroup>
+                <Input
+                  value={nickName}
+                  onChange={(e) => {
+                    setNickName(e.target.value);
+                    setIsNickNameChecked(false);
+                  }}
+                  borderRadius="full"
+                />
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={handleCheckNickName}
+                    isDisabled={isNickNameChecked}
+                    bgColor="#2AC1BC"
+                  >
+                    중복확인
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+
+            <Button
+              onClick={handleClick}
+              isDisabled={isDisableSaveButton}
+              bgColor="#2AC1BC"
+              size="lg"
+              width="100%"
+              borderRadius="full"
+            >
+              가입하기
+            </Button>
+          </VStack>
+        </Box>
+      </VStack>
+    </Container>
   );
 }
