@@ -94,6 +94,7 @@ function Login(props) {
         >
           로그인
         </Button>
+
         <Divider />
         <Center>
           <Text
