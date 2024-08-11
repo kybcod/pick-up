@@ -5,12 +5,12 @@ import {
   Center,
   Divider,
   FormControl,
-  FormLabel,
   Heading,
   Image,
   Input,
   Text,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { LoginContext } from "../../component/LoginProvider.jsx";
@@ -23,7 +23,6 @@ function Login(props) {
   const account = useContext(LoginContext);
   const navigate = useNavigate();
 
-  //const CLIENTID = import.meta.env.CLIENT_ID;
   const reUri = "http://localhost:5173/oauth/login";
   const state = Math.random();
 
@@ -56,43 +55,64 @@ function Login(props) {
   }
 
   return (
-    <Box>
-      <Heading>로그인</Heading>
-      <Box>
+    <Box
+      p={8}
+      maxWidth="400px"
+      margin="auto"
+      mt={20}
+      boxShadow="xl"
+      borderRadius="lg"
+      bg="white"
+    >
+      <VStack spacing={6} align="stretch">
+        <Heading textAlign="center" color="blue.500" fontSize="2xl">
+          로그인
+        </Heading>
         <FormControl>
-          <FormLabel>아이디</FormLabel>
           <Input
             onChange={(e) => setEmail(e.target.value)}
-            placeholder={"아이디를 입력해주세요"}
+            placeholder="아이디를 입력해주세요"
+            size="lg"
+            borderRadius="full"
           />
         </FormControl>
-      </Box>
-      <Box>
         <FormControl>
-          <FormLabel>패스워드</FormLabel>
           <Input
-            type={"password"}
+            type="password"
             onChange={(e) => setPassword(e.target.value)}
-            placeholder={"패스워드를 입력해주세요"}
+            placeholder="패스워드를 입력해주세요"
+            size="lg"
+            borderRadius="full"
           />
         </FormControl>
-      </Box>
-      <Button onClick={handleClickLogin} width={"100%"}>
-        로그인
-      </Button>
-      <Divider borderColor={"gray.200"} mt={10} />
-      <Center mt={10}>
-        <Text ml={3} onClick={() => navigate("/signup")} cursor={"pointer"}>
-          회원가입
-        </Text>
-      </Center>
-      <Center mt={5}>
-        <a
-          href={`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=cOENA5ySQ3knmQd0ghMS&redirect_uri=${reUri}&state=${state}`}
+        <Button
+          onClick={handleClickLogin}
+          width="100%"
+          bgColor="#2AC1BC"
+          size="lg"
+          borderRadius="full"
         >
-          <Image boxSize={"50px"} src={"/img/naver.png"} />
-        </a>
-      </Center>
+          로그인
+        </Button>
+        <Divider />
+        <Center>
+          <Text
+            color="#2AC1BC"
+            fontWeight="bold"
+            onClick={() => navigate("/signup")}
+            cursor="pointer"
+          >
+            회원가입
+          </Text>
+        </Center>
+        <Center>
+          <a
+            href={`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=cOENA5ySQ3knmQd0ghMS&redirect_uri=${reUri}&state=${state}`}
+          >
+            <Image boxSize="40px" src="/img/naver.png" />
+          </a>
+        </Center>
+      </VStack>
     </Box>
   );
 }
