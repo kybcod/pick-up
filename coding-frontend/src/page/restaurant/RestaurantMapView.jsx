@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CustomOverlayMap, Map, MapMarker } from "react-kakao-maps-sdk";
 import {
   Box,
+  Button,
   Container,
   Flex,
   Heading,
@@ -27,6 +28,7 @@ export default function RestaurantMapView() {
   const [info, setInfo] = useState(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [category, setCategory] = useState(null);
+  const [routePath, setRoutePath] = useState([]);
   const { categoryId } = useParams();
   const navigate = useNavigate();
   const [restaurantsDb, setRestaurantsDb] = useState(null);
@@ -71,7 +73,7 @@ export default function RestaurantMapView() {
             const newMap = new window.kakao.maps.Map(mapContainer, options);
             setMap(newMap);
           }
-        }, 500); // 100ms 지연
+        }, 500);
       });
     };
 
@@ -169,6 +171,27 @@ export default function RestaurantMapView() {
     });
   };
 
+  const handleRestaurantClick = (restaurant) => {
+    setSelectedRestaurant(restaurant);
+    setInfo(restaurant);
+    map.panTo(
+      new window.kakao.maps.LatLng(
+        restaurant.position.lat,
+        restaurant.position.lng,
+      ),
+    );
+  };
+
+  const handleNavigateToKakao = () => {
+    if (info && info.position) {
+      const lat = info.position.lat;
+      const lng = info.position.lng;
+      window.location.href = `https://map.kakao.com/link/to/${info.place.place_name},${lat},${lng}`;
+    } else {
+      console.error("No valid info available for navigation");
+    }
+  };
+
   useEffect(() => {
     if (map && markers.length > 0) {
       const bounds = new window.kakao.maps.LatLngBounds();
@@ -183,17 +206,6 @@ export default function RestaurantMapView() {
       map.setBounds(bounds);
     }
   }, [map, markers]);
-
-  const handleRestaurantClick = (restaurant) => {
-    setSelectedRestaurant(restaurant);
-    setInfo(restaurant);
-    map.panTo(
-      new window.kakao.maps.LatLng(
-        restaurant.position.lat,
-        restaurant.position.lng,
-      ),
-    );
-  };
 
   if (restaurantsDb === null) {
     return <Spinner />;
@@ -266,6 +278,7 @@ export default function RestaurantMapView() {
                     }}
                     onClick={() => {
                       setInfo(marker);
+                      setSelectedRestaurant(marker);
                     }}
                   />
                 ))}
@@ -312,6 +325,13 @@ export default function RestaurantMapView() {
                             <Text fontSize="xs" color="gray.500">
                               {info.place.phone}
                             </Text>
+                            <Button
+                              size="sm"
+                              colorScheme="teal"
+                              onClick={handleNavigateToKakao}
+                            >
+                              길찾기
+                            </Button>
                           </VStack>
                         </PopoverBody>
                       </PopoverContent>
