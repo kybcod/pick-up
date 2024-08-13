@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Badge,
   Box,
   Flex,
   Image,
@@ -87,9 +86,6 @@ export function RestaurantList({ restaurants, onRestaurantClick }) {
                     >
                       {placenamefull || restaurant.place.place_name}
                     </Text>
-                    <Badge ml={2} colorScheme="green">
-                      픽업가능
-                    </Badge>
                   </Flex>
                   <Text fontSize="sm" color="gray.600" mb={1}>
                     {road_address_name || restaurant.place.road_address_name
