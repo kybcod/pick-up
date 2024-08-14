@@ -13,9 +13,6 @@
 
 ## **👨‍👨‍👧‍👦 팀원 소개**
 
-[팀 노션](https://www.notion.so/huitopia/2c4fb555828c41f4b69f4a675689e282)
-
-
 **Ye Been Kim**
 
 - 🐍 Github: [https://github.com/kybcod]
