@@ -13,6 +13,9 @@
 
 ## **👨‍👨‍👧‍👦 팀원 소개**
 
+[팀 노션](https://www.notion.so/huitopia/2c4fb555828c41f4b69f4a675689e282)
+
+
 **Ye Been Kim**
 
 - 🐍 Github: [https://github.com/kybcod]
@@ -20,6 +23,13 @@
 **Jeong Yun Heo**
 
 - 🐴 Github : [https://github.com/JeongYunheo]
+
+<br>
+
+| Name            | Role                | 
+| --------------- | ------------------- |
+| 김예빈       | Restaurant, Payment, Review, Map     | 
+| 허정윤       | User     | 
 
 <br>
 
@@ -72,8 +82,9 @@
 - Java 21.0.3
 - React 18.3.1
 - node 20.13.1
-
+- 
 <br>
+
 
 
 ## **⭐️ 주요 기능**
