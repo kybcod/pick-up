@@ -23,6 +23,13 @@
 
 <br>
 
+| Name            | Role                | 
+| --------------- | ------------------- |
+| 김예빈       | Restaurant, Payment, Review, Map     | 
+| 허정윤       | User     | 
+
+<br>
+
 ## **🔨 기술 스택**
 ![skils](https://github.com/user-attachments/assets/ba4e7dcb-67d3-46f3-ba9a-03608c8ef886)
 
@@ -72,8 +79,9 @@
 - Java 21.0.3
 - React 18.3.1
 - node 20.13.1
-
+- 
 <br>
+
 
 
 ## **⭐️ 주요 기능**
