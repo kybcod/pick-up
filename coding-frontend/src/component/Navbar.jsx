@@ -11,7 +11,7 @@ export function Navbar() {
 
   return (
     <Flex
-      h="60px"
+      h="70px"
       backgroundColor="#2AC1BC"
       alignItems="center"
       px={4}
@@ -19,11 +19,11 @@ export function Navbar() {
       mb={account.isSeller() ? 0 : 10}
     >
       {account.isSeller() ? (
-        <Box cursor="pointer" w="200px" onClick={() => navigate("/seller")}>
+        <Box cursor="pointer" w="210px" onClick={() => navigate("/seller")}>
           <Image src="/img/seller_logo.png" alt="Logo" />
         </Box>
       ) : (
-        <Box cursor="pointer" w="150px" onClick={() => navigate("/")}>
+        <Box cursor="pointer" w="160px" onClick={() => navigate("/")}>
           <Image src="/img/pickUp_black.png" alt="Logo" />
         </Box>
       )}
